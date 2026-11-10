@@ -24,7 +24,7 @@ function overlay(){ $("overlay").classList.add("show")}
 function openCart(){closePanels();$("cartDrawer").classList.add("open");$("cartDrawer").setAttribute("aria-hidden","false");overlay()}
 function openCheckout(){if(!cart.length){alert(t("need"));return}closePanels();$("checkoutModal").classList.add("open");$("checkoutModal").setAttribute("aria-hidden","false");overlay();updateTotal()}
 function showProduct(id){
- const p=products.find(x=>x.id===id);if(!p)return;
+ const p=products.find(x=>x.id===id);if(!p)return;location.href="?page=product&id="+encodeURIComponent(id);return;
  $("productDetailContent").innerHTML='<div class="product-detail-grid"><div class="detail-image-wrap"><img class="detail-image" src="'+p.img+'" alt="'+pname(p)+'" onerror="this.onerror=null;this.src=\'https://placehold.co/800x800/f0eee8/222?text=KORDESH+Product\'"></div><div class="detail-copy"><p class="eyebrow">'+p.brand+' · '+p.size+'</p><h2>'+pname(p)+'</h2><strong class="detail-price">'+money(p.price)+'</strong><h3>'+t("desc")+'</h3><p>'+p.desc+'</p><h3>'+t("ingredients")+'</h3><p>'+p.ingredients+'</p><h3>'+t("skin")+'</h3><p>'+p.skin+'</p><h3>'+t("how")+'</h3><p>'+p.how+'</p><div class="detail-actions"><button class="button button-light" data-add-detail="'+p.id+'">'+t("add")+'</button><button class="button button-dark" data-buy="'+p.id+'">'+t("buy")+'</button></div></div></div>';
  closePanels();$("productModal").classList.add("open");$("productModal").setAttribute("aria-hidden","false");overlay();
 }
@@ -79,4 +79,27 @@ document.addEventListener("click",e=>{
  const filter=e.target.closest("[data-filter]");if(filter){document.querySelectorAll(".filter").forEach(x=>x.classList.remove("active"));filter.classList.add("active");renderProducts(filter.dataset.filter)}
 });
 document.addEventListener("keydown",e=>{if(e.key==="Escape")closePanels();if((e.key==="Enter"||e.key===" ")&&e.target.classList.contains("product-card"))showProduct(e.target.dataset.product)});
-$("openCart").addEventListener("click",openCart);$("closeCart").addEventListener("click",closePanels);$("overlay").addEventListener("click",closePanels);$("closeCheckout").addEventListener("click",closePanels);$("closeProduct").addEventListener("click",closePanels);$("checkoutButton").addEventListener("click",openCheckout);$("deliverySelect").addEventListener("change",updateTotal);$("checkoutForm").addEventListener("submit",submitOrder);$("languageToggle").addEventListener("click",()=>setLanguage(language==="bn"?"en":"bn"));$("year").textContent=new Date().getFullYear();renderProducts();renderCart();$("contactWhatsApp").href="https://wa.me/"+CONFIG.WHATSAPP_NUMBER;
+$("openCart").addEventListener("click",openCart);$("closeCart").addEventListener("click",closePanels);$("overlay").addEventListener("click",closePanels);$("closeCheckout").addEventListener("click",closePanels);$("closeProduct").addEventListener("click",closePanels);$("checkoutButton").addEventListener("click",openCheckout);$("deliverySelect").addEventListener("change",updateTotal);$("checkoutForm").addEventListener("submit",submitOrder);$("languageToggle").addEventListener("click",()=>setLanguage(language==="bn"?"en":"bn"));$("year").textContent=new Date().getFullYear();
+function initStorefront(){
+ const params=new URLSearchParams(location.search),page=params.get("page")||"home",cat=params.get("category"),id=params.get("id");
+ const main=document.querySelector("main");
+ const categoryNames={skincare:"স্কিনকেয়ার",suncare:"সানকেয়ার"};
+ const categoryCards=[{id:"skincare",title:"Skincare",bn:"স্কিনকেয়ার",desc:"দৈনন্দিন ত্বকের যত্নের জন্য কোরিয়ান পণ্য",img:"https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?auto=format&fit=crop&w=900&q=85"},{id:"suncare",title:"Sun Care",bn:"সানকেয়ার",desc:"সূর্যের আলো থেকে ত্বকের যত্ন",img:"https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=900&q=85"}];
+ const homeHref="?";
+ document.querySelector(".brand").href=homeHref;
+ document.querySelectorAll(".desktop-nav").forEach(n=>n.style.display="none");
+ if(page==="home"){
+  main.innerHTML='<section class="category-home"><p class="eyebrow">KORDESH / SHOP BY CATEGORY</p><h1>কোরিয়ান বিউটি,<br><em>আপনার পছন্দে।</em></h1><p class="category-intro">আপনার প্রয়োজন অনুযায়ী পণ্য ক্যাটাগরি বেছে নিন।</p><div class="category-grid">'+categoryCards.map(c=>'<a class="category-card" href="?page=category&category='+c.id+'"><img src="'+c.img+'" alt="'+c.title+'"><div><span>EXPLORE CATEGORY ↗</span><h2>'+c.bn+'</h2><p>'+c.desc+'</p></div></a>').join("")+'</div></section>';
+ }else if(page==="category"){
+  const selected=categoryCards.find(c=>c.id===cat);
+  if(!selected){location.href="?";return}
+  main.innerHTML='<section class="catalog-page"><a class="back-link" href="?">← সব ক্যাটাগরি</a><p class="eyebrow">KORDESH / CATEGORY</p><h1>'+selected.bn+'</h1><p class="category-intro">এই ক্যাটাগরির বাছাই করা কোরিয়ান পণ্য।</p><div class="product-grid" id="productGrid"></div></section>';
+  renderProducts(cat);
+ }else if(page==="product"){
+  const p=products.find(x=>x.id===id);
+  if(!p){location.href="?";return}
+  main.innerHTML='<section class="product-page"><a class="back-link" href="?page=category&category='+p.category+'">← '+categoryNames[p.category]+'</a><div class="product-detail-grid"><div class="detail-image-wrap"><img class="detail-image" src="'+p.img+'" alt="'+p.name+'" onerror="this.onerror=null;this.src=\'https://placehold.co/800x800/f0eee8/222?text=KORDESH+Product\'"></div><div class="detail-copy"><p class="eyebrow">'+p.brand+' · '+p.size+'</p><h1>'+p.bn+'</h1><strong class="detail-price">'+money(p.price)+'</strong><p>'+p.desc+'</p><h3>মূল উপাদান</h3><p>'+p.ingredients+'</p><h3>কোন ত্বকের জন্য</h3><p>'+p.skin+'</p><h3>ব্যবহারবিধি</h3><p>'+p.how+'</p><div class="detail-actions"><button class="button button-light" data-add-detail="'+p.id+'">কার্টে যোগ করুন</button><button class="button button-dark" data-buy="'+p.id+'">এখনই অর্ডার করুন</button></div></div></div></section>';
+ }else{location.href="?";return}
+}
+initStorefront();renderCart();$("contactWhatsApp").href="https://wa.me/"+CONFIG.WHATSAPP_NUMBER;
+document.addEventListener("click",e=>{const link=e.target.closest('a[href^="?"]');if(link){document.body.classList.add("page-loading");}});
