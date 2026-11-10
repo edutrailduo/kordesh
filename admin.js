@@ -3,7 +3,7 @@ const SUPABASE_URL="https://bibithkwfrwahttdkcfi.supabase.co";
 const SUPABASE_KEY="sb_publishable_S5_tTYQbL6kUkNFp22YhaA_W9SJ-USF";
 const supabase=createClient(SUPABASE_URL,SUPABASE_KEY);
 const $=id=>document.getElementById(id);
-const labels={pending:"Pending",confirmed:"Confirmed",processing:"Processing",shipped:"Shipped",delivered:"Delivered",cancelled:"Cancelled"};
+const labels={pending:"Pending",confirmed:"Confirmed",processing:"Processing",shipped:"Shipped",delivered:"Delivered",cancelled:"Cancelled"};\nlet cachedOrders=[];
 function msg(id,text){$(id).textContent=text}
 async function showSession(){
  const {data:{session}}=await supabase.auth.getSession();
@@ -19,16 +19,43 @@ $("authForm").addEventListener("submit",async e=>{e.preventDefault();const email
 $("signupBtn").addEventListener("click",async()=>{const email=$("email").value.trim(),password=$("password").value;if(!email||password.length<8){msg("authMessage","ইমেইল দিন এবং অন্তত ৮ অক্ষরের পাসওয়ার্ড লিখুন।");return}const {data,error}=await supabase.auth.signUp({email,password});if(error){msg("authMessage",error.message);return}if(data.session){msg("authMessage","Account তৈরি হয়েছে। এখন লগইন করুন।");await showSession()}else{msg("authMessage","এই ইমেইলে account আগে থেকেই থাকতে পারে, অথবা confirmation email পাঠানো হয়েছে। Inbox/Spam দেখুন; আগে account থাকলে পাসওয়ার্ড রিসেট করুন।")}});
 $("resetBtn").addEventListener("click",async()=>{const email=$("email").value.trim();if(!email){msg("authMessage","আগে আপনার account-এর ইমেইল লিখুন।");return}const {error}=await supabase.auth.resetPasswordForEmail(email,{redirectTo:location.origin+location.pathname});if(error){msg("authMessage",error.message);return}msg("authMessage","পাসওয়ার্ড reset link পাঠানো হয়েছে। Inbox ও Spam folder দেখুন।")});
 $("logoutBtn").addEventListener("click",async()=>{await supabase.auth.signOut();await showSession()});
-$("refreshBtn").addEventListener("click",loadOrders);$("statusFilter").addEventListener("change",loadOrders);
+$("refreshBtn").addEventListener("click",loadOrders);$("statusFilter").addEventListener("change",renderOrders);$("orderSearch").addEventListener("input",renderOrders);$("exportBtn").addEventListener("click",exportOrders);
 async function loadOrders(){
  msg("dashMessage","অর্ডার লোড হচ্ছে...");
- const {data,error}=await supabase.from("kordesh_orders").select("*").order("created_at",{ascending:false}).limit(100);
+ const {data,error}=await supabase.from("kordesh_orders").select("*").order("created_at",{ascending:false}).limit(1000);
  if(error){msg("dashMessage",error.message);return}
- const list=data||[];$("totalCount").textContent=list.length;$("pendingCount").textContent=list.filter(x=>x.status==="pending").length;
- const filter=$("statusFilter").value,rows=filter==="all"?list:list.filter(x=>x.status===filter);
- $("orders").innerHTML=rows.length?rows.map(o=>`<article class="order"><div class="order-head"><div><h3>${o.order_number}</h3><span class="order-meta">${new Date(o.created_at).toLocaleString("en-BD")}</span></div><span class="order-meta">${o.delivery_zone}</span></div><div class="order-grid"><p><b>নাম:</b> ${esc(o.customer_name)}</p><p><b>ফোন:</b> <a href="tel:${esc(o.customer_phone)}">${esc(o.customer_phone)}</a></p><p><b>জেলা:</b> ${esc(o.customer_district)}</p><p><b>এলাকা:</b> ${esc(o.customer_area)}</p><p><b>ঠিকানা:</b> ${esc(o.customer_address)}</p><p><b>নোট:</b> ${esc(o.customer_note||"নেই")}</p></div><div class="items"><b>পণ্য:</b><br>${(o.items||[]).map(i=>esc(i.name)+" × "+i.qty+" = ৳"+(Number(i.price)*Number(i.qty)).toLocaleString("en-BD")).join("<br>")}</div><div class="order-bottom"><span class="total">৳${Number(o.total).toLocaleString("en-BD")}</span><select data-status-id="${o.id}">${Object.entries(labels).map(([v,l])=>`<option value="${v}" ${o.status===v?"selected":""}>${l}</option>`).join("")}</select></div></article>`).join(""):'<div class="panel">এখনো কোনো অর্ডার নেই।</div>';
- $("orders").querySelectorAll("[data-status-id]").forEach(el=>el.addEventListener("change",async()=>{const {error}=await supabase.from("kordesh_orders").update({status:el.value}).eq("id",el.dataset.statusId);if(error){msg("dashMessage",error.message);return}msg("dashMessage","অর্ডারের স্ট্যাটাস আপডেট হয়েছে।");await loadOrders()}));
+ cachedOrders=data||[];
+ $("totalCount").textContent=cachedOrders.length;
+ $("pendingCount").textContent=cachedOrders.filter(x=>x.status==="pending").length;
+ $("deliveredCount").textContent=cachedOrders.filter(x=>x.status==="delivered").length;
+ renderOrders();
+}
+function renderOrders(){
+ const filter=$("statusFilter").value,query=$("orderSearch").value.trim().toLocaleLowerCase();
+ const rows=cachedOrders.filter(o=>{
+  const statusMatch=filter==="all"||o.status===filter;
+  const hay=[o.order_number,o.customer_name,o.customer_phone,o.customer_district,o.customer_area].join(" ").toLocaleLowerCase();
+  return statusMatch&&(!query||hay.includes(query));
+ });
+ $("orders").innerHTML=rows.length?rows.map(o=>`<article class="order"><div class="order-head"><div><h3>${esc(o.order_number)}</h3><span class="order-meta">${new Date(o.created_at).toLocaleString("en-BD")}</span></div><span class="order-meta">${esc(o.delivery_zone)}</span></div><div class="order-grid"><p><b>নাম:</b> ${esc(o.customer_name)}</p><p><b>ফোন:</b> <a href="tel:${telValue(o.customer_phone)}">${esc(o.customer_phone)}</a></p><p><b>জেলা:</b> ${esc(o.customer_district)}</p><p><b>এলাকা:</b> ${esc(o.customer_area)}</p><p><b>ঠিকানা:</b> ${esc(o.customer_address)}</p><p><b>নোট:</b> ${esc(o.customer_note||"নেই")}</p></div><div class="items"><b>পণ্য:</b><br>${(Array.isArray(o.items)?o.items:[]).map(i=>esc(i.name)+" × "+Number(i.qty||0)+" = ৳"+(Number(i.price||0)*Number(i.qty||0)).toLocaleString("en-BD")).join("<br>")}</div><div class="order-bottom"><span class="total">৳${Number(o.total||0).toLocaleString("en-BD")}</span><select data-status-id="${esc(o.id)}">${Object.entries(labels).map(([v,l])=>`<option value="${v}" ${o.status===v?"selected":""}>${l}</option>`).join("")}</select></div></article>`).join(""):'<div class="panel">কোনো অর্ডার পাওয়া যায়নি।</div>';
+ $("orders").querySelectorAll("[data-status-id]").forEach(el=>el.addEventListener("change",async()=>{
+  el.disabled=true;
+  const {error}=await supabase.from("kordesh_orders").update({status:el.value}).eq("id",el.dataset.statusId);
+  if(error){msg("dashMessage","স্ট্যাটাস আপডেট হয়নি: "+error.message);el.disabled=false;return}
+  const order=cachedOrders.find(x=>String(x.id)===el.dataset.statusId);if(order)order.status=el.value;
+  msg("dashMessage","অর্ডারের স্ট্যাটাস আপডেট হয়েছে।");renderOrders();
+ }));
  msg("dashMessage",rows.length+"টি অর্ডার দেখানো হচ্ছে।");
+}
+function telValue(value){return String(value??"").replace(/[^+0-9]/g,"")}
+function csvCell(value){return '"'+String(value??"").replace(/"/g,'""')+'"'}
+function exportOrders(){
+ if(!cachedOrders.length){msg("dashMessage","ডাউনলোড করার মতো অর্ডার নেই।");return}
+ const columns=["order_number","created_at","customer_name","customer_phone","customer_district","customer_area","customer_address","customer_note","items","subtotal","delivery_fee","total","delivery_zone","status"];
+ const rows=[columns.join(","),...cachedOrders.map(o=>columns.map(k=>csvCell(k==="items"?(Array.isArray(o.items)?o.items.map(i=>i.name+" x "+i.qty).join("; "):""):o[k])).join(","))];
+ const blob=new Blob(["\\uFEFF"+rows.join("\\r\\n")],{type:"text/csv;charset=utf-8"});
+ const url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="kordesh-orders-"+new Date().toISOString().slice(0,10)+".csv";document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
+ msg("dashMessage","CSV ফাইল ডাউনলোড শুরু হয়েছে।");
 }
 function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 supabase.auth.onAuthStateChange((event)=>{if(event==="PASSWORD_RECOVERY"){$("authPanel").hidden=true;$("dashboard").hidden=true;$("recoveryPanel").hidden=false;return}setTimeout(showSession,0)});showSession();
