@@ -353,14 +353,50 @@ function initStorefront(){
 initStorefront();initLocationSelectors();renderCart();initOrderTracking();
 document.addEventListener("click",e=>{const link=e.target.closest('a[href^="?"]');if(link){document.body.classList.add("page-loading");}});
 
-/* KORDESH AI chathead panel controls */
+/* KORDESH AI floating chat assistant */
+function addKordeshAIMessage(message,role){
+ const list=document.getElementById("kordeshAIMessages");if(!list)return;
+ const item=document.createElement("div");item.className="kordesh-ai-message "+role;item.textContent=message;list.appendChild(item);list.scrollTop=list.scrollHeight;
+}
+function answerKordeshAI(raw){
+ const q=String(raw||"").toLowerCase();
+ const list=products.filter(p=>{
+  const hay=[p.name,p.bn,p.brand,p.category,p.desc,p.skin].join(" ").toLowerCase();
+  const terms=[];
+  if(/sun|সান|রোদ|spf/.test(q))terms.push("suncare");
+  if(/তৈলাক্ত|oily/.test(q))terms.push("oily","heartleaf","centella");
+  if(/শুষ্ক|dry|ড্রাই/.test(q))terms.push("dry","moistur","snail","birch");
+  if(/ব্রণ|acne|pimple/.test(q))terms.push("acne","heartleaf","tea tree");
+  if(/টোনার|toner/.test(q))terms.push("toner");
+  if(/ক্লেনজার|cleanser|ফেসওয়াশ/.test(q))terms.push("cleanser");
+  if(/ময়েশ্চার|moisturizer|ক্রিম|cream/.test(q))terms.push("cream","moistur");
+  return terms.some(t=>hay.includes(t))||[p.name,p.bn,p.brand].some(v=>v&&q.includes(String(v).toLowerCase()));
+ }).slice(0,3);
+ if(/hello|হ্যালো|হাই|hi\b/.test(q))return "হ্যালো! KORDESH AI-তে স্বাগতম। পণ্য, ত্বকের ধরন বা স্কিনকেয়ার রুটিন সম্পর্কে কী জানতে চান?";
+ if(list.length){
+  const lines=list.map(p=>"• "+p.name+" — ৳"+Number(p.price).toLocaleString("en-US")).join("\n");
+  return "আপনার প্রশ্ন অনুযায়ী ক্যাটালগে এই পণ্যগুলো পাওয়া গেছে:\n"+lines+"\n\nপণ্যের বিস্তারিত দেখতে শপে গিয়ে নামটি সার্চ করুন। আপনার ত্বকে নতুন পণ্য ব্যবহারের আগে প্যাচ টেস্ট করুন।";
+ }
+ if(/routine|রুটিন|skin analysis|ত্বকের ধরন/.test(q))return "আপনার ত্বকের ধরন ও লক্ষ্য অনুযায়ী রুটিন সাজাতে Skin Analysis ব্যবহার করুন।";
+ return "আপনার প্রশ্নটি আরেকটু নির্দিষ্ট করে বলবেন? যেমন তৈলাক্ত বা শুষ্ক ত্বকের পণ্য, সানস্ক্রিন, টোনার কিংবা ক্লেনজার। আমি বর্তমানে KORDESH-এর পণ্যের ক্যাটালগ থেকে সাজেশন দিতে পারি।";
+}
+function sendKordeshAI(text){
+ const value=String(text||"").trim();if(!value)return;
+ addKordeshAIMessage(value,"user");
+ addKordeshAIMessage(answerKordeshAI(value),"ai");
+}
 document.addEventListener("click",event=>{
- const launcher=event.target.closest("#kordeshAILauncher");
- const close=event.target.closest("#kordeshAIClose");
- const panel=document.getElementById("kordeshAIPanel");
- const trigger=document.getElementById("kordeshAILauncher");
+ const launcher=event.target.closest("#kordeshAILauncher"),close=event.target.closest("#kordeshAIClose");
+ const prompt=event.target.closest("[data-ai-prompt]");
+ const panel=document.getElementById("kordeshAIPanel"),trigger=document.getElementById("kordeshAILauncher");
+ if(prompt){sendKordeshAI(prompt.dataset.aiPrompt);return}
  if(!panel||!trigger)return;
- if(launcher){const opening=panel.hidden;panel.hidden=!opening;trigger.setAttribute("aria-expanded",String(opening));return}
+ if(launcher){const opening=panel.hidden;panel.hidden=!opening;trigger.setAttribute("aria-expanded",String(opening));if(opening)setTimeout(()=>document.getElementById("kordeshAIInput")?.focus(),80);return}
  if(close){panel.hidden=true;trigger.setAttribute("aria-expanded","false");return}
  if(!event.target.closest("#kordeshAIWidget")){panel.hidden=true;trigger.setAttribute("aria-expanded","false")}
+});
+document.addEventListener("submit",event=>{
+ if(event.target.id!=="kordeshAIForm")return;
+ event.preventDefault();const input=document.getElementById("kordeshAIInput");
+ sendKordeshAI(input?.value);if(input)input.value="";
 });
