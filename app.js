@@ -37,7 +37,7 @@ function setLanguage(next){language=next;document.documentElement.lang=next;$("l
 function orderMessage(o){return "KORDESH ORDER\nOrder ID: "+o.orderId+"\nName: "+o.customer.name+"\nPhone: "+o.customer.phone+"\nDistrict: "+o.customer.district+"\nArea: "+o.customer.area+"\nAddress: "+o.customer.address+"\n\nItems:\n"+o.items.map(i=>"• "+i.name+" × "+i.qty+" = "+money(i.price*i.qty)).join("\n")+"\n\nSubtotal: "+money(o.subtotal)+"\nDelivery: "+money(o.deliveryFee)+"\nTotal: "+money(o.total)+"\nNote: "+(o.customer.note||"N/A")}
 async function submitOrder(e){
  e.preventDefault();if(!cart.length){$("orderStatus").textContent=t("need");return}
- const d=new FormData(e.target),customer={name:String(d.get("name")).trim(),phone:String(d.get("phone")).trim(),district:String(d.get("district")).trim(),area:String(d.get("area")).trim(),address:String(d.get("address")).trim(),note:String(d.get("note")).trim()};
+ const d=new FormData(e.target),customer={name:String(d.get("name")).trim(),email:String(d.get("email")).trim(),phone:String(d.get("phone")).trim(),district:String(d.get("district")).trim(),area:String(d.get("area")).trim(),address:String(d.get("address")).trim(),note:String(d.get("note")).trim()};
  if(!/^(\+?88)?01[3-9]\d{8}$/.test(customer.phone.replace(/[\s-]/g,""))){$("orderStatus").textContent="সঠিক বাংলাদেশি মোবাইল নম্বর লিখুন।";return}
  const fee=d.get("delivery")==="inside"?80:130,sub=cart.reduce((s,x)=>s+x.qty*x.price,0),order={orderId:"KD"+Date.now().toString().slice(-9),createdAt:new Date().toISOString(),customer,items:cart.map(i=>{const p=products.find(x=>x.id===i.id);return{id:p.id,name:p.bn,englishName:p.name,brand:p.brand,price:p.price,qty:i.qty}}),subtotal:sub,deliveryFee:fee,deliveryZone:d.get("delivery")==="inside"?"Inside Dhaka":"Outside Dhaka",total:sub+fee,currency:"BDT"};
  const wa=CONFIG.WHATSAPP_NUMBER.replace(/\D/g,""),waOk=wa.length>=11&&!wa.includes("XXXXXXXX");
@@ -47,12 +47,25 @@ async function submitOrder(e){
    const response=await fetch(CONFIG.SUPABASE_URL+"/rest/v1/kordesh_orders",{
      method:"POST",
      headers:{"apikey":CONFIG.SUPABASE_KEY,"Authorization":"Bearer "+CONFIG.SUPABASE_KEY,"Content-Type":"application/json","Prefer":"return=minimal"},
-     body:JSON.stringify({order_number:order.orderId,customer_name:customer.name,customer_phone:customer.phone,customer_district:customer.district,customer_area:customer.area,customer_address:customer.address,customer_note:customer.note,items:order.items,subtotal:sub,delivery_fee:fee,total:sub+fee,delivery_zone:order.deliveryZone,status:"pending"})
+     body:JSON.stringify({order_number:order.orderId,customer_name:customer.name,customer_email:customer.email,customer_phone:customer.phone,customer_district:customer.district,customer_area:customer.area,customer_address:customer.address,customer_note:customer.note,items:order.items,subtotal:sub,delivery_fee:fee,total:sub+fee,delivery_zone:order.deliveryZone,status:"pending"})
    });
    if(!response.ok){const detail=await response.text();throw new Error("Order save failed ("+response.status+"): "+detail)}
-   if(waOk&&tab){tab.location.href="https://wa.me/"+wa+"?text="+encodeURIComponent(orderMessage(order));$("orderStatus").textContent=t("waReady")+" Order ID: "+order.orderId}
-   else {$("orderStatus").textContent="অর্ডার সফলভাবে সংরক্ষিত হয়েছে। Order ID: "+order.orderId}
-   $("orderStatus").className="order-status";cart=[];saveCart();e.target.reset();updateTotal();
+   let emailSent=false,emailMessage="";
+   try{
+     const mailResponse=await fetch(CONFIG.SUPABASE_URL+"/functions/v1/kordesh-order-email",{
+       method:"POST",
+       headers:{"apikey":CONFIG.SUPABASE_KEY,"Content-Type":"application/json"},
+       body:JSON.stringify({order_number:order.orderId})
+     });
+     const mailResult=await mailResponse.json().catch(()=>({}));
+     emailSent=mailResponse.ok&&mailResult.email_sent===true;
+     if(!emailSent)emailMessage=mailResult.error||"ইমেইল সার্ভিস এখনো সেটআপ হয়নি";
+   }catch(mailError){emailMessage="ইমেইল পাঠানো যায়নি";}
+   if(waOk&&tab){tab.location.href="https://wa.me/"+wa+"?text="+encodeURIComponent(orderMessage(order))}
+   else if(tab)tab.close();
+   $("orderStatus").textContent="ধন্যবাদ, আপনার অর্ডার সফলভাবে নিশ্চিত হয়েছে। Order ID: "+order.orderId+(emailSent?" কনফার্মেশন ইমেইল পাঠানো হয়েছে।":" অর্ডার সেভ হয়েছে, তবে ইমেইল পাঠানো যায়নি।");
+   $("orderStatus").className="order-status"+(emailSent?" success":"");
+   cart=[];saveCart();e.target.reset();updateTotal();
  }catch(err){
    if(tab)tab.close();console.error(err);$("orderStatus").textContent="অর্ডার সংরক্ষণ হয়নি। আবার চেষ্টা করুন। ("+err.message+")";$("orderStatus").className="order-status error";
  }
