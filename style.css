@@ -177,3 +177,33 @@ em{font-family:'Hind Siliguri','DM Sans',sans-serif;font-style:normal}
 .receipt-footer{text-align:center;border-top:1px solid #e9e7e2;padding-top:18px;font-size:12px;line-height:1.8;color:#777}.receipt-actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:18px auto 24px}.receipt-unavailable{padding:20px;color:#777}
 @media(max-width:560px){.order-receipt{padding:18px 12px;margin:22px auto}.receipt-header h2{font-size:17px}.receipt-meta{gap:12px}.receipt-table{font-size:11px}.receipt-table th,.receipt-table td{padding:10px 5px}}
 @media print{body *{visibility:hidden!important}.order-receipt,.order-receipt *{visibility:visible!important}.order-receipt{position:absolute;left:0;top:0;width:100%;max-width:none;margin:0;padding:18mm;border:0;box-shadow:none}.receipt-actions,.success-mark,.success-page>h1,.success-page>p,.success-number,.success-page>.back-link{display:none!important}@page{size:A4;margin:12mm}}
+
+/* Left navigation and floating KORDESH AI assistant */
+.site-header{display:flex;align-items:center;gap:24px}
+.header-menu-left{order:-1;position:relative;flex:0 0 auto}
+.site-header>.brand{order:0}
+.site-header>.header-actions{margin-left:auto}
+.menu-button{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:5px;font-size:0}
+.menu-button span{display:block;width:19px;height:2px;background:currentColor;border-radius:2px}
+.header-menu-left .site-menu{left:0;right:auto}
+.kordesh-ai-widget{position:fixed;right:22px;bottom:26px;z-index:1005;font-family:'DM Sans','Hind Siliguri',sans-serif}
+.kordesh-ai-launcher{display:flex;align-items:center;gap:10px;padding:10px 17px 10px 10px;border:1px solid #252525;border-radius:999px;background:#171717;color:#fff;box-shadow:0 8px 28px #0002;font-size:12px;font-weight:700;letter-spacing:.07em;cursor:pointer}
+.kordesh-ai-orb{width:34px;height:34px;display:grid;place-items:center;border-radius:50%;background:#f0eee9;color:#171717;font-family:Georgia,serif;font-size:20px;font-weight:700}
+.kordesh-ai-dot{width:7px;height:7px;border-radius:50%;background:#9ac7a4}
+.kordesh-ai-panel{position:absolute;right:0;bottom:62px;width:min(350px,calc(100vw - 32px));padding:0;background:#fff;border:1px solid #e5e2dc;border-radius:17px;box-shadow:0 18px 55px #0002;overflow:hidden;color:#171717}
+.kordesh-ai-panel[hidden]{display:none}
+.kordesh-ai-panel>header{display:flex;align-items:center;justify-content:space-between;padding:15px 17px;background:#171717;color:#fff}
+.kordesh-ai-panel>header>div{display:flex;align-items:center;gap:10px}
+.kordesh-ai-panel>header .kordesh-ai-orb{width:36px;height:36px}
+.kordesh-ai-panel>header strong,.kordesh-ai-panel>header small{display:block}
+.kordesh-ai-panel>header strong{font-size:12px;letter-spacing:.08em}
+.kordesh-ai-panel>header small{font-size:10px;color:#c7c4bd;margin-top:3px}
+.kordesh-ai-panel>header button{border:0;background:transparent;color:#fff;font-size:25px;cursor:pointer}
+.kordesh-ai-welcome{padding:23px 21px 15px}
+.kordesh-ai-eyebrow{font-size:9px;letter-spacing:.15em;color:#8b806f;font-weight:700}
+.kordesh-ai-welcome h3{font-size:21px;line-height:1.35;margin:10px 0}
+.kordesh-ai-welcome p{font-size:13px;line-height:1.8;color:#666;margin:0}
+.kordesh-ai-start{display:flex;justify-content:space-between;align-items:center;margin:0 21px;padding:14px 16px;background:#171717;color:#fff;text-decoration:none;font-size:12px;font-weight:600}
+.kordesh-ai-note{display:block;padding:13px 21px 17px;color:#888;font-size:10px}
+@media(max-width:600px){.site-header{gap:12px}.kordesh-ai-widget{right:13px;bottom:16px}.kordesh-ai-launcher{padding:8px 13px 8px 8px}.kordesh-ai-orb{width:31px;height:31px}.header-menu-left .site-menu{max-width:calc(100vw - 30px)}}
+@media print{.kordesh-ai-widget{display:none!important}}
