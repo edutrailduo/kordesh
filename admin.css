@@ -10,3 +10,17 @@
 
 /* Admin order date range */
 .date-filter{display:flex;align-items:center;gap:7px;font-size:11px;color:#666;white-space:nowrap}.date-filter input{padding:10px 9px;border:1px solid #ddd;background:#fff;color:#171717;font:12px Arial,sans-serif;min-width:135px}.date-filter input:focus{outline:2px solid #b8a88f;outline-offset:1px}@media(max-width:650px){.date-filter{justify-content:space-between;width:100%}.date-filter input{flex:1;min-width:0}}
+
+/* Customer care mobile usability */
+@media(max-width:650px){
+ .chat-admin{width:100%;padding:16px;margin:18px 0}
+ .chat-admin-head h2{font-size:21px}
+ .chat-admin-layout{display:flex;flex-direction:column;min-height:0}
+ .chat-inbox{width:100%;max-height:230px;min-height:100px}
+ .chat-conversation{width:100%;min-height:360px;padding:10px}
+ .chat-thread{height:42vh;min-height:220px;max-height:420px}
+ .chat-reply-form{position:sticky;bottom:0;background:#fff;padding-top:8px}
+ .chat-reply-form input{font-size:16px}
+ .chat-reply-form button{min-height:44px;padding:0 15px}
+ #chatCloseBtn{min-height:42px}
+}
