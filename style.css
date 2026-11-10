@@ -165,3 +165,15 @@ em{font-family:'Hind Siliguri','DM Sans',sans-serif;font-style:normal}
 .tracking-foot strong{font-weight:600}.tracking-auto-update{font-size:11px;color:#888;margin:16px 0 0}
 .tracking-empty{text-align:center;color:#555;line-height:1.7}.tracking-empty strong{color:#222;font-size:17px}
 @media(max-width:560px){.tracking-page{width:calc(100% - 28px);padding-top:32px}.tracking-form,.tracking-card,.tracking-empty{padding:17px}.tracking-search-row{grid-template-columns:1fr}.tracking-search-row button{width:100%}.tracking-foot{align-items:flex-start;flex-direction:column}}
+
+/* Printable KORDESH order receipt */
+.order-receipt{max-width:760px;margin:30px auto 18px;padding:30px;background:#fff;border:1px solid #e5e2dc;text-align:left;color:#171717}
+.receipt-header{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;padding-bottom:20px;border-bottom:2px solid #171717}
+.receipt-header h2{font-size:23px;letter-spacing:.04em;margin:5px 0}.receipt-header>strong{font-size:11px;letter-spacing:.13em}
+.receipt-meta{display:grid;grid-template-columns:1fr 1fr;gap:15px 22px;padding:22px 0}
+.receipt-meta div{display:grid;gap:5px;min-width:0}.receipt-meta span,.receipt-table th{font-size:11px;color:#777;text-transform:uppercase;letter-spacing:.06em}.receipt-meta b{font-size:13px;overflow-wrap:anywhere}
+.receipt-table-wrap{overflow-x:auto}.receipt-table{width:100%;border-collapse:collapse;font-size:12px}.receipt-table th,.receipt-table td{padding:12px 8px;border-bottom:1px solid #e9e7e2;text-align:left}.receipt-table th:not(:first-child),.receipt-table td:not(:first-child){text-align:right;white-space:nowrap}
+.receipt-totals{max-width:300px;margin:18px 0 18px auto}.receipt-totals p{display:flex;justify-content:space-between;gap:16px;font-size:13px;margin:9px 0}.receipt-grand-total{border-top:1px solid #171717;padding-top:12px;font-size:17px!important;font-weight:700}
+.receipt-footer{text-align:center;border-top:1px solid #e9e7e2;padding-top:18px;font-size:12px;line-height:1.8;color:#777}.receipt-actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:18px auto 24px}.receipt-unavailable{padding:20px;color:#777}
+@media(max-width:560px){.order-receipt{padding:18px 12px;margin:22px auto}.receipt-header h2{font-size:17px}.receipt-meta{gap:12px}.receipt-table{font-size:11px}.receipt-table th,.receipt-table td{padding:10px 5px}}
+@media print{body *{visibility:hidden!important}.order-receipt,.order-receipt *{visibility:visible!important}.order-receipt{position:absolute;left:0;top:0;width:100%;max-width:none;margin:0;padding:18mm;border:0;box-shadow:none}.receipt-actions,.success-mark,.success-page>h1,.success-page>p,.success-number,.success-page>.back-link{display:none!important}@page{size:A4;margin:12mm}}
