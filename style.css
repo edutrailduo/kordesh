@@ -233,3 +233,15 @@ em{font-family:'Hind Siliguri','DM Sans',sans-serif;font-style:normal}
 .kordesh-live-status{margin:0 20px 8px;color:#777;font-size:10px;line-height:1.6}
 .kordesh-live-back{margin:0 17px 8px;padding:5px 0;border:0;background:transparent;color:#6e604e;font-size:11px;cursor:pointer}
 .kordesh-live-back[hidden],.kordesh-live-start[hidden]{display:none}
+
+/* Customer feedback after automatic chat closure */
+.kordesh-chat-rating{margin:12px 0;padding:14px;border:1px solid #e7e2d9;border-radius:14px;background:#faf9f6;color:#171717}
+.kordesh-chat-rating>strong{font-size:13px}.kordesh-chat-rating>p{font-size:11px;color:#777;margin:5px 0 10px}
+.kordesh-rating-stars,.kordesh-rating-feedback{display:flex;gap:7px;flex-wrap:wrap;margin:8px 0}
+.kordesh-rating-stars button{border:0;background:transparent;color:#c8c2b7;font-size:27px;padding:0 3px;cursor:pointer}
+.kordesh-rating-stars button.selected{color:#bd8b28}
+.kordesh-rating-feedback button{border:1px solid #ddd8ce;border-radius:999px;padding:7px 10px;background:#fff;color:#444;font-size:11px;cursor:pointer}
+.kordesh-rating-feedback button.selected{border-color:#171717;background:#171717;color:#fff}
+.kordesh-rating-submit{border:0;border-radius:999px;background:#171717;color:#fff;padding:9px 15px;font-size:11px;cursor:pointer}
+.kordesh-rating-submit:disabled{opacity:.4;cursor:not-allowed}
+.kordesh-ai-form button:disabled{opacity:.35;cursor:not-allowed}
