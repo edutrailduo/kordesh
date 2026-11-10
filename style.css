@@ -523,3 +523,48 @@ em{font-family:'Hind Siliguri','DM Sans',sans-serif;font-style:normal}
 @media(max-width:800px){
  #kordeshAIWidget .kordesh-ai-panel{left:0!important;right:auto!important;width:min(350px,calc(100vw - 24px))!important}
 }
+
+
+/* KORDESH dark mode */
+.theme-toggle{border:1px solid var(--line);background:transparent;color:var(--ink);padding:10px 12px;font-size:11px;white-space:nowrap}
+html.kordesh-dark{--ink:#f2f0eb;--paper:#111210;--muted:#aaa69d;--line:#34332f;--white:#1b1c19;--accent:#b8aa94;color-scheme:dark}
+html.kordesh-dark body{background:#111210;color:#f2f0eb}
+html.kordesh-dark .site-header,html.kordesh-dark footer,html.kordesh-dark .home-search-section,html.kordesh-dark .catalog-page,html.kordesh-dark .product-page{background:#151613;color:#f2f0eb}
+html.kordesh-dark .site-header{border-color:#34332f}
+html.kordesh-dark .desktop-nav a,html.kordesh-dark footer>div a,html.kordesh-dark .brand small,html.kordesh-dark .home-search>label{color:#c6c1b7}
+html.kordesh-dark .theme-toggle,html.kordesh-dark .language-toggle,html.kordesh-dark .cart-button{color:#f2f0eb;border-color:#48463f;background:#1d1e1a}
+html.kordesh-dark .cart-button b{background:#eee9df;color:#171717}
+html.kordesh-dark input,html.kordesh-dark textarea,html.kordesh-dark select{background:#20211d;color:#f4f1eb;border-color:#49473f}
+html.kordesh-dark .home-about .editorial-copy>p:not(.eyebrow),html.kordesh-dark .category-intro,html.kordesh-dark .product-info p,html.kordesh-dark .about-story p{color:#c3beb4}
+html.kordesh-dark .product-card,html.kordesh-dark .product-modal,html.kordesh-dark .checkout-modal,html.kordesh-dark .cart-drawer{background:#1a1b17;color:#f2f0eb;border-color:#3b3a34}
+html.kordesh-dark .product-info,html.kordesh-dark .cart-summary,html.kordesh-dark .drawer-head,html.kordesh-dark .modal-head{background:#1a1b17;color:#f2f0eb}
+html.kordesh-dark .mobile-bottom-nav{background:rgba(22,23,20,.97);border-color:#3b3a34}
+html.kordesh-dark .mobile-bottom-nav a{color:#d2cec5}
+html.kordesh-dark .home-categories,html.kordesh-dark .home-about,html.kordesh-dark .trust-strip{background:#111210;color:#f2f0eb}
+html.kordesh-dark .about-page{background:#111210;color:#f2f0eb}
+html.kordesh-dark .about-hero{background:linear-gradient(120deg,#20211d,#121310);color:#f5f1e9}
+html.kordesh-dark .about-hero p:not(.eyebrow),html.kordesh-dark .about-values p{color:#c8c2b8}
+html.kordesh-dark .about-quote{background:#22231e;border-color:#625a4d;color:#f0e8dc}
+html.kordesh-dark .about-values article{background:#1b1c18;border-color:#3b3a34}
+html.kordesh-dark .about-read-more{color:#e8d9c2}
+html.kordesh-dark .back-link,html.kordesh-dark .details-link{color:#e6dfd2}
+@media(max-width:800px){.theme-toggle{padding:9px 8px;font-size:10px}.header-actions{gap:6px}}
+@media(max-width:390px){.theme-toggle{font-size:9px;padding:8px 6px}.language-toggle{padding:8px 7px}}
+/* Expanded About Us page */
+.about-page{padding:0 0 80px;background:var(--paper)}
+.about-hero{padding:clamp(65px,10vw,130px) clamp(22px,10vw,150px);background:linear-gradient(115deg,#e9e3d8,#f6f3ed 65%,#ded6c8);color:#191816}
+.about-hero h1{max-width:850px;font-size:clamp(42px,6.2vw,78px);line-height:1.16;letter-spacing:-.04em;margin:0 0 22px}
+.about-hero h1 em{font-family:Georgia,serif;font-weight:400}
+.about-hero>p:last-child{max-width:700px;font-size:16px;line-height:2;color:#5d584f}
+.about-story{max-width:940px;margin:0 auto;padding:70px 24px 0}
+.about-story h2{font-size:clamp(26px,3.5vw,40px);line-height:1.35;margin:0 0 22px}
+.about-story>p:not(.eyebrow){font-size:15px;line-height:2.1;color:#625d54;margin:0 0 22px}
+.about-quote{margin:42px 0 65px;padding:30px 34px;border-left:3px solid #a99a83;background:#f0ece4;font-family:Georgia,'Hind Siliguri',serif;font-size:clamp(20px,3vw,28px);line-height:1.7}
+.about-values{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:30px 0 68px}
+.about-values article{padding:26px;border:1px solid #e2ddd3;background:#fff}
+.about-values article>span{font-size:11px;letter-spacing:.16em;color:#9b896f}
+.about-values h3{margin:14px 0 10px;font-size:18px}
+.about-values p{margin:0;font-size:13px;line-height:1.9;color:#6b665e}
+.about-story>.button{margin-top:16px}
+.about-read-more{display:inline-block;margin-top:10px;font-size:13px;font-weight:700;text-decoration:underline;text-underline-offset:5px;color:#5e5140}
+@media(max-width:650px){.about-hero{padding:62px 22px}.about-hero h1{font-size:42px}.about-hero>p:last-child{font-size:14px;line-height:1.9}.about-story{padding:48px 20px 0}.about-story>p:not(.eyebrow){font-size:14px;line-height:2}.about-values{grid-template-columns:1fr;gap:12px;margin-bottom:48px}.about-values article{padding:21px}}
