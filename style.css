@@ -431,3 +431,43 @@ em{font-family:'Hind Siliguri','DM Sans',sans-serif;font-style:normal}
 .home-hero-image{height:390px;border:1px solid #ffffff35;box-shadow:0 28px 70px #0008;background:#ffffff12 url("https://cdn-design.amorepacific.com/contents/2024/06/18150054/2023-05w2-01-1024x1024.png") center/contain no-repeat;backdrop-filter:blur(3px)}
 .home-search-section{position:relative;z-index:2}
 @media(max-width:800px){.home-hero{min-height:auto;padding:54px 22px 36px;grid-template-columns:1fr;gap:24px}.home-hero:before{background:linear-gradient(180deg,rgba(10,10,10,.9),rgba(10,10,10,.66)),url("https://officialyuri.com/cdn/shop/articles/blog-hero_0d599c09-08d1-4410-945e-4f1d01ccfafd.jpg?v=1777367220") center/cover no-repeat}.home-hero-image{height:245px;max-width:440px;width:100%;margin:auto}.home-hero:after{display:none}}
+
+
+/* KORDESH premium homepage: final mobile-first layout */
+.home-hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,.95fr);align-items:center;min-height:540px;gap:clamp(22px,5vw,64px);padding:clamp(42px,6vw,78px) clamp(20px,8vw,128px);background:#171717;color:#fff}
+.home-hero>div:first-child{min-width:0;position:relative;z-index:2}
+.home-hero .eyebrow{color:#d7c9b5}
+.home-hero h1{color:#fff;font-size:clamp(38px,5.2vw,70px);line-height:1.18;overflow-wrap:anywhere}
+.home-hero h1 em{color:#e6d8c5;font-family:Georgia,'Times New Roman',serif;font-style:italic}
+.home-hero p:not(.eyebrow){max-width:490px;color:#e5e0d9;font-size:15px;line-height:1.9}
+.home-hero .button-dark{background:#fff;color:#171717;border-color:#fff}
+.home-hero-image{width:100%;height:clamp(260px,34vw,390px);min-width:0;background-position:center;background-size:cover}
+.home-hero:after{pointer-events:none}
+.home-search-section,.home-search{width:100%;min-width:0}
+.home-categories .category-card{min-width:0}
+.home-categories .category-card img{inset:0}
+@media(max-width:800px){
+ .home-hero{grid-template-columns:minmax(0,1fr);min-height:0;gap:24px;padding:42px 20px 34px}
+ .home-hero h1{font-size:clamp(36px,9vw,50px);line-height:1.2;margin-bottom:14px}
+ .home-hero p:not(.eyebrow){font-size:14px;line-height:1.8;margin-bottom:22px}
+ .home-hero-image{height:clamp(220px,62vw,310px);width:100%}
+ .home-hero:after{font-size:8px;right:16px;bottom:12px}
+ .home-categories{padding:48px 16px}
+ .home-categories>h2{font-size:27px;line-height:1.35}
+ .home-categories .category-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+ .home-categories .category-card{min-height:235px}
+ .home-categories .category-card h2{font-size:20px;overflow-wrap:anywhere}
+ .home-categories .category-card>div{padding:14px}
+ .home-about{padding:48px 20px}
+ .home-about>h2{font-size:29px;line-height:1.35}
+ .home-search-section{padding:22px 16px 28px}
+ .home-search>div{display:grid;grid-template-columns:minmax(0,1fr) auto}
+ .home-search input{width:100%;font-size:16px}
+ .home-search .button{min-width:78px;padding:10px 12px}
+}
+@media(max-width:390px){
+ .home-categories .category-grid{grid-template-columns:1fr}
+ .home-categories .category-card{min-height:220px}
+ .home-hero{padding-left:16px;padding-right:16px}
+ .home-hero-image{height:225px}
+}
