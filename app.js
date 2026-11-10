@@ -431,10 +431,16 @@ function appendKordeshLiveMessage(m){
   const start=document.getElementById("kordeshLiveChatStart");if(start)start.textContent="Start a new chat";
   addKordeshAIMessage(m.body,"ai");
   renderKordeshChatRating();
+  showKordeshNewChatButton();
   return;
  }
  if(m.sender==="agent")setKordeshLiveStatus("Customer Care প্রতিনিধি যুক্ত হয়েছেন। আপনি সরাসরি উত্তর দিতে পারেন।");
  addKordeshAIMessage((m.sender==="agent"?"Customer Care: ":"আপনি: ")+m.body,m.sender==="agent"?"ai":"user");
+}
+function showKordeshNewChatButton(){
+ const list=document.getElementById("kordeshAIMessages");if(!list||document.getElementById("kordeshNewChatButton"))return;
+ const button=document.createElement("button");button.type="button";button.id="kordeshNewChatButton";button.className="kordesh-live-start";button.textContent="নতুন চ্যাট শুরু করুন";
+ button.addEventListener("click",startKordeshLiveChat);list.appendChild(button);list.scrollTop=list.scrollHeight;
 }
 async function loadKordeshLiveMessages(){
  if(!kordeshLiveChatKey)return;
@@ -447,8 +453,11 @@ async function loadKordeshLiveMessages(){
 }
 async function startKordeshLiveChat(){
  const start=document.getElementById("kordeshLiveChatStart");
- if(kordeshLiveChatClosed){localStorage.removeItem("kordesh_live_chat_key");kordeshLiveChatKey="";kordeshLiveChatLastId=0;kordeshLiveChatClosed=false;}
-
+ if(kordeshLiveChatClosed){
+  localStorage.removeItem("kordesh_live_chat_key");kordeshLiveChatKey="";kordeshLiveChatLastId=0;kordeshLiveChatClosed=false;
+  if(kordeshLiveChatPoll){clearInterval(kordeshLiveChatPoll);kordeshLiveChatPoll=null;}
+  const oldMessages=document.getElementById("kordeshAIMessages");if(oldMessages)oldMessages.innerHTML="";
+ }
  if(start)start.disabled=true;
  try{
   const client=await getKordeshChatClient();
@@ -465,6 +474,7 @@ async function startKordeshLiveChat(){
   const send=document.querySelector("#kordeshAIForm button");if(send)send.disabled=false;
   if(start)start.textContent="Talk to Customer Care";
   const messages=document.getElementById("kordeshAIMessages");if(messages)messages.innerHTML="";
+  const inputAgain=document.getElementById("kordeshAIInput");if(inputAgain)inputAgain.value="";
   const quick=document.querySelector(".kordesh-ai-quick");if(quick)quick.hidden=true;
   const back=document.getElementById("kordeshLiveChatBack");if(back)back.hidden=false;
   setKordeshLiveStatus("Customer Care-এ সংযোগের অনুরোধ পাঠানো হয়েছে। প্রতিনিধি উত্তর দিলে এখানে দেখতে পাবেন।");
