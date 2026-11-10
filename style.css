@@ -415,3 +415,19 @@ em{font-family:'Hind Siliguri','DM Sans',sans-serif;font-style:normal}
 .home-about .editorial-copy h2{margin-bottom:24px}
 .home-about .editorial-copy>p:not(.eyebrow){max-width:850px;margin:0 0 17px;color:#5f5a52;font-size:15px;line-height:2.1}
 @media(max-width:600px){.home-search-section{padding:24px 18px 30px}.home-search>div{gap:7px}.home-search input{height:48px;padding:0 11px;font-size:12px}.home-search .button{height:48px;min-width:76px;padding:10px}.home-about{padding:55px 20px!important}.home-about .editorial-copy>p:not(.eyebrow){font-size:14px;line-height:2}}
+
+
+/* Premium KORDESH hero refresh */
+.home-hero{position:relative;isolation:isolate;min-height:540px;padding:74px clamp(24px,8vw,128px);grid-template-columns:minmax(0,1fr) minmax(280px,.95fr);gap:5%;background:linear-gradient(105deg,#101010 0%,#191919 48%,#29231f 100%);color:#fff;overflow:hidden}
+.home-hero:before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,rgba(10,10,10,.94) 0%,rgba(10,10,10,.78) 42%,rgba(10,10,10,.12) 100%),url("https://officialyuri.com/cdn/shop/articles/blog-hero_0d599c09-08d1-4410-945e-4f1d01ccfafd.jpg?v=1777367220") center 44%/cover no-repeat;opacity:.96}
+.home-hero:after{content:"KOREA  /  BEAUTY  /  CARE";position:absolute;right:clamp(20px,7vw,100px);bottom:24px;color:#ffffff8a;font-size:10px;letter-spacing:.22em}
+.home-hero>div:first-child{position:relative;z-index:1}
+.home-hero .eyebrow{color:#d7c9b5;letter-spacing:.2em}
+.home-hero h1{max-width:650px;color:#fff;font-size:clamp(40px,5.4vw,72px);line-height:1.14;letter-spacing:-.035em}
+.home-hero h1 em{color:#e6d8c5;font-style:normal}
+.home-hero p:not(.eyebrow){max-width:490px;color:#e5e0d9;font-size:15px;line-height:1.9}
+.home-hero .button-dark{background:#fff;color:#171717;border:1px solid #fff;padding:15px 24px}
+.home-hero .button-dark:hover{background:#e8dfd3}
+.home-hero-image{height:390px;border:1px solid #ffffff35;box-shadow:0 28px 70px #0008;background:#ffffff12 url("https://cdn-design.amorepacific.com/contents/2024/06/18150054/2023-05w2-01-1024x1024.png") center/contain no-repeat;backdrop-filter:blur(3px)}
+.home-search-section{position:relative;z-index:2}
+@media(max-width:800px){.home-hero{min-height:auto;padding:54px 22px 36px;grid-template-columns:1fr;gap:24px}.home-hero:before{background:linear-gradient(180deg,rgba(10,10,10,.9),rgba(10,10,10,.66)),url("https://officialyuri.com/cdn/shop/articles/blog-hero_0d599c09-08d1-4410-945e-4f1d01ccfafd.jpg?v=1777367220") center/cover no-repeat}.home-hero-image{height:245px;max-width:440px;width:100%;margin:auto}.home-hero:after{display:none}}
