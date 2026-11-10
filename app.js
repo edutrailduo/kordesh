@@ -391,15 +391,45 @@ function sendKordeshAI(text){
  addKordeshAIMessage(value,"user");
  addKordeshAIMessage(answerKordeshAI(value),"ai");
 }
+function setKordeshChatPanelMode(mode){
+ const panel=document.getElementById("kordeshAIPanel");
+ const title=document.getElementById("kordeshChatPanelTitle");
+ const subtitle=document.getElementById("kordeshChatPanelSubtitle");
+ const input=document.getElementById("kordeshAIInput");
+ if(!panel)return;
+ panel.classList.toggle("customer-care-mode",mode==="customer");
+ if(title)title.textContent=mode==="customer"?"KORDESH CUSTOMER CARE":"KORDESH AI";
+ if(subtitle)subtitle.textContent=mode==="customer"?"Live Customer Support":"Personal Beauty Assistant";
+ if(input)input.placeholder=mode==="customer"?"Write your message...":"Ask your question...";
+}
+async function openKordeshCustomerCare(){
+ const panel=document.getElementById("kordeshAIPanel");
+ const aiTrigger=document.getElementById("kordeshAILauncher");
+ if(!panel)return;
+ if(!panel.hidden&&panel.classList.contains("customer-care-mode")){panel.hidden=true;return;}
+ setKordeshChatPanelMode("customer");
+ panel.hidden=false;
+ if(aiTrigger)aiTrigger.setAttribute("aria-expanded","false");
+ await startKordeshLiveChat();
+ setTimeout(()=>document.getElementById("kordeshAIInput")?.focus(),80);
+}
 document.addEventListener("click",event=>{
  const launcher=event.target.closest("#kordeshAILauncher"),close=event.target.closest("#kordeshAIClose");
+ const support=event.target.closest("#kordeshCustomerCareLauncher");
  const prompt=event.target.closest("[data-ai-prompt]");
  const panel=document.getElementById("kordeshAIPanel"),trigger=document.getElementById("kordeshAILauncher");
+ if(support){openKordeshCustomerCare();return;}
  if(prompt){sendKordeshAI(prompt.dataset.aiPrompt);return}
  if(!panel||!trigger)return;
- if(launcher){const opening=panel.hidden;panel.hidden=!opening;trigger.setAttribute("aria-expanded",String(opening));if(opening)setTimeout(()=>document.getElementById("kordeshAIInput")?.focus(),80);return}
- if(close){panel.hidden=true;trigger.setAttribute("aria-expanded","false");return}
- if(!event.target.closest("#kordeshAIWidget")){panel.hidden=true;trigger.setAttribute("aria-expanded","false")}
+ if(launcher){
+  const opening=panel.hidden;
+  if(opening)setKordeshChatPanelMode("ai");
+  panel.hidden=!opening;trigger.setAttribute("aria-expanded",String(opening));
+  if(opening)setTimeout(()=>document.getElementById("kordeshAIInput")?.focus(),80);
+  return;
+ }
+ if(close){panel.hidden=true;panel.classList.remove("customer-care-mode");trigger.setAttribute("aria-expanded","false");return}
+ if(!event.target.closest("#kordeshAIWidget")&&!event.target.closest("#kordeshCustomerCareLauncher")){panel.hidden=true;panel.classList.remove("customer-care-mode");trigger.setAttribute("aria-expanded","false")}
 });
 document.addEventListener("submit",event=>{
  if(event.target.id!=="kordeshAIForm")return;
@@ -500,6 +530,7 @@ document.getElementById("kordeshLiveChatBack")?.addEventListener("click",()=>{
  const back=document.getElementById("kordeshLiveChatBack");if(back)back.hidden=true;
  setKordeshLiveStatus("সরাসরি সহায়তা পেতে Customer Care-এ মেসেজ করুন।");
  const messages=document.getElementById("kordeshAIMessages");if(messages)messages.innerHTML="";
+ setKordeshChatPanelMode("ai");
  addKordeshAIMessage("আমি KORDESH AI। আপনার প্রয়োজন বলুন, আমি পণ্য খুঁজে দিতে সাহায্য করব।","ai");
 });
 
