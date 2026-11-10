@@ -438,8 +438,8 @@ document.addEventListener("click",event=>{
   if(opening)setTimeout(()=>document.getElementById("kordeshAIInput")?.focus(),80);
   return;
  }
- if(close){panel.hidden=true;panel.classList.remove("customer-care-mode");trigger.setAttribute("aria-expanded","false");return}
- if(!event.target.closest("#kordeshAIWidget")&&!event.target.closest("#kordeshCustomerCareLauncher")){panel.hidden=true;panel.classList.remove("customer-care-mode");trigger.setAttribute("aria-expanded","false")}
+ if(close){panel.hidden=true;trigger.setAttribute("aria-expanded","false");return}
+ if(!event.target.closest("#kordeshAIWidget")&&!event.target.closest("#kordeshCustomerCareLauncher")){panel.hidden=true;trigger.setAttribute("aria-expanded","false")}
 });
 document.addEventListener("submit",event=>{
  if(event.target.id!=="kordeshAIForm")return;
