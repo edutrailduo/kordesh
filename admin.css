@@ -7,3 +7,6 @@
 
 .admin-chat-message.system{align-self:center;max-width:96%;background:#f6f0e5;color:#665b47;text-align:center}
 .chat-inbox-item .chat-rating{display:block;color:#9b711f;font-size:11px;margin-top:4px}
+
+/* Admin order date range */
+.date-filter{display:flex;align-items:center;gap:7px;font-size:11px;color:#666;white-space:nowrap}.date-filter input{padding:10px 9px;border:1px solid #ddd;background:#fff;color:#171717;font:12px Arial,sans-serif;min-width:135px}.date-filter input:focus{outline:2px solid #b8a88f;outline-offset:1px}@media(max-width:650px){.date-filter{justify-content:space-between;width:100%}.date-filter input{flex:1;min-width:0}}
