@@ -137,15 +137,23 @@ function showProduct(id){
 const BD_GEO_URL="https://iqbalhasandev.github.io/bangladesh-geo-json/bangladesh-geo.json";
 function geoNorm(v){return String(v||"").toLocaleLowerCase().normalize("NFKD").replace(/[\\u0300-\\u036f]/g,"").replace(/[^a-z0-9\\u0980-\\u09ff]/g,"")}
 function geoOption(label,value,kind){const o=document.createElement("option");o.textContent=label;o.value=value;if(kind)o.dataset.kind=kind;return o}
+const BD_DIVISION_DISTRICTS={"বরিশাল":["বরগুনা","বরিশাল","ভোলা","ঝালকাঠি","পটুয়াখালী","পিরোজপুর"],"চট্টগ্রাম":["বান্দরবান","ব্রাহ্মণবাড়িয়া","চাঁদপুর","চট্টগ্রাম","কুমিল্লা","কক্সবাজার","ফেনী","খাগড়াছড়ি","লক্ষ্মীপুর","নোয়াখালী","রাঙ্গামাটি"],"ঢাকা":["ঢাকা","ফরিদপুর","গাজীপুর","গোপালগঞ্জ","কিশোরগঞ্জ","মাদারীপুর","মানিকগঞ্জ","মুন্সিগঞ্জ","নারায়ণগঞ্জ","নরসিংদী","রাজবাড়ী","শরীয়তপুর","টাঙ্গাইল"],"খুলনা":["বাগেরহাট","চুয়াডাঙ্গা","যশোর","ঝিনাইদহ","খুলনা","কুষ্টিয়া","মাগুরা","মেহেরপুর","নড়াইল","সাতক্ষীরা"],"ময়মনসিংহ":["জামালপুর","ময়মনসিংহ","নেত্রকোণা","শেরপুর"],"রাজশাহী":["বগুড়া","জয়পুরহাট","নওগাঁ","নাটোর","চাঁপাইনবাবগঞ্জ","পাবনা","রাজশাহী","সিরাজগঞ্জ"],"রংপুর":["দিনাজপুর","গাইবান্ধা","কুড়িগ্রাম","লালমনিরহাট","নীলফামারী","পঞ্চগড়","রংপুর","ঠাকুরগাঁও"],"সিলেট":["হবিগঞ্জ","মৌলভীবাজার","সুনামগঞ্জ","সিলেট"]};
+const BD_DIVISIONS=[{bn:"বরিশাল",en:"Barishal"},{bn:"চট্টগ্রাম",en:"Chattogram"},{bn:"ঢাকা",en:"Dhaka"},{bn:"খুলনা",en:"Khulna"},{bn:"ময়মনসিংহ",en:"Mymensingh"},{bn:"রাজশাহী",en:"Rajshahi"},{bn:"রংপুর",en:"Rangpur"},{bn:"সিলেট",en:"Sylhet"}];
 async function loadBangladeshGeo(){
  const districtSelect=$("districtSelect"),localitySelect=$("localitySelect");if(!districtSelect||!localitySelect)return;
  try{
   const response=await fetch(BD_GEO_URL,{cache:"force-cache"});if(!response.ok)throw new Error("HTTP "+response.status);
   const tree=await response.json(),records=[];
-  tree.forEach(div=>(div.districts||[]).forEach(dist=>records.push({bn:dist.bn_name,en:dist.name,upazilas:(dist.upazilas||[]).map(up=>({bn:up.bn_name,en:up.name,unions:up.unions||[],pourashavas:up.pourashavas||[]}))})));
+  tree.forEach(div=>(div.districts||[]).forEach(dist=>records.push({bn:dist.bn_name,en:dist.name,divisionBn:div.bn_name,divisionEn:div.name,upazilas:(dist.upazilas||[]).map(up=>({bn:up.bn_name,en:up.name,unions:up.unions||[],pourashavas:up.pourashavas||[]}))})));
   if(records.length!==64)throw new Error("Unexpected district count: "+records.length);
-  window.KORDESH_BD_LOCATIONS=records;districtSelect.disabled=false;renderDistrictOptions();
- }catch(err){console.error("Bangladesh union/municipality data failed:",err);districtSelect.disabled=false;renderDistrictOptions();localitySelect.innerHTML="";localitySelect.append(geoOption("তথ্য লোড হয়নি; সম্পূর্ণ ঠিকানা লিখুন",""));localitySelect.disabled=true;}
+  window.KORDESH_BD_LOCATIONS=records;renderDivisionOptions();
+ }catch(err){console.error("Bangladesh geo data failed:",err);window.KORDESH_BD_LOCATIONS=window.KORDESH_BD_LOCATIONS.map(d=>({...d,divisionBn:Object.keys(BD_DIVISION_DISTRICTS).find(k=>BD_DIVISION_DISTRICTS[k].includes(d.bn))||""}));renderDivisionOptions();}
+}
+function renderDivisionOptions(){
+ const el=$("divisionSelect");if(!el)return;const selected=el.value;
+ el.innerHTML='<option value="">'+(language==="bn"?"বিভাগ নির্বাচন করুন":"Select division")+'</option>'+BD_DIVISIONS.map(d=>'<option value="'+d.bn+'">'+(language==="bn"?d.bn:d.en)+'</option>').join("");
+ if(selected&&BD_DIVISIONS.some(d=>d.bn===selected))el.value=selected;
+ el.disabled=false;renderDistrictOptions();
 }
 function renderLocalityOptions(){
  const ds=$("districtSelect"),as=$("areaSelect"),ls=$("localitySelect");if(!ls)return;
@@ -165,11 +173,13 @@ function filterLocationSelect(inputId,selectId){
 }
 function resetLocationSearch(inputId){const input=$(inputId);if(input)input.value="";}
 function renderDistrictOptions(){
- const districtSelect=$("districtSelect"),areaSelect=$("areaSelect");if(!districtSelect||!areaSelect)return;
- const selected=districtSelect.value,selectedArea=areaSelect.value;
- districtSelect.innerHTML='<option value="">'+(language==="bn"?"জেলা নির্বাচন করুন":"Select district")+'</option>'+window.KORDESH_BD_LOCATIONS.map(d=>'<option value="'+d.bn+'" data-en="'+d.en+'">'+(language==="bn"?d.bn:d.en)+'</option>').join("");
- if(selected&&window.KORDESH_BD_LOCATIONS.some(d=>d.bn===selected))districtSelect.value=selected;
- renderUpazilaOptions();if(selectedArea&&[...areaSelect.options].some(o=>o.value===selectedArea))areaSelect.value=selectedArea;renderLocalityOptions();filterLocationSelect("districtSearch","districtSelect");filterLocationSelect("areaSearch","areaSelect");filterLocationSelect("localitySearch","localitySelect");
+ const divisionSelect=$("divisionSelect"),districtSelect=$("districtSelect"),areaSelect=$("areaSelect");if(!divisionSelect||!districtSelect||!areaSelect)return;
+ const selected=districtSelect.value,division=divisionSelect.value;
+ const records=window.KORDESH_BD_LOCATIONS.filter(d=>d.divisionBn===division);
+ districtSelect.disabled=!division;
+ districtSelect.innerHTML='<option value="">'+(language==="bn"?"জেলা নির্বাচন করুন":"Select district")+'</option>'+records.map(d=>'<option value="'+d.bn+'">'+(language==="bn"?d.bn:d.en)+'</option>').join("");
+ if(selected&&records.some(d=>d.bn===selected))districtSelect.value=selected;
+ renderUpazilaOptions();
 }
 function renderUpazilaOptions(){
  const districtSelect=$("districtSelect"),areaSelect=$("areaSelect");if(!districtSelect||!areaSelect)return;
@@ -178,20 +188,18 @@ function renderUpazilaOptions(){
  areaSelect.innerHTML='<option value="">'+(district?(language==="bn"?"থানা / উপজেলা নির্বাচন করুন":"Select thana / upazila"):(language==="bn"?"আগে জেলা নির্বাচন করুন":"Select a district first"))+'</option>'+(district?district.upazilas.map(u=>'<option value="'+u.bn+'">'+(language==="bn"?u.bn:u.en)+'</option>').join(""):"");renderLocalityOptions();
 }
 function initLocationSelectors(){
- const districtSelect=$("districtSelect"),areaSelect=$("areaSelect");if(!districtSelect||!areaSelect||!Array.isArray(window.KORDESH_BD_LOCATIONS))return;
- renderDistrictOptions();loadBangladeshGeo();
- districtSelect.addEventListener("change",()=>{resetLocationSearch("districtSearch");renderUpazilaOptions()});areaSelect.addEventListener("change",()=>{resetLocationSearch("areaSearch");resetLocationSearch("localitySearch");renderLocalityOptions()});
- ["districtSearch","areaSearch","localitySearch"].forEach(id=>$(id)?.addEventListener("input",()=>filterLocationSelect(id,id.replace("Search","Select"))));
+ const divisionSelect=$("divisionSelect"),districtSelect=$("districtSelect"),areaSelect=$("areaSelect");if(!districtSelect||!areaSelect||!Array.isArray(window.KORDESH_BD_LOCATIONS))return;
+ renderDivisionOptions();divisionSelect.addEventListener("change",renderDistrictOptions);districtSelect.addEventListener("change",renderUpazilaOptions);areaSelect.addEventListener("change",renderLocalityOptions);loadBangladeshGeo();
 }
 function updateTotal(){const sub=cart.reduce((s,x)=>s+x.qty*x.price,0),fee=$("deliverySelect").value==="inside"?80:130;$("checkoutTotal").textContent=money(sub+fee)}
 const pageWords={
 bn:{announcement:"কোরিয়ান বিউটি পণ্য এখন আপনার হাতের নাগালে",shop:"শপ",about:"আমাদের সম্পর্কে",promise:"আমাদের প্রতিশ্রুতি",contact:"যোগাযোগ",cart:"কার্ট",heroEyebrow:"K-BEAUTY, SELECTED WITH CARE",heroTitle:"কোরিয়ান বিউটির<br><em>নতুন ঠিকানা।</em>",heroText:"বিশ্বস্ত কোরিয়ান স্কিনকেয়ার ও কসমেটিকস পণ্য বেছে নিন সহজে। আপনার পছন্দের পণ্য পৌঁছে যাবে বাংলাদেশের ঠিকানায়।",explore:"পণ্য দেখুন <span>↗</span>",heroBottom:"আসল পণ্যের প্রতি অঙ্গীকার · সহজ অর্ডার · বাংলাদেশে ডেলিভারি",trust1:"পণ্য যাচাইয়ের অঙ্গীকার",trust2:"বাংলাদেশজুড়ে অর্ডার",trust3:"সহজ কার্ট ও চেকআউট",curated:"THE KORDESH EDIT",productsTitle:"পছন্দের কোরিয়ান বিউটি",productsSub:"প্রতিদিনের স্কিনকেয়ার রুটিনের জন্য বাছাই করা কিছু জনপ্রিয় পণ্য।",all:"সব পণ্য",skincare:"স্কিনকেয়ার",suncare:"সানকেয়ার",sample:"নমুনা পণ্য ও আনুমানিক মূল্য",ourApproach:"OUR APPROACH",editorialTitle:"সঠিক পণ্য।<br><em>সচেতন পছন্দ।</em>",editorialText:"KORDESH-এর লক্ষ্য হলো কোরিয়ান বিউটি পণ্য বাংলাদেশি ক্রেতাদের কাছে সহজে পৌঁছে দেওয়া। পণ্যের তথ্য, মূল্য ও অর্ডার প্রক্রিয়া থাকবে পরিষ্কার ও সহজ।",learnMore:"আরও জানুন ↗",contactTitle:"আপনার পছন্দের পণ্য<br>খুঁজে পেতে সাহায্য চাই?",contactText:"পণ্য, অর্ডার বা ডেলিভারি বিষয়ে আমাদের সঙ্গে যোগাযোগ করুন।",rights:"সর্বস্বত্ব সংরক্ষিত।",yourCart:"আপনার কার্ট",subtotal:"সাবটোটাল",shippingNote:"ডেলিভারি চার্জ চেকআউটে যোগ হবে।",checkout:"অর্ডার সম্পন্ন করুন",checkoutTitle:"অর্ডার তথ্য",fullName:"আপনার নাম",phone:"মোবাইল নম্বর",district:"জেলা",area:"এলাকা / থানা",address:"সম্পূর্ণ ঠিকানা",note:"অর্ডার নোট (ঐচ্ছিক)",delivery:"ডেলিভারি এলাকা",total:"সর্বমোট",paymentHint:"অর্ডার নিশ্চিত হলে আপনার দেওয়া ইমেইল ঠিকানায় আপডেট পাঠানো হবে।",placeOrder:"অর্ডার নিশ্চিত করুন"},
 en:{announcement:"Korean beauty, thoughtfully selected for Bangladesh",shop:"Shop",about:"Our story",promise:"Our promise",contact:"Contact",cart:"Bag",heroEyebrow:"K-BEAUTY, SELECTED WITH CARE",heroTitle:"A new address<br><em>for Korean beauty.</em>",heroText:"Discover selected Korean skincare and beauty essentials, delivered to your address in Bangladesh.",explore:"Explore products <span>↗</span>",heroBottom:"Product authenticity commitment · Easy ordering · Bangladesh delivery",trust1:"Authenticity-first promise",trust2:"Orders across Bangladesh",trust3:"Simple cart and checkout",curated:"THE KORDESH EDIT",productsTitle:"Korean beauty, thoughtfully selected",productsSub:"A considered edit of popular essentials for your everyday skincare routine.",all:"All products",skincare:"Skincare",suncare:"Sun care",sample:"Sample products and indicative prices",ourApproach:"OUR APPROACH",editorialTitle:"The right product.<br><em>A considered choice.</em>",editorialText:"KORDESH aims to make selected Korean beauty products more accessible to customers in Bangladesh, with clear product information, transparent pricing and a simple ordering experience.",learnMore:"Discover our promise ↗",contactTitle:"Need help finding<br>your next favourite?",contactText:"Contact us for product, order and delivery questions.",rights:"All rights reserved.",yourCart:"Your bag",subtotal:"Subtotal",shippingNote:"Delivery charges are added at checkout.",checkout:"Continue to checkout",checkoutTitle:"Your details",fullName:"Full name",phone:"Mobile number",district:"District",area:"Area / Thana",address:"Full delivery address",note:"Order note (optional)",delivery:"Delivery zone",total:"Total",placeOrder:"Confirm order"}
 };
-function setLanguage(next){language=next;document.documentElement.lang=next;$("languageToggle").textContent=next==="bn"?"EN":"বাংলা";document.querySelectorAll("[data-i18n]").forEach(el=>{const key=el.dataset.i18n;if(pageWords[next][key])el.innerHTML=pageWords[next][key]});const currentCategory=new URLSearchParams(location.search).get("category")||"all";renderProducts(currentCategory);renderCart();$("deliverySelect").options[0].text=t("inside");$("deliverySelect").options[1].text=t("outside");renderDistrictOptions();updateTotal()}
+function setLanguage(next){language=next;document.documentElement.lang=next;$("languageToggle").textContent=next==="bn"?"EN":"বাংলা";document.querySelectorAll("[data-i18n]").forEach(el=>{const key=el.dataset.i18n;if(pageWords[next][key])el.innerHTML=pageWords[next][key]});const currentCategory=new URLSearchParams(location.search).get("category")||"all";renderProducts(currentCategory);renderCart();$("deliverySelect").options[0].text=t("inside");$("deliverySelect").options[1].text=t("outside");renderDivisionOptions();updateTotal()}
 async function submitOrder(e){
  e.preventDefault();if(!cart.length){$("orderStatus").textContent=t("need");return}
- const d=new FormData(e.target),customer={name:String(d.get("name")).trim(),phone:String(d.get("phone")).trim(),district:String(d.get("district")).trim(),area:String(d.get("area")).trim()+(d.get("locality")?" / "+String(d.get("locality")).trim():""),address:String(d.get("address")).trim(),note:String(d.get("note")).trim()};
+ const d=new FormData(e.target),customer={name:String(d.get("name")).trim(),phone:String(d.get("phone")).trim(),district:String(d.get("division")).trim()+" / "+String(d.get("district")).trim(),area:String(d.get("area")).trim()+(d.get("locality")?" / "+String(d.get("locality")).trim():""),address:String(d.get("address")).trim(),note:String(d.get("note")).trim()};
  if(!/^(\+?88)?01[3-9]\d{8}$/.test(customer.phone.replace(/[\s-]/g,""))){$("orderStatus").textContent="সঠিক বাংলাদেশি মোবাইল নম্বর লিখুন।";return}
  const safeItems=cart.map(i=>{const p=products.find(x=>x.id===i.id);return p&&Number.isInteger(Number(i.qty))&&Number(i.qty)>=1&&Number(i.qty)<=99?{id:p.id,qty:Number(i.qty),price:p.price}:null}).filter(Boolean);
  if(!safeItems.length||safeItems.length!==cart.length){$("orderStatus").textContent="কার্টে থাকা কোনো পণ্য আর পাওয়া যাচ্ছে না। কার্ট রিফ্রেশ করে আবার চেষ্টা করুন।";return}
