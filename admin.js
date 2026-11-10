@@ -3,7 +3,8 @@ const SUPABASE_URL="https://bibithkwfrwahttdkcfi.supabase.co";
 const SUPABASE_KEY="sb_publishable_S5_tTYQbL6kUkNFp22YhaA_W9SJ-USF";
 const supabase=createClient(SUPABASE_URL,SUPABASE_KEY);
 const $=id=>document.getElementById(id);
-const labels={pending:"Pending",confirmed:"Confirmed",processing:"Processing",shipped:"Shipped",delivered:"Delivered",cancelled:"Cancelled"};\nlet cachedOrders=[];
+const labels={pending:"Pending",confirmed:"Confirmed",processing:"Processing",shipped:"Shipped",delivered:"Delivered",cancelled:"Cancelled"};
+let cachedOrders=[];
 function msg(id,text){$(id).textContent=text}
 async function showSession(){
  const {data:{session}}=await supabase.auth.getSession();
@@ -53,7 +54,7 @@ function exportOrders(){
  if(!cachedOrders.length){msg("dashMessage","ডাউনলোড করার মতো অর্ডার নেই।");return}
  const columns=["order_number","created_at","customer_name","customer_phone","customer_district","customer_area","customer_address","customer_note","items","subtotal","delivery_fee","total","delivery_zone","status"];
  const rows=[columns.join(","),...cachedOrders.map(o=>columns.map(k=>csvCell(k==="items"?(Array.isArray(o.items)?o.items.map(i=>i.name+" x "+i.qty).join("; "):""):o[k])).join(","))];
- const blob=new Blob(["\\uFEFF"+rows.join("\\r\\n")],{type:"text/csv;charset=utf-8"});
+ const blob=new Blob([String.fromCharCode(65279)+rows.join(String.fromCharCode(13,10))],{type:"text/csv;charset=utf-8"});
  const url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="kordesh-orders-"+new Date().toISOString().slice(0,10)+".csv";document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
  msg("dashMessage","CSV ফাইল ডাউনলোড শুরু হয়েছে।");
 }
