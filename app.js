@@ -151,7 +151,7 @@ function renderLocalityOptions(){
  const ds=$("districtSelect"),as=$("areaSelect"),ls=$("localitySelect");if(!ls)return;
  const district=window.KORDESH_BD_LOCATIONS.find(d=>d.bn===ds.value),upazila=district&&district.upazilas.find(u=>u.bn===as.value);
  ls.replaceChildren();ls.append(geoOption(upazila?(language==="bn"?"ইউনিয়ন / পৌরসভা নির্বাচন করুন":"Select union / municipality"):"আগে উপজেলা নির্বাচন করুন",""));
- if(!upazila){ls.disabled=true;return}
+ if(!upazila){ls.disabled=true;const localitySearch=$("localitySearch");if(localitySearch)localitySearch.disabled=true;return}
  const unions=upazila.unions||[],municipalities=upazila.pourashavas||[];
  if(unions.length){const g=document.createElement("optgroup");g.label=language==="bn"?"ইউনিয়ন":"Unions";unions.forEach(x=>g.append(geoOption(language==="bn"?x.bn_name:x.name,(language==="bn"?x.bn_name:x.name)+" [ইউনিয়ন]","union")));ls.append(g)}
  if(municipalities.length){const g=document.createElement("optgroup");g.label=language==="bn"?"পৌরসভা":"Municipalities";municipalities.forEach(x=>g.append(geoOption((language==="bn"?x.bn_name:x.name)+(language==="bn"?" পৌরসভা":" Municipality"),(language==="bn"?x.bn_name:x.name)+" [পৌরসভা]","pourashava")));ls.append(g)}
