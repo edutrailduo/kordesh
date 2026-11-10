@@ -270,6 +270,45 @@ document.addEventListener("click",e=>{
 });
 document.addEventListener("keydown",e=>{if(e.key==="Escape")closePanels();if((e.key==="Enter"||e.key===" ")&&e.target.classList.contains("product-card"))showProduct(e.target.dataset.product)});
 $("openCart").addEventListener("click",openCart);$("closeCart").addEventListener("click",closePanels);$("overlay").addEventListener("click",closePanels);$("closeCheckout").addEventListener("click",closePanels);$("closeProduct").addEventListener("click",closePanels);$("checkoutButton").addEventListener("click",openCheckout);$("deliverySelect").addEventListener("change",updateTotal);$("applyCouponButton").addEventListener("click",applyCoupon);$("couponInput").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();applyCoupon()}});$("paymentMethodSelect").addEventListener("change",updatePaymentHint);$("checkoutForm").addEventListener("submit",submitOrder);$("languageToggle").addEventListener("click",()=>setLanguage(language==="bn"?"en":"bn"));document.addEventListener("input",e=>{if(e.target.id==="productSearch")renderProducts($("categoryFilter")?.value||new URLSearchParams(location.search).get("category")||"all")});document.addEventListener("change",e=>{if(e.target.id==="sortProducts")renderProducts($("categoryFilter")?.value||new URLSearchParams(location.search).get("category")||"all");if(e.target.id==="categoryFilter"){const value=e.target.value;if(document.body.classList.contains("page-category"))location.href=value==="all"?"?":"?page=category&category="+encodeURIComponent(value);else renderProducts(value)}});$("year").textContent=new Date().getFullYear();
+
+const orderTrackingStages=[
+{id:"pending",title:"অর্ডারটি গ্রহণ করা হয়েছে",description:"আপনার অর্ডারটি আমরা পেয়েছি। আমাদের টিম অর্ডারের তথ্য যাচাই করছে।"},
+{id:"confirmed",title:"অর্ডার কনফার্ম হয়েছে",description:"আপনার অর্ডারটি নিশ্চিত করা হয়েছে।"},
+{id:"processing",title:"পণ্য প্রস্তুত করা হচ্ছে",description:"আপনার পণ্যটি যত্নসহকারে প্রস্তুত ও প্যাকেজিং করা হচ্ছে।"},
+{id:"shipped",title:"পণ্যটি পাঠিয়ে দেওয়া হয়েছে",description:"আপনার পণ্যটি ডেলিভারি পার্টনারের কাছে হস্তান্তর করা হয়েছে।"},
+{id:"delivered",title:"ডেলিভারি সম্পন্ন হয়েছে",description:"আপনার অর্ডার সফলভাবে পৌঁছে দেওয়া হয়েছে।"}
+];
+let trackingPoll=null,trackedOrderNumber="";
+function escapeTrackingText(value){return String(value||"").replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]))}
+function formatTrackingDate(value){try{return new Date(value).toLocaleString("bn-BD",{dateStyle:"medium",timeStyle:"short"})}catch{return""}}
+function renderTrackingResult(order){
+ const target=document.getElementById("trackingResult");if(!target)return;
+ if(!order){target.innerHTML='<div class="tracking-empty"><strong>অর্ডার পাওয়া যায়নি</strong><p>অর্ডার নম্বরটি সঠিক কি না যাচাই করে আবার চেষ্টা করুন।</p></div>';return}
+ const current=orderTrackingStages.findIndex(s=>s.id===order.status);
+ if(order.status==="cancelled"){target.innerHTML='<article class="tracking-card"><div class="tracking-card-head"><span class="tracking-label">ORDER STATUS</span><span class="tracking-badge cancelled">অর্ডার বাতিল</span></div><h2>'+escapeTrackingText(order.order_number)+'</h2><p>এই অর্ডারটি বাতিল করা হয়েছে। বিস্তারিত জানতে KORDESH কাস্টমার সাপোর্টে যোগাযোগ করুন।</p><small>অর্ডারের তারিখ: '+formatTrackingDate(order.created_at)+'</small></article>';return}
+ if(current<0){target.innerHTML='<div class="tracking-empty"><strong>স্ট্যাটাস পাওয়া যায়নি</strong><p>এই অর্ডারের জন্য কোনো স্বীকৃত ডেলিভারি স্ট্যাটাস পাওয়া যায়নি।</p></div>';return}
+ const active=orderTrackingStages[current];
+ target.innerHTML='<article class="tracking-card"><div class="tracking-card-head"><span class="tracking-label">ORDER STATUS</span><span class="tracking-badge">'+active.title+'</span></div><h2>'+escapeTrackingText(order.order_number)+'</h2><p class="tracking-current-description">'+active.description+'</p><div class="tracking-timeline">'+orderTrackingStages.map((stage,index)=>'<div class="tracking-step '+(index<current?'complete':index===current?'active':'')+'"><span class="tracking-step-marker">'+(index<current?'✓':String(index+1).padStart(2,"0"))+'</span><div><strong>'+stage.title+'</strong><p>'+stage.description+'</p></div></div>').join("")+'</div><div class="tracking-foot"><span>অর্ডারের তারিখ</span><strong>'+formatTrackingDate(order.created_at)+'</strong></div><p class="tracking-auto-update">এই পেজ খোলা থাকলে স্ট্যাটাস প্রতি ১৫ সেকেন্ডে স্বয়ংক্রিয়ভাবে আপডেট হবে।</p></article>';
+}
+async function lookupTrackingOrder(orderNumber){
+ const result=document.getElementById("trackingResult"),button=document.getElementById("trackingSearchButton");if(!result)return;
+ if(!/^KD[A-Z0-9]{6,20}$/i.test(orderNumber)){result.innerHTML='<div class="tracking-empty">সঠিক Order Number লিখুন।</div>';return}
+ if(button){button.disabled=true;button.textContent="খোঁজা হচ্ছে..."}
+ try{
+  const response=await fetch(CONFIG.SUPABASE_URL+"/rest/v1/rpc/kordesh_track_order",{method:"POST",headers:{"apikey":CONFIG.SUPABASE_KEY,"Authorization":"Bearer "+CONFIG.SUPABASE_KEY,"Content-Type":"application/json"},body:JSON.stringify({p_order_number:orderNumber})});
+  if(!response.ok)throw new Error("স্ট্যাটাস লোড করা যায়নি। কিছুক্ষণ পর আবার চেষ্টা করুন।");
+  const rows=await response.json(),found=Array.isArray(rows)&&rows.length?rows[0]:null;renderTrackingResult(found);
+  if(found){trackedOrderNumber=found.order_number;if(trackingPoll)clearInterval(trackingPoll);trackingPoll=setInterval(refreshTrackingStatus,15000)}
+  else{trackedOrderNumber="";if(trackingPoll)clearInterval(trackingPoll)}
+ }catch(error){result.innerHTML='<div class="tracking-empty">'+escapeTrackingText(error.message||"স্ট্যাটাস লোড করা যায়নি।")+'</div>'}
+ finally{if(button){button.disabled=false;button.textContent="স্ট্যাটাস দেখুন"}}
+}
+async function refreshTrackingStatus(){
+ if(!trackedOrderNumber)return;
+ try{const response=await fetch(CONFIG.SUPABASE_URL+"/rest/v1/rpc/kordesh_track_order",{method:"POST",headers:{"apikey":CONFIG.SUPABASE_KEY,"Authorization":"Bearer "+CONFIG.SUPABASE_KEY,"Content-Type":"application/json"},body:JSON.stringify({p_order_number:trackedOrderNumber})});if(!response.ok)return;const rows=await response.json();if(Array.isArray(rows)&&rows.length)renderTrackingResult(rows[0])}catch(error){console.warn("Tracking refresh failed",error)}
+}
+function initOrderTracking(){const form=document.getElementById("trackingForm");if(!form)return;form.addEventListener("submit",event=>{event.preventDefault();lookupTrackingOrder(document.getElementById("trackingOrderInput").value.trim())})}
+
 function initStorefront(){
  const params=new URLSearchParams(location.search),page=params.get("page")||"home",cat=params.get("category"),id=params.get("id"),order=params.get("order");
  document.body.classList.remove("page-home","page-category","page-product","page-success");document.body.classList.add("page-"+page);
@@ -295,12 +334,15 @@ function initStorefront(){
   const catName=(categoryMeta[p.category]||[p.category])[0];
   main.innerHTML='<section class="product-page"><a class="back-link" href="?page=category&category='+p.category+'">← '+catName+'</a><div class="product-detail-grid"><div class="detail-image-wrap"><img class="detail-image" src="'+p.img+'" alt="'+p.name+'" onerror="this.onerror=null;this.src=\'https://placehold.co/800x800/f0eee8/222?text=KORDESH+Product\'"></div><div class="detail-copy"><p class="eyebrow">'+p.brand+' · '+p.size+'</p><h1>'+p.bn+'</h1><p class="product-english-name">'+p.name+'</p><strong class="detail-price">'+money(p.price)+'</strong><p class="product-tag detail-tag">'+p.tag+'</p><h3>পণ্যের বিবরণ</h3><p>'+p.desc+'</p><h3>মূল উপাদান</h3><p>'+p.ingredients+'</p><h3>কোন ত্বক/ব্যবহারের জন্য</h3><p>'+p.skin+'</p><h3>ব্যবহারবিধি</h3><p>'+p.how+'</p><div class="detail-actions"><button class="button button-light" data-add-detail="'+p.id+'">কার্টে যোগ করুন</button><button class="button button-dark" data-buy="'+p.id+'">এখনই অর্ডার করুন</button></div></div></div></section>';
  }else if(page==="success"){
-  main.innerHTML='<section class="success-page"><div class="success-mark">✓</div><p class="eyebrow">KORDESH / ORDER CONFIRMED</p><h1>আপনার অর্ডার নিশ্চিত হয়েছে</h1><p>আপনার অর্ডারটি সফলভাবে গ্রহণ করা হয়েছে।</p><div class="success-number"><span>অর্ডার নম্বর</span><strong>'+String(order||"").replace(/[<>&"]/g,"")+'</strong></div><a class="button button-dark" href="?">হোমে ফিরে যান</a></section>';
+  main.innerHTML='<section class="success-page"><div class="success-mark">✓</div><p class="eyebrow">KORDESH / ORDER CONFIRMED</p><h1>আপনার অর্ডার নিশ্চিত হয়েছে</h1><p>আপনার অর্ডারটি সফলভাবে গ্রহণ করা হয়েছে।</p><div class="success-number"><span>অর্ডার নম্বর</span><strong>'+String(order||"").replace(/[<>&"]/g,"")+'</strong></div><a class="button button-dark" href="?page=track&order='+encodeURIComponent(order||"")+'">অর্ডারের স্ট্যাটাস দেখুন</a> <a class="back-link" href="?">হোমে ফিরে যান</a></section>';
+ }else if(page==="track"){
+  main.innerHTML='<section class="tracking-page"><a class="back-link" href="?">← হোম</a><p class="eyebrow">KORDESH / ORDER TRACKING</p><h1>Track Your Order Status</h1><p class="category-intro">আপনার অর্ডার নম্বর লিখে ডেলিভারির সর্বশেষ অবস্থা দেখুন।</p><form id="trackingForm" class="tracking-form"><label for="trackingOrderInput">অর্ডার নম্বর</label><div class="tracking-search-row"><input id="trackingOrderInput" name="orderNumber" type="text" placeholder="যেমন: KD123456789" maxlength="32" autocomplete="off" required><button class="button button-dark" id="trackingSearchButton" type="submit">স্ট্যাটাস দেখুন</button></div><p class="tracking-help">অর্ডার নিশ্চিত হওয়ার পর পাওয়া Order Number ব্যবহার করুন।</p></form><div id="trackingResult" aria-live="polite"></div></section>';
+  if(order){setTimeout(()=>{const input=document.getElementById("trackingOrderInput");if(input){input.value=String(order);document.getElementById("trackingForm").requestSubmit()}},0)}
  }else if(page==="advisor"){
   main.innerHTML='<section class="advisor-page"><a class="back-link" href="?">← হোম</a><p class="eyebrow">KORDESH / PERSONAL BEAUTY GUIDE</p><h1>AI Skin Advisor</h1><p class="category-intro">আপনার ত্বকের ধরন ও প্রয়োজন জানালে ক্যাটালগ থেকে উপযুক্ত পণ্য এবং সহজ রুটিন সাজিয়ে দেব।</p><form id="advisorForm" class="advisor-form"><label>আপনার ত্বকের ধরন<select id="advisorSkin" required><option value="">নির্বাচন করুন</option><option value="dry">শুষ্ক</option><option value="oily">তৈলাক্ত</option><option value="combination">মিশ্র</option><option value="normal">স্বাভাবিক</option><option value="sensitive">সংবেদনশীল</option></select></label><label>আপনার প্রধান লক্ষ্য<select id="advisorConcern" required><option value="">নির্বাচন করুন</option><option value="hydration">শুষ্কতা ও আর্দ্রতা</option><option value="acne">ব্রণ ও অতিরিক্ত তেল</option><option value="soothing">লালচে ভাব ও সংবেদনশীলতা</option><option value="sun">সূর্যের আলো থেকে সুরক্ষা</option><option value="texture">অসমান টেক্সচার</option></select></label><label>ত্বক কি সহজে জ্বালা করে?<select id="advisorSensitive"><option value="no">না / নিশ্চিত নই</option><option value="yes">হ্যাঁ</option></select></label><button class="button button-dark full" type="submit">আমার স্কিনকেয়ার সাজেশন দেখুন</button></form><div id="advisorResult" class="advisor-result" aria-live="polite"></div><p class="advisor-disclaimer">এটি সাধারণ কসমেটিকস-ভিত্তিক গাইড, চিকিৎসা পরামর্শ নয়। নতুন পণ্য ব্যবহারের আগে প্যাচ টেস্ট করুন। ত্বকের সমস্যা স্থায়ী বা গুরুতর হলে ডার্মাটোলজিস্টের পরামর্শ নিন।</p></section>';
  }else if(page==="about"){
   main.innerHTML='<section class="catalog-page"><a class="back-link" href="?">← হোম</a><p class="eyebrow">ABOUT KORDESH</p><h1>আসল পণ্য। সচেতন পছন্দ।</h1><p class="category-intro">কোরিয়ান বিউটি পণ্য বাংলাদেশে পৌঁছে দেওয়াই আমাদের লক্ষ্য।</p></section>';
  }else{location.href="?";return}
 }
-initStorefront();initLocationSelectors();renderCart();
+initStorefront();initLocationSelectors();renderCart();initOrderTracking();
 document.addEventListener("click",e=>{const link=e.target.closest('a[href^="?"]');if(link){document.body.classList.add("page-loading");}});
