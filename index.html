@@ -67,6 +67,11 @@
     <div class="cart-summary"><div><span data-i18n="subtotal">সাবটোটাল</span><b id="cartSubtotal">৳০</b></div><small data-i18n="shippingNote">ডেলিভারি চার্জ চেকআউটে যোগ হবে।</small><button class="button button-dark full" id="checkoutButton" data-i18n="checkout">অর্ডার সম্পন্ন করুন</button></div>
   </aside>
 
+  <section class="product-modal" id="productModal" aria-hidden="true">
+    <button class="icon-button product-modal-close" id="closeProduct" aria-label="Close">×</button>
+    <div id="productDetailContent"></div>
+  </section>
+
   <section class="checkout-modal" id="checkoutModal" aria-hidden="true">
     <div class="modal-head"><div><p class="eyebrow">KORDESH / CHECKOUT</p><h2 data-i18n="checkoutTitle">অর্ডার তথ্য</h2></div><button class="icon-button" id="closeCheckout" aria-label="Close">×</button></div>
     <form id="checkoutForm">
