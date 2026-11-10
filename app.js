@@ -352,3 +352,15 @@ function initStorefront(){
 }
 initStorefront();initLocationSelectors();renderCart();initOrderTracking();
 document.addEventListener("click",e=>{const link=e.target.closest('a[href^="?"]');if(link){document.body.classList.add("page-loading");}});
+
+/* KORDESH AI chathead panel controls */
+document.addEventListener("click",event=>{
+ const launcher=event.target.closest("#kordeshAILauncher");
+ const close=event.target.closest("#kordeshAIClose");
+ const panel=document.getElementById("kordeshAIPanel");
+ const trigger=document.getElementById("kordeshAILauncher");
+ if(!panel||!trigger)return;
+ if(launcher){const opening=panel.hidden;panel.hidden=!opening;trigger.setAttribute("aria-expanded",String(opening));return}
+ if(close){panel.hidden=true;trigger.setAttribute("aria-expanded","false");return}
+ if(!event.target.closest("#kordeshAIWidget")){panel.hidden=true;trigger.setAttribute("aria-expanded","false")}
+});
