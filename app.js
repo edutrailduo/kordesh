@@ -144,7 +144,9 @@ async function submitOrder(e){
  e.preventDefault();if(!cart.length){$("orderStatus").textContent=t("need");return}
  const d=new FormData(e.target),customer={name:String(d.get("name")).trim(),phone:String(d.get("phone")).trim(),district:String(d.get("district")).trim(),area:String(d.get("area")).trim(),address:String(d.get("address")).trim(),note:String(d.get("note")).trim()};
  if(!/^(\+?88)?01[3-9]\d{8}$/.test(customer.phone.replace(/[\s-]/g,""))){$("orderStatus").textContent="সঠিক বাংলাদেশি মোবাইল নম্বর লিখুন।";return}
- const fee=d.get("delivery")==="inside"?80:130,sub=cart.reduce((s,x)=>s+x.qty*x.price,0),order={orderId:"KD"+Date.now().toString().slice(-9),createdAt:new Date().toISOString(),customer,items:cart.map(i=>{const p=products.find(x=>x.id===i.id);return{id:p.id,name:p.bn,englishName:p.name,brand:p.brand,price:p.price,qty:i.qty}}),subtotal:sub,deliveryFee:fee,deliveryZone:d.get("delivery")==="inside"?"Inside Dhaka":"Outside Dhaka",total:sub+fee,currency:"BDT"};
+ const safeItems=cart.map(i=>{const p=products.find(x=>x.id===i.id);return p&&Number.isInteger(Number(i.qty))&&Number(i.qty)>=1&&Number(i.qty)<=99?{id:p.id,qty:Number(i.qty),price:p.price}:null}).filter(Boolean);
+ if(!safeItems.length||safeItems.length!==cart.length){$("orderStatus").textContent="কার্টে থাকা কোনো পণ্য আর পাওয়া যাচ্ছে না। কার্ট রিফ্রেশ করে আবার চেষ্টা করুন।";return}
+ const fee=d.get("delivery")==="inside"?80:130,sub=safeItems.reduce((sum,x)=>sum+x.qty*x.price,0),order={orderId:"KD"+Date.now().toString().slice(-9),createdAt:new Date().toISOString(),customer,items:safeItems.map(i=>({id:i.id,qty:i.qty})),subtotal:sub,deliveryFee:fee,deliveryZone:d.get("delivery")==="inside"?"Inside Dhaka":"Outside Dhaka",total:sub+fee,currency:"BDT"};
  $("placeOrderButton").disabled=true;$("placeOrderButton").textContent=t("sending");
  try{
    const response=await fetch(CONFIG.SUPABASE_URL+"/rest/v1/kordesh_orders",{
@@ -187,7 +189,7 @@ document.addEventListener("click",e=>{
  const card=e.target.closest(".product-card");if(card&&!e.target.closest("button")){showProduct(card.dataset.product);return}
  const ad=e.target.closest("[data-add-detail]");if(ad){addToCart(ad.dataset.addDetail);return}
  const buy=e.target.closest("[data-buy]");if(buy){addToCart(buy.dataset.buy);openCheckout();return}
- const qty=e.target.closest("[data-qty]");if(qty){const it=cart.find(x=>x.id===qty.dataset.id);if(it){it.qty+=Number(qty.dataset.qty);if(it.qty<1)cart=cart.filter(x=>x.id!==it.id);saveCart()}return}
+ const qty=e.target.closest("[data-qty]");if(qty){const it=cart.find(x=>x.id===qty.dataset.id);if(it){it.qty=Math.min(99,Math.max(0,it.qty+Number(qty.dataset.qty)));if(it.qty<1)cart=cart.filter(x=>x.id!==it.id);saveCart()}return}
  const rm=e.target.closest("[data-remove]");if(rm){cart=cart.filter(x=>x.id!==rm.dataset.remove);saveCart();return}
  
  const menuButton=e.target.closest("#menuButton");if(menuButton){$("siteMenu").classList.toggle("open");menuButton.setAttribute("aria-expanded",$("siteMenu").classList.contains("open"))}
