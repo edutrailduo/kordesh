@@ -16,6 +16,8 @@ async function showSession(){
  $("dashboard").hidden=false;$("signedInAs").textContent=session.user.email||session.user.id;
  await loadOrders();
  await loadChatSessions();
+ renderSalesReport();
+ showAdminView("home");
  if(chatPollTimer)clearInterval(chatPollTimer);chatPollTimer=setInterval(()=>{loadChatSessions();if(selectedChatId)loadAdminChatMessages()},5000);
 }
 $("recoveryForm").addEventListener("submit",async e=>{e.preventDefault();const password=$("newPassword").value;if(password.length<8){msg("recoveryMessage","অন্তত ৮ অক্ষরের পাসওয়ার্ড দিন।");return}const {error}=await supabase.auth.updateUser({password});if(error){msg("recoveryMessage",error.message);return}msg("recoveryMessage","পাসওয়ার্ড আপডেট হয়েছে। Admin Dashboard খুলছে...");$("recoveryPanel").hidden=true;await showSession()});
@@ -27,11 +29,7 @@ async function loadOrders(){
  msg("dashMessage","অর্ডার লোড হচ্ছে...");
  const fromDate=$("orderDateFrom").value,toDate=$("orderDateTo").value;
  if(fromDate&&toDate&&fromDate>toDate){msg("dashMessage","শুরুর তারিখ শেষ তারিখের পরে হতে পারবে না।");$("orders").innerHTML="";return}
- let query=supabase.from("kordesh_orders").select("*");
- const fromTime=localDateBoundary(fromDate),toTime=localDateBoundary(toDate,1);
- if(fromTime!==null)query=query.gte("created_at",new Date(fromTime).toISOString());
- if(toTime!==null)query=query.lt("created_at",new Date(toTime).toISOString());
- const {data,error}=await query.order("created_at",{ascending:false}).limit(1000);
+ const {data,error}=await supabase.from("kordesh_orders").select("*").order("created_at",{ascending:false}).limit(1000);
  if(error){msg("dashMessage",error.message);return}
  cachedOrders=data||[];
  $("totalCount").textContent=cachedOrders.length;
@@ -157,4 +155,47 @@ async function loadAdminChatMessages(){
   item.append(who,body,time);$("chatThread").appendChild(item);
  });
  $("chatThread").scrollTop=$("chatThread").scrollHeight;
+}
+
+/* Admin home navigation and sales reporting */
+function showAdminView(view){
+ $("adminHome").hidden=view!=="home";
+ $("ordersView").hidden=view!=="orders";
+ $("chatView").hidden=view!=="chat";
+ $("salesView").hidden=view!=="sales";
+ if(view==="sales")renderSalesReport();
+ if(view==="chat"){loadChatSessions();if(selectedChatId)loadAdminChatMessages()}
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+document.querySelectorAll("[data-open-view]").forEach(button=>button.addEventListener("click",()=>showAdminView(button.dataset.openView)));
+document.querySelectorAll("[data-back-home]").forEach(button=>button.addEventListener("click",()=>showAdminView("home")));
+$("salesDateFrom").addEventListener("change",renderSalesReport);
+$("salesDateTo").addEventListener("change",renderSalesReport);
+$("salesClearDates").addEventListener("click",()=>{$("salesDateFrom").value="";$("salesDateTo").value="";renderSalesReport()});
+$("salesRefresh").addEventListener("click",async()=>{await loadOrders();renderSalesReport()});
+function getSalesOrders(){
+ const from=$("salesDateFrom").value,to=$("salesDateTo").value;
+ if(from&&to&&from>to){$("salesReportMessage").textContent="শুরুর তারিখ শেষ তারিখের পরে হতে পারবে না।";return null}
+ const start=localDateBoundary(from),end=localDateBoundary(to,1);
+ return cachedOrders.filter(o=>{const t=new Date(o.created_at).getTime();return (!from||t>=start)&&(!to||t<end)});
+}
+function moneyBDT(value){return "৳"+Math.round(Number(value)||0).toLocaleString("en-BD")}
+function renderSalesReport(){
+ const all=getSalesOrders();if(!all)return;
+ const valid=all.filter(o=>o.status!=="cancelled");
+ const delivered=valid.filter(o=>o.status==="delivered");
+ const revenue=valid.reduce((s,o)=>s+(Number(o.total)||0),0);
+ const deliveredRevenue=delivered.reduce((s,o)=>s+(Number(o.total)||0),0);
+ const avg=valid.length?revenue/valid.length:0;
+ const metrics=[["Total Orders",all.length],["Net Order Value",moneyBDT(revenue)],["Delivered Sales",moneyBDT(deliveredRevenue)],["Average Order Value",moneyBDT(avg)]];
+ $("salesMetrics").innerHTML=metrics.map(([label,value])=>'<article class="sales-metric"><small>'+label+'</small><strong>'+value+'</strong></article>').join("");
+ const byDay={};
+ valid.forEach(o=>{const day=new Date(o.created_at).toLocaleDateString("en-CA");byDay[day]=(byDay[day]||0)+(Number(o.total)||0)});
+ const days=Object.entries(byDay).sort((a,b)=>a[0].localeCompare(b[0])).slice(-14),max=Math.max(1,...days.map(x=>x[1]));
+ $("dailySalesReport").innerHTML=days.length?days.map(([day,value])=>'<div class="sales-bar-row"><span>'+day+'</span><div class="sales-bar-track"><div class="sales-bar" style="width:'+Math.max(1,value/max*100)+'%"></div></div><b>'+moneyBDT(value)+'</b></div>').join(""):'<p class="sales-empty">এই সময়ের মধ্যে কোনো বিক্রির তথ্য নেই।</p>';
+ const products={};
+ valid.forEach(o=>(Array.isArray(o.items)?o.items:[]).forEach(item=>{const name=String(item.name||"Unnamed product");if(!products[name])products[name]={qty:0,revenue:0};const qty=Number(item.qty)||0;products[name].qty+=qty;products[name].revenue+=(Number(item.price)||0)*qty}));
+ const top=Object.entries(products).sort((a,b)=>b[1].qty-a[1].qty).slice(0,10);
+ $("topProductsReport").innerHTML=top.length?'<table class="sales-table"><thead><tr><th>Product</th><th>Qty</th><th>Sales</th></tr></thead><tbody>'+top.map(([name,v])=>'<tr><td>'+esc(name)+'</td><td>'+v.qty+'</td><td>'+moneyBDT(v.revenue)+'</td></tr>').join("")+'</tbody></table>':'<p class="sales-empty">পণ্যের বিক্রির তথ্য পাওয়া যায়নি।</p>';
+ $("salesReportMessage").textContent="রিপোর্টে "+all.length+"টি অর্ডার অন্তর্ভুক্ত। Cancelled অর্ডার Net Order Value ও পণ্য বিক্রির হিসাব থেকে বাদ।";
 }
