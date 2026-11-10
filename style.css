@@ -322,3 +322,30 @@ em{font-family:'Hind Siliguri','DM Sans',sans-serif;font-style:normal}
 @media(prefers-reduced-motion:reduce){
  .kordesh-customer-launcher span,.kordesh-ai-launcher,.kordesh-ai-orb{animation:none!important}
 }
+
+
+/* KORDESH AI label slides out from the icon and returns, matching Customer Care */
+#kordeshAILauncher{overflow:visible!important}
+.kordesh-ai-launcher-label{
+ position:absolute!important;right:62px!important;top:50%!important;
+ display:block!important;width:0!important;max-width:0!important;overflow:hidden!important;
+ white-space:nowrap!important;opacity:0!important;
+ transform:translateY(-50%) translateX(8px)!important;
+ padding:0!important;border:0!important;border-radius:999px!important;
+ background:#171717!important;color:#fff!important;
+ box-shadow:0 5px 20px #0002!important;
+ font:700 11px 'DM Sans','Hind Siliguri',sans-serif!important;
+ letter-spacing:.08em!important;
+ animation:kordeshAILabel 5.2s ease-in-out infinite!important;
+ pointer-events:none!important;
+}
+@keyframes kordeshAILabel{
+ 0%,12%,82%,100%{width:0!important;max-width:0!important;padding:0!important;opacity:0!important;transform:translateY(-50%) translateX(8px)!important}
+ 22%,68%{width:91px!important;max-width:91px!important;padding:9px 12px!important;opacity:1!important;transform:translateY(-50%) translateX(0)!important}
+}
+#kordeshAILauncher:hover .kordesh-ai-launcher-label,
+#kordeshAILauncher:focus-visible .kordesh-ai-launcher-label{
+ animation:none!important;width:91px!important;max-width:91px!important;
+ padding:9px 12px!important;opacity:1!important;transform:translateY(-50%) translateX(0)!important
+}
+@media(prefers-reduced-motion:reduce){.kordesh-ai-launcher-label{animation:none!important}}
