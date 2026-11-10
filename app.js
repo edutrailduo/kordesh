@@ -83,6 +83,7 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape")closePanels();if((e.
 $("openCart").addEventListener("click",openCart);$("closeCart").addEventListener("click",closePanels);$("overlay").addEventListener("click",closePanels);$("closeCheckout").addEventListener("click",closePanels);$("closeProduct").addEventListener("click",closePanels);$("checkoutButton").addEventListener("click",openCheckout);$("deliverySelect").addEventListener("change",updateTotal);$("checkoutForm").addEventListener("submit",submitOrder);$("languageToggle").addEventListener("click",()=>setLanguage(language==="bn"?"en":"bn"));$("year").textContent=new Date().getFullYear();
 function initStorefront(){
  const params=new URLSearchParams(location.search),page=params.get("page")||"home",cat=params.get("category"),id=params.get("id");
+ document.body.classList.remove("page-home","page-category","page-product");document.body.classList.add("page-"+page);
  const main=document.querySelector("main");
  const categoryNames={skincare:"স্কিনকেয়ার",suncare:"সানকেয়ার"};
  const categoryCards=[{id:"skincare",title:"Skincare",bn:"স্কিনকেয়ার",desc:"দৈনন্দিন ত্বকের যত্নের জন্য কোরিয়ান পণ্য",img:"https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?auto=format&fit=crop&w=900&q=85"},{id:"suncare",title:"Sun Care",bn:"সানকেয়ার",desc:"সূর্যের আলো থেকে ত্বকের যত্ন",img:"https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=900&q=85"}];
