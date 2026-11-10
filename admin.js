@@ -90,6 +90,14 @@ async function loadChatSessions(){
  const {data,error}=await supabase.rpc("kordesh_chat_admin_sessions");
  if(error){msg("chatAdminMessage","লাইভ চ্যাট লোড হয়নি: "+error.message);return}
  cachedChats=Array.isArray(data)?data:[];
+ if(selectedChatId){
+  const current=cachedChats.find(x=>x.id===selectedChatId);
+  const isClosed=!current||current.status==="closed";
+  $("chatReplyInput").disabled=isClosed;
+  $("chatReplyForm").querySelector("button").disabled=isClosed;
+  $("chatCloseBtn").disabled=isClosed;
+  if(current&&current.rating_stars)$("chatConversationTitle").textContent=current.customer_name+" · Closed · ★"+current.rating_stars+"/5 · "+current.rating_feedback;
+ }
  $("chatInbox").innerHTML=cachedChats.length?cachedChats.map(c=>`<button type="button" class="chat-inbox-item ${selectedChatId===c.id?"selected":""}" data-chat-id="${esc(c.id)}"><strong>${esc(c.customer_name||"Guest")}</strong><small>${esc(c.status)}${c.rating_stars?" · ★"+c.rating_stars+"/5 · "+esc(c.rating_feedback||""):""} · ${new Date(c.last_message_at).toLocaleString("en-BD")}</small><span>${esc(c.last_message||"নতুন চ্যাট")}</span></button>`).join(""):"<p class='muted'>এখনো কোনো নতুন কাস্টমার চ্যাট নেই।</p>";
  $("chatInbox").querySelectorAll("[data-chat-id]").forEach(btn=>btn.addEventListener("click",()=>selectAdminChat(btn.dataset.chatId)));
 }
