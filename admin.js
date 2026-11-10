@@ -22,10 +22,16 @@ $("recoveryForm").addEventListener("submit",async e=>{e.preventDefault();const p
 $("authForm").addEventListener("submit",async e=>{e.preventDefault();const email=$("email").value.trim(),password=$("password").value;const {error}=await supabase.auth.signInWithPassword({email,password});if(error){msg("authMessage",error.message);return}msg("authMessage","লগইন হয়েছে।");await showSession()});
 $("resetBtn").addEventListener("click",async()=>{const email=$("email").value.trim();if(!email){msg("authMessage","আগে আপনার account-এর ইমেইল লিখুন।");return}const {error}=await supabase.auth.resetPasswordForEmail(email,{redirectTo:location.origin+location.pathname});if(error){msg("authMessage",error.message);return}msg("authMessage","পাসওয়ার্ড reset link পাঠানো হয়েছে। Inbox ও Spam folder দেখুন।")});
 $("logoutBtn").addEventListener("click",async()=>{await supabase.auth.signOut();await showSession()});
-$("refreshBtn").addEventListener("click",loadOrders);$("statusFilter").addEventListener("change",renderOrders);$("orderSearch").addEventListener("input",renderOrders);$("orderDateFrom").addEventListener("change",renderOrders);$("orderDateTo").addEventListener("change",renderOrders);$("clearDateFilter").addEventListener("click",()=>{$("orderDateFrom").value="";$("orderDateTo").value="";renderOrders()});$("exportBtn").addEventListener("click",exportOrders);
+$("refreshBtn").addEventListener("click",loadOrders);$("statusFilter").addEventListener("change",renderOrders);$("orderSearch").addEventListener("input",renderOrders);$("orderDateFrom").addEventListener("change",loadOrders);$("orderDateTo").addEventListener("change",loadOrders);$("clearDateFilter").addEventListener("click",()=>{$("orderDateFrom").value="";$("orderDateTo").value="";loadOrders()});$("exportBtn").addEventListener("click",exportOrders);
 async function loadOrders(){
  msg("dashMessage","অর্ডার লোড হচ্ছে...");
- const {data,error}=await supabase.from("kordesh_orders").select("*").order("created_at",{ascending:false}).limit(1000);
+ const fromDate=$("orderDateFrom").value,toDate=$("orderDateTo").value;
+ if(fromDate&&toDate&&fromDate>toDate){msg("dashMessage","শুরুর তারিখ শেষ তারিখের পরে হতে পারবে না।");$("orders").innerHTML="";return}
+ let query=supabase.from("kordesh_orders").select("*");
+ const fromTime=localDateBoundary(fromDate),toTime=localDateBoundary(toDate,1);
+ if(fromTime!==null)query=query.gte("created_at",new Date(fromTime).toISOString());
+ if(toTime!==null)query=query.lt("created_at",new Date(toTime).toISOString());
+ const {data,error}=await query.order("created_at",{ascending:false}).limit(1000);
  if(error){msg("dashMessage",error.message);return}
  cachedOrders=data||[];
  $("totalCount").textContent=cachedOrders.length;
