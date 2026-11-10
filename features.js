@@ -3,6 +3,7 @@ const $=s=>document.querySelector(s);
 const read=k=>{try{const v=JSON.parse(localStorage.getItem(k)||"[]");return Array.isArray(v)?v:[]}catch{return[]}};
 let wish=read("kordesh-wishlist"),compare=read("kordesh-compare");
 let cache={};try{cache=JSON.parse(localStorage.getItem("kordesh-product-cache")||"{}")}catch{cache={}}
+Object.keys(cache).forEach(id=>{if(!wish.includes(id)&&!compare.includes(id))delete cache[id]});localStorage.setItem("kordesh-product-cache",JSON.stringify(cache));
 const saveLists=()=>{localStorage.setItem("kordesh-wishlist",JSON.stringify(wish));localStorage.setItem("kordesh-compare",JSON.stringify(compare));};
 const idOf=c=>c?.dataset.product||c?.querySelector("[data-add]")?.dataset.add||"";
 function addControls(card){if(!card||!card.matches?.(".product-card"))return;const id=idOf(card);if(!id||card.querySelector(".kordesh-product-tools"))return;const info=card.querySelector(".product-info");if(!info)return;const bar=document.createElement("div");bar.className="kordesh-product-tools";bar.innerHTML='<button type="button" data-kordesh-save="wishlist" data-id="'+id+'">'+(wish.includes(id)?"♥ Saved":"♡ Wishlist")+'</button><button type="button" data-kordesh-save="compare" data-id="'+id+'">'+(compare.includes(id)?"✓ Added":"⇄ Compare")+'</button>';info.append(bar);}
