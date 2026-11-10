@@ -180,7 +180,8 @@ function renderUpazilaOptions(){
 function initLocationSelectors(){
  const districtSelect=$("districtSelect"),areaSelect=$("areaSelect");if(!districtSelect||!areaSelect||!Array.isArray(window.KORDESH_BD_LOCATIONS))return;
  renderDistrictOptions();loadBangladeshGeo();
- districtSelect.addEventListener("change",()=>{resetLocationSearch("districtSearch");renderUpazilaOptions()});areaSelect.addEventListener("change",()=>{resetLocationSearch("areaSearch");resetLocationSearch("localitySearch");renderLocalityOptions()});\n ["districtSearch","areaSearch","localitySearch"].forEach(id=>$(id)?.addEventListener("input",()=>filterLocationSelect(id,id.replace("Search","Select"))));
+ districtSelect.addEventListener("change",()=>{resetLocationSearch("districtSearch");renderUpazilaOptions()});areaSelect.addEventListener("change",()=>{resetLocationSearch("areaSearch");resetLocationSearch("localitySearch");renderLocalityOptions()});
+ ["districtSearch","areaSearch","localitySearch"].forEach(id=>$(id)?.addEventListener("input",()=>filterLocationSelect(id,id.replace("Search","Select"))));
 }
 function updateTotal(){const sub=cart.reduce((s,x)=>s+x.qty*x.price,0),fee=$("deliverySelect").value==="inside"?80:130;$("checkoutTotal").textContent=money(sub+fee)}
 const pageWords={
