@@ -86,6 +86,10 @@
       <label><span data-i18n="address">সম্পূর্ণ ঠিকানা</span><textarea name="address" required rows="2" placeholder="বাসা, রোড, এলাকার বিস্তারিত ঠিকানা"></textarea></label>
       <label><span data-i18n="note">অর্ডার নোট (ঐচ্ছিক)</span><textarea name="note" rows="2" placeholder="বিশেষ কোনো নির্দেশনা থাকলে লিখুন"></textarea></label>
       <label><span data-i18n="delivery">ডেলিভারি এলাকা</span><select name="delivery" id="deliverySelect"><option value="inside">ঢাকার ভেতরে · ৳৮০</option><option value="outside">ঢাকার বাইরে · ৳১৩০</option></select></label>
+      <div class="coupon-panel"><label for="couponInput"><span>কুপন কোড / Coupon code</span><input id="couponInput" name="coupon" type="text" placeholder="WELCOME" autocomplete="off"></label><button class="button button-light coupon-apply" type="button" id="applyCouponButton">Apply</button><p id="couponStatus" class="coupon-status" role="status">WELCOME ব্যবহার করলে সঙ্গে সঙ্গে ৳১০০ ছাড় পাবেন।</p></div>
+      <label><span>পেমেন্ট পদ্ধতি / Payment method</span><select name="payment_method" id="paymentMethodSelect" required><option value="cod">Cash on Delivery</option><option value="bkash">bKash</option><option value="nagad">Nagad</option><option value="bank_transfer">Bank Transfer</option><option value="bangla_qr">Bangla QR</option></select></label>
+      <p class="payment-hint" id="paymentHint">Cash on Delivery নির্বাচন করা হয়েছে।</p>
+      <div class="checkout-breakdown" id="checkoutBreakdown"></div>
       <div class="order-total"><span data-i18n="total">সর্বমোট</span><strong id="checkoutTotal">৳০</strong></div>
       
       <button class="button button-dark full" type="submit" id="placeOrderButton" data-i18n="placeOrder">অর্ডার নিশ্চিত করুন</button>
