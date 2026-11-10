@@ -398,6 +398,7 @@ document.addEventListener("click",event=>{
 document.addEventListener("submit",event=>{
  if(event.target.id!=="kordeshAIForm")return;
  event.preventDefault();const input=document.getElementById("kordeshAIInput");
+ if(kordeshLiveChatMode){const value=input?.value||"";if(input)input.value="";sendKordeshLiveMessage(value);return;}
  sendKordeshAI(input?.value);if(input)input.value="";
 });
 
@@ -467,12 +468,4 @@ document.getElementById("kordeshLiveChatBack")?.addEventListener("click",()=>{
  setKordeshLiveStatus("সরাসরি সহায়তা পেতে Customer Care-এ মেসেজ করুন।");
  const messages=document.getElementById("kordeshAIMessages");if(messages)messages.innerHTML="";
  addKordeshAIMessage("আমি KORDESH AI। আপনার প্রয়োজন বলুন, আমি পণ্য খুঁজে দিতে সাহায্য করব।","ai");
-});
-const kordeshAIForm=document.getElementById("kordeshAIForm");
-if(kordeshAIForm)kordeshAIForm.addEventListener("submit",async event=>{
- if(!kordeshLiveChatMode)return;
- event.preventDefault();
- const input=document.getElementById("kordeshAIInput"),value=input?.value||"";
- if(input)input.value="";
- await sendKordeshLiveMessage(value);
 });
