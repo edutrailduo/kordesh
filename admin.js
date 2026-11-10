@@ -4,7 +4,7 @@ const SUPABASE_KEY="sb_publishable_S5_tTYQbL6kUkNFp22YhaA_W9SJ-USF";
 const supabase=createClient(SUPABASE_URL,SUPABASE_KEY);
 const $=id=>document.getElementById(id);
 const labels={pending:"Pending",confirmed:"Confirmed",processing:"Processing",shipped:"Shipped",delivered:"Delivered",cancelled:"Cancelled"};
-let cachedOrders=[];
+let cachedOrders=[];\nlet selectedChatId=null;let chatLastId=0;let chatPollTimer=null;let cachedChats=[];
 function msg(id,text){$(id).textContent=text}
 async function showSession(){
  const {data:{session}}=await supabase.auth.getSession();
@@ -13,7 +13,7 @@ async function showSession(){
  const {data:admin,error}=await supabase.from("kordesh_admins").select("user_id").eq("user_id",session.user.id).maybeSingle();
  if(error||!admin){$("authPanel").hidden=false;$("dashboard").hidden=true;$("identityHelp").hidden=false;$("userId").textContent=session.user.id;msg("authMessage","আপনার account তৈরি হয়েছে, কিন্তু Admin অনুমোদন এখনো দেওয়া হয়নি।");return}
  $("dashboard").hidden=false;$("signedInAs").textContent=session.user.email||session.user.id;
- await loadOrders();
+ await loadOrders();\n await loadChatSessions();\n if(chatPollTimer)clearInterval(chatPollTimer);chatPollTimer=setInterval(()=>{loadChatSessions();if(selectedChatId)loadAdminChatMessages()},5000);
 }
 $("recoveryForm").addEventListener("submit",async e=>{e.preventDefault();const password=$("newPassword").value;if(password.length<8){msg("recoveryMessage","অন্তত ৮ অক্ষরের পাসওয়ার্ড দিন।");return}const {error}=await supabase.auth.updateUser({password});if(error){msg("recoveryMessage",error.message);return}msg("recoveryMessage","পাসওয়ার্ড আপডেট হয়েছে। Admin Dashboard খুলছে...");$("recoveryPanel").hidden=true;await showSession()});
 $("authForm").addEventListener("submit",async e=>{e.preventDefault();const email=$("email").value.trim(),password=$("password").value;const {error}=await supabase.auth.signInWithPassword({email,password});if(error){msg("authMessage",error.message);return}msg("authMessage","লগইন হয়েছে।");await showSession()});
@@ -67,3 +67,50 @@ function exportOrders(){
 }
 function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 supabase.auth.onAuthStateChange((event)=>{if(event==="PASSWORD_RECOVERY"){$("authPanel").hidden=true;$("dashboard").hidden=true;$("recoveryPanel").hidden=false;return}setTimeout(showSession,0)});showSession();
+/* Admin live customer care inbox */
+$("chatRefreshBtn")?.addEventListener("click",()=>{loadChatSessions();if(selectedChatId)loadAdminChatMessages()});
+$("chatReplyForm")?.addEventListener("submit",async e=>{
+ e.preventDefault();if(!selectedChatId)return;
+ const input=$("chatReplyInput"),body=input.value.trim();if(!body)return;
+ input.disabled=true;
+ const {error}=await supabase.rpc("kordesh_chat_admin_send",{p_chat_id:selectedChatId,p_body:body});
+ if(error){msg("chatAdminMessage","উত্তর পাঠানো যায়নি: "+error.message);input.disabled=false;return}
+ input.value="";input.disabled=false;await loadAdminChatMessages();await loadChatSessions();
+});
+$("chatCloseBtn")?.addEventListener("click",async()=>{
+ if(!selectedChatId||!confirm("এই কথোপকথনটি বন্ধ করবেন?"))return;
+ const {error}=await supabase.rpc("kordesh_chat_admin_close",{p_chat_id:selectedChatId});
+ if(error){msg("chatAdminMessage","চ্যাট বন্ধ হয়নি: "+error.message);return}
+ selectedChatId=null;chatLastId=0;$("chatThread").innerHTML="<p class='muted'>চ্যাট বন্ধ করা হয়েছে।</p>";$("chatConversationTitle").textContent="একটি কথোপকথন নির্বাচন করুন";$("chatReplyInput").disabled=true;$("chatReplyForm").querySelector("button").disabled=true;$("chatCloseBtn").disabled=true;await loadChatSessions();
+});
+async function loadChatSessions(){
+ const {data,error}=await supabase.rpc("kordesh_chat_admin_sessions");
+ if(error){msg("chatAdminMessage","লাইভ চ্যাট লোড হয়নি: "+error.message);return}
+ cachedChats=Array.isArray(data)?data:[];
+ $("chatInbox").innerHTML=cachedChats.length?cachedChats.map(c=>`<button type="button" class="chat-inbox-item ${selectedChatId===c.id?"selected":""}" data-chat-id="${esc(c.id)}"><strong>${esc(c.customer_name||"Guest")}</strong><small>${esc(c.status)} · ${new Date(c.last_message_at).toLocaleString("en-BD")}</small><span>${esc(c.last_message||"নতুন চ্যাট")}</span></button>`).join(""):"<p class='muted'>এখনো কোনো নতুন কাস্টমার চ্যাট নেই।</p>";
+ $("chatInbox").querySelectorAll("[data-chat-id]").forEach(btn=>btn.addEventListener("click",()=>selectAdminChat(btn.dataset.chatId)));
+}
+async function selectAdminChat(id){
+ selectedChatId=id;chatLastId=0;
+ const chat=cachedChats.find(x=>x.id===id);
+ $("chatConversationTitle").textContent=chat?chat.customer_name+" · "+chat.status:"Customer conversation";
+ $("chatReplyInput").disabled=false;$("chatReplyForm").querySelector("button").disabled=false;$("chatCloseBtn").disabled=false;
+ await loadChatSessions();await loadAdminChatMessages();
+}
+async function loadAdminChatMessages(){
+ if(!selectedChatId)return;
+ const {data,error}=await supabase.rpc("kordesh_chat_admin_messages",{p_chat_id:selectedChatId,p_after_id:chatLastId});
+ if(error){msg("chatAdminMessage","মেসেজ লোড হয়নি: "+error.message);return}
+ const rows=Array.isArray(data)?data:[];
+ if(!chatLastId)$("chatThread").innerHTML="";
+ rows.forEach(m=>{
+  if(Number(m.id)<=chatLastId)return;
+  chatLastId=Math.max(chatLastId,Number(m.id));
+  const item=document.createElement("div");item.className="admin-chat-message "+(m.sender==="agent"?"agent":"customer");
+  const who=document.createElement("small");who.textContent=m.sender==="agent"?"KORDESH Customer Care":"Customer";
+  const body=document.createElement("p");body.textContent=m.body;
+  const time=document.createElement("time");time.textContent=new Date(m.created_at).toLocaleString("en-BD");
+  item.append(who,body,time);$("chatThread").appendChild(item);
+ });
+ $("chatThread").scrollTop=$("chatThread").scrollHeight;
+}
