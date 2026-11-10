@@ -294,3 +294,31 @@ em{font-family:'Hind Siliguri','DM Sans',sans-serif;font-style:normal}
 .saved-remove{display:block;width:100%;margin-top:8px;padding:8px;border:1px solid #ddd;background:#fff;cursor:pointer;font-size:11px}
 @media(max-width:850px){.compare-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:520px){.kordesh-product-tools button{font-size:9px;padding:8px 4px}.compare-grid{grid-template-columns:1fr 1fr;gap:10px}}
+
+/* Matching compact floating support launchers */
+.kordesh-customer-launcher{width:52px!important;height:52px!important;min-width:52px!important;padding:0!important;display:grid!important;place-items:center!important;gap:0!important;border-radius:50%!important;overflow:visible!important}
+.kordesh-customer-launcher svg{width:22px!important;height:22px!important;flex:0 0 22px!important;transition:transform .35s ease}
+.kordesh-customer-launcher:hover svg{transform:scale(1.08)}
+.kordesh-customer-launcher span{position:absolute!important;left:62px!important;top:50%!important;display:block!important;width:0!important;max-width:0!important;overflow:hidden!important;white-space:nowrap!important;opacity:0!important;transform:translateY(-50%) translateX(-8px)!important;padding:0!important;border:0!important;border-radius:999px!important;background:#fff!important;color:#171717!important;box-shadow:0 5px 20px #0002!important;font:700 11px 'DM Sans','Hind Siliguri',sans-serif!important;letter-spacing:.01em!important;animation:kordeshCareLabel 5.2s ease-in-out infinite!important}
+@keyframes kordeshCareLabel{
+ 0%,12%,82%,100%{width:0!important;max-width:0!important;padding:0 0!important;opacity:0!important;transform:translateY(-50%) translateX(-8px)!important}
+ 22%,68%{width:154px!important;max-width:154px!important;padding:9px 13px!important;opacity:1!important;transform:translateY(-50%) translateX(0)!important}
+}
+.kordesh-customer-launcher:hover span,.kordesh-customer-launcher:focus-visible span{animation:none!important;width:154px!important;max-width:154px!important;padding:9px 13px!important;opacity:1!important;transform:translateY(-50%) translateX(0)!important}
+.kordesh-ai-widget{right:22px!important;bottom:26px!important}
+#kordeshAILauncher{width:52px!important;height:52px!important;min-height:52px!important;min-width:52px!important;padding:0!important;display:grid!important;place-items:center!important;gap:0!important;border-radius:50%!important;position:relative!important;animation:kordeshAIFloat 3.8s ease-in-out infinite!important}
+.kordesh-ai-orb{width:29px!important;height:29px!important;display:grid!important;place-items:center!important;position:relative!important;background:#f0eee9!important;color:#171717!important;border-radius:50%!important;font:700 9px 'DM Sans',sans-serif!important;gap:0!important;animation:kordeshAIIcon 3.8s ease-in-out infinite!important}
+.kordesh-ai-orb svg{width:17px!important;height:17px!important;display:block!important}
+.kordesh-ai-orb>span{position:absolute!important;right:-4px!important;bottom:-3px!important;padding:1px 3px!important;border-radius:5px!important;background:#171717!important;color:#fff!important;font:700 7px 'DM Sans',sans-serif!important;line-height:1.2!important}
+.kordesh-ai-launcher>.kordesh-ai-dot{position:absolute!important;right:3px!important;top:3px!important;width:7px!important;height:7px!important}
+@keyframes kordeshAIFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+@keyframes kordeshAIIcon{0%,100%{transform:rotate(0) scale(1)}50%{transform:rotate(7deg) scale(1.06)}}
+@media(max-width:600px){
+ .kordesh-customer-launcher{left:12px!important;bottom:14px!important;width:52px!important;height:52px!important;min-width:52px!important;max-width:none!important}
+ .kordesh-customer-launcher span{left:62px!important}
+ #kordeshAIWidget{right:12px!important;bottom:14px!important}
+ #kordeshAILauncher{width:52px!important;height:52px!important;min-height:52px!important;min-width:52px!important}
+}
+@media(prefers-reduced-motion:reduce){
+ .kordesh-customer-launcher span,.kordesh-ai-launcher,.kordesh-ai-orb{animation:none!important}
+}
