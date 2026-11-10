@@ -125,3 +125,8 @@ em{font-family:'Hind Siliguri','DM Sans',sans-serif;font-style:normal}
  .home-categories .category-card{min-height:230px}
  .product-info h3{overflow-wrap:anywhere}
 }
+
+/* Searchable Bangladesh address selectors */
+.checkout-modal .location-search{margin-top:7px;margin-bottom:0;min-height:42px;background:#f7f6f3;border-style:dashed;font-size:12px}
+.checkout-modal .location-search:disabled{opacity:.5;background:#f0eee9}
+.checkout-modal select option[hidden],.checkout-modal optgroup[hidden]{display:none}
