@@ -1,4 +1,4 @@
-const CONFIG={SHEETS_WEB_APP_URL:"PASTE_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE",WHATSAPP_NUMBER:"8801640282864"};
+const CONFIG={SUPABASE_URL:"https://bibithkwfrwahttdkcfi.supabase.co",SUPABASE_KEY:"sb_publishable_S5_tTYQbL6kUkNFp22YhaA_W9SJ-USF",WHATSAPP_NUMBER:"8801640282864"};
 const products=[
 {id:"anua-heartleaf-77",brand:"ANUA",name:"Heartleaf 77% Soothing Toner",bn:"হার্টলিফ ৭৭% সুদিং টোনার",category:"skincare",price:1450,tag:"BESTSELLER",size:"250ml",img:"https://my-kare.com/cdn/shop/files/ANUA-Heartleaf-77_-Soothing-Toner_1200x.jpg?v=1778597959",desc:"৭৭% হার্টলিফ এক্সট্র্যাক্টযুক্ত হালকা টোনার। ত্বককে আরামদায়ক অনুভূতি দিতে এবং আর্দ্রতা বজায় রাখতে সাহায্য করে।",ingredients:"হার্টলিফ এক্সট্র্যাক্ট, গ্লিসারিন, প্যানথেনল ও হায়ালুরোনিক অ্যাসিড।",skin:"স্বাভাবিক, তৈলাক্ত ও মিশ্র ত্বকের দৈনন্দিন যত্নে ব্যবহার করা যায়।",how:"মুখ পরিষ্কারের পর হাতে বা কটন প্যাডে নিয়ে মুখে আলতোভাবে লাগান। সকাল ও রাতে ব্যবহার করা যায়।"},
 {id:"boj-relief-sun",brand:"BEAUTY OF JOSEON",name:"Relief Sun: Rice + Probiotics SPF50+",bn:"রিলিফ সান: রাইস + প্রোবায়োটিকস SPF50+",category:"suncare",price:1550,tag:"SUN CARE",size:"50ml",img:"https://lloydspharmacy.com/cdn/shop/files/0159211_1024x.jpg?v=1764323619",desc:"রাইস এক্সট্র্যাক্ট ও ফারমেন্টেড উপাদানযুক্ত হালকা সানস্ক্রিন। SPF50+ PA++++ সুরক্ষা দিয়ে ত্বকে আরামদায়ক অনুভূতি দেয়।",ingredients:"রাইস এক্সট্র্যাক্ট, ফারমেন্টেড গ্রেইন এক্সট্র্যাক্ট ও UV ফিল্টার।",skin:"বেশিরভাগ ত্বকের ধরনে ব্যবহার উপযোগী; সংবেদনশীল ত্বকে আগে প্যাচ টেস্ট করুন।",how:"সকালের স্কিনকেয়ারের শেষ ধাপে মুখ ও গলায় পর্যাপ্ত পরিমাণে লাগান। বাইরে থাকলে প্রতি ২-৩ ঘণ্টা পর পুনরায় লাগান।"},
@@ -40,14 +40,22 @@ async function submitOrder(e){
  const d=new FormData(e.target),customer={name:String(d.get("name")).trim(),phone:String(d.get("phone")).trim(),district:String(d.get("district")).trim(),area:String(d.get("area")).trim(),address:String(d.get("address")).trim(),note:String(d.get("note")).trim()};
  if(!/^(\+?88)?01[3-9]\d{8}$/.test(customer.phone.replace(/[\s-]/g,""))){$("orderStatus").textContent="সঠিক বাংলাদেশি মোবাইল নম্বর লিখুন।";return}
  const fee=d.get("delivery")==="inside"?80:130,sub=cart.reduce((s,x)=>s+x.qty*x.price,0),order={orderId:"KD"+Date.now().toString().slice(-9),createdAt:new Date().toISOString(),customer,items:cart.map(i=>{const p=products.find(x=>x.id===i.id);return{id:p.id,name:p.bn,englishName:p.name,brand:p.brand,price:p.price,qty:i.qty}}),subtotal:sub,deliveryFee:fee,deliveryZone:d.get("delivery")==="inside"?"Inside Dhaka":"Outside Dhaka",total:sub+fee,currency:"BDT"};
- const wa=CONFIG.WHATSAPP_NUMBER.replace(/\D/g,""),waOk=wa.length>=11&&!wa.includes("XXXXXXXX"),sheetOk=CONFIG.SHEETS_WEB_APP_URL.startsWith("https://script.google.com/");
- if(!waOk&&!sheetOk){$("orderStatus").textContent=t("setup");$("orderStatus").className="order-status error";return}
+ const wa=CONFIG.WHATSAPP_NUMBER.replace(/\D/g,""),waOk=wa.length>=11&&!wa.includes("XXXXXXXX");
  $("placeOrderButton").disabled=true;$("placeOrderButton").textContent=t("sending");
  const tab=waOk?window.open("about:blank","_blank"):null;
- let sheetSent=false;if(sheetOk){try{await fetch(CONFIG.SHEETS_WEB_APP_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(order)});sheetSent=true}catch(err){console.error(err)}}
- if(waOk&&tab){tab.location.href="https://wa.me/"+wa+"?text="+encodeURIComponent(orderMessage(order));$("orderStatus").textContent=t("waReady");cart=[];saveCart();e.target.reset();updateTotal()}
- else if(sheetSent){$("orderStatus").textContent="অর্ডার রিকোয়েস্ট পাঠানো হয়েছে। Google Sheet-এ যাচাই করুন।";cart=[];saveCart();e.target.reset();updateTotal()}
- else {$("orderStatus").textContent="WhatsApp পপ-আপ ব্লক হয়েছে। আবার চেষ্টা করুন।";$("orderStatus").className="order-status error"}
+ try{
+   const response=await fetch(CONFIG.SUPABASE_URL+"/rest/v1/kordesh_orders",{
+     method:"POST",
+     headers:{"apikey":CONFIG.SUPABASE_KEY,"Authorization":"Bearer "+CONFIG.SUPABASE_KEY,"Content-Type":"application/json","Prefer":"return=minimal"},
+     body:JSON.stringify({order_number:order.orderId,customer_name:customer.name,customer_phone:customer.phone,customer_district:customer.district,customer_area:customer.area,customer_address:customer.address,customer_note:customer.note,items:order.items,subtotal:sub,delivery_fee:fee,total:sub+fee,delivery_zone:order.deliveryZone,status:"pending"})
+   });
+   if(!response.ok){const detail=await response.text();throw new Error("Order save failed ("+response.status+"): "+detail)}
+   if(waOk&&tab){tab.location.href="https://wa.me/"+wa+"?text="+encodeURIComponent(orderMessage(order));$("orderStatus").textContent=t("waReady")+" Order ID: "+order.orderId}
+   else {$("orderStatus").textContent="অর্ডার সফলভাবে সংরক্ষিত হয়েছে। Order ID: "+order.orderId}
+   $("orderStatus").className="order-status";cart=[];saveCart();e.target.reset();updateTotal();
+ }catch(err){
+   if(tab)tab.close();console.error(err);$("orderStatus").textContent="অর্ডার সংরক্ষণ হয়নি। আবার চেষ্টা করুন। ("+err.message+")";$("orderStatus").className="order-status error";
+ }
  $("placeOrderButton").disabled=false;$("placeOrderButton").textContent=t("place");
 }
 document.addEventListener("click",e=>{
@@ -61,4 +69,4 @@ document.addEventListener("click",e=>{
  const filter=e.target.closest("[data-filter]");if(filter){document.querySelectorAll(".filter").forEach(x=>x.classList.remove("active"));filter.classList.add("active");renderProducts(filter.dataset.filter)}
 });
 document.addEventListener("keydown",e=>{if(e.key==="Escape")closePanels();if((e.key==="Enter"||e.key===" ")&&e.target.classList.contains("product-card"))showProduct(e.target.dataset.product)});
-$("openCart").addEventListener("click",openCart);$("closeCart").addEventListener("click",closePanels);$("overlay").addEventListener("click",closePanels);$("closeCheckout").addEventListener("click",closePanels);$("closeProduct").addEventListener("click",closePanels);$("checkoutButton").addEventListener("click",openCheckout);$("deliverySelect").addEventListener("change",updateTotal);$("checkoutForm").addEventListener("submit",submitOrder);$("languageToggle").addEventListener("click",()=>setLanguage(language==="bn"?"en":"bn"));$("year").textContent=new Date().getFullYear();renderProducts();renderCart();
+$("openCart").addEventListener("click",openCart);$("closeCart").addEventListener("click",closePanels);$("overlay").addEventListener("click",closePanels);$("closeCheckout").addEventListener("click",closePanels);$("closeProduct").addEventListener("click",closePanels);$("checkoutButton").addEventListener("click",openCheckout);$("deliverySelect").addEventListener("change",updateTotal);$("checkoutForm").addEventListener("submit",submitOrder);$("languageToggle").addEventListener("click",()=>setLanguage(language==="bn"?"en":"bn"));$("year").textContent=new Date().getFullYear();renderProducts();renderCart();$("contactWhatsApp").href="https://wa.me/"+CONFIG.WHATSAPP_NUMBER;
