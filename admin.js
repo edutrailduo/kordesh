@@ -12,7 +12,7 @@ async function showSession(){
  if(!session){$("authPanel").hidden=false;$("dashboard").hidden=true;return}
  $("authPanel").hidden=true;
  const {data:admin,error}=await supabase.from("kordesh_admins").select("user_id").eq("user_id",session.user.id).maybeSingle();
- if(error||!admin){$("authPanel").hidden=false;$("dashboard").hidden=true;$("identityHelp").hidden=false;$("userId").textContent=session.user.id;msg("authMessage","আপনার account তৈরি হয়েছে, কিন্তু Admin অনুমোদন এখনো দেওয়া হয়নি।");return}
+ if(error||!admin){$("dashboard").hidden=true;await supabase.auth.signOut();$("authPanel").hidden=false;msg("authMessage","এই অ্যাকাউন্টটি KORDESH Admin হিসেবে অনুমোদিত নয়। প্রবেশাধিকার দেওয়া হয়নি।");return}
  $("dashboard").hidden=false;$("signedInAs").textContent=session.user.email||session.user.id;
  await loadOrders();
  await loadChatSessions();
@@ -20,7 +20,6 @@ async function showSession(){
 }
 $("recoveryForm").addEventListener("submit",async e=>{e.preventDefault();const password=$("newPassword").value;if(password.length<8){msg("recoveryMessage","অন্তত ৮ অক্ষরের পাসওয়ার্ড দিন।");return}const {error}=await supabase.auth.updateUser({password});if(error){msg("recoveryMessage",error.message);return}msg("recoveryMessage","পাসওয়ার্ড আপডেট হয়েছে। Admin Dashboard খুলছে...");$("recoveryPanel").hidden=true;await showSession()});
 $("authForm").addEventListener("submit",async e=>{e.preventDefault();const email=$("email").value.trim(),password=$("password").value;const {error}=await supabase.auth.signInWithPassword({email,password});if(error){msg("authMessage",error.message);return}msg("authMessage","লগইন হয়েছে।");await showSession()});
-$("signupBtn").addEventListener("click",async()=>{const email=$("email").value.trim(),password=$("password").value;if(!email||password.length<8){msg("authMessage","ইমেইল দিন এবং অন্তত ৮ অক্ষরের পাসওয়ার্ড লিখুন।");return}const {data,error}=await supabase.auth.signUp({email,password});if(error){msg("authMessage",error.message);return}if(data.session){msg("authMessage","Account তৈরি হয়েছে। এখন লগইন করুন।");await showSession()}else{msg("authMessage","এই ইমেইলে account আগে থেকেই থাকতে পারে, অথবা confirmation email পাঠানো হয়েছে। Inbox/Spam দেখুন; আগে account থাকলে পাসওয়ার্ড রিসেট করুন।")}});
 $("resetBtn").addEventListener("click",async()=>{const email=$("email").value.trim();if(!email){msg("authMessage","আগে আপনার account-এর ইমেইল লিখুন।");return}const {error}=await supabase.auth.resetPasswordForEmail(email,{redirectTo:location.origin+location.pathname});if(error){msg("authMessage",error.message);return}msg("authMessage","পাসওয়ার্ড reset link পাঠানো হয়েছে। Inbox ও Spam folder দেখুন।")});
 $("logoutBtn").addEventListener("click",async()=>{await supabase.auth.signOut();await showSession()});
 $("refreshBtn").addEventListener("click",loadOrders);$("statusFilter").addEventListener("change",renderOrders);$("orderSearch").addEventListener("input",renderOrders);$("exportBtn").addEventListener("click",exportOrders);
