@@ -249,8 +249,8 @@ em{font-family:'Hind Siliguri','DM Sans',sans-serif;font-style:normal}
 #kordeshAIPanel.customer-care-mode .kordesh-ai-note{display:none!important}
 #kordeshAIPanel.customer-care-mode .kordesh-ai-messages{height:260px}
 @media(max-width:600px){
- .kordesh-customer-launcher{left:12px!important;bottom:14px!important;padding:9px!important;width:48px;height:48px;justify-content:center}
- .kordesh-customer-launcher span{display:none}
+ .kordesh-customer-launcher{left:12px!important;bottom:14px!important;padding:8px 12px 8px 9px!important;width:auto!important;max-width:calc(100vw - 92px);height:48px;justify-content:center;gap:7px}
+ .kordesh-customer-launcher span{display:inline!important;font-size:10px;white-space:nowrap}
  #kordeshAIPanel.customer-care-mode{left:12px!important;right:auto!important;bottom:72px!important;width:min(350px,calc(100vw - 24px))!important}
 }
 @media print{.kordesh-customer-launcher{display:none!important}}
