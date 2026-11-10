@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#111">
+<title>KORDESH | Admin</title><link rel="stylesheet" href="admin.css">
+</head>
+<body>
+<header class="top"><a href="./">KORDESH<span>.</span></a><small>STORE MANAGEMENT</small></header>
+<main class="wrap">
+<section id="authPanel" class="panel auth">
+<p class="eyebrow">PRIVATE ADMIN ACCESS</p><h1>অর্ডার ম্যানেজমেন্ট</h1><p class="muted">KORDESH স্টোরের অর্ডার দেখতে আপনার Admin account দিয়ে প্রবেশ করুন।</p>
+<form id="authForm"><label>ইমেইল<input id="email" type="email" autocomplete="email" required></label><label>পাসওয়ার্ড<input id="password" type="password" minlength="8" autocomplete="current-password" required></label><div class="actions"><button type="submit" id="loginBtn">লগইন</button><button type="button" class="secondary" id="signupBtn">Admin account তৈরি</button></div></form>
+<p id="authMessage" class="message" role="status"></p>
+<div id="identityHelp" class="identity" hidden><strong>আপনার User ID</strong><code id="userId"></code><p>এই ID আমাকে পাঠান। আমি এটিকে KORDESH Admin হিসেবে অনুমোদন করব। অনুমোদনের আগে অর্ডার দেখা যাবে না।</p></div>
+</section>
+<section id="dashboard" hidden>
+<div class="dash-head"><div><p class="eyebrow">KORDESH / ORDERS</p><h1>অর্ডারসমূহ</h1><p id="signedInAs" class="muted"></p></div><button id="logoutBtn" class="secondary">লগআউট</button></div>
+<div class="toolbar"><div class="stats"><div><small>মোট অর্ডার</small><strong id="totalCount">0</strong></div><div><small>পেন্ডিং</small><strong id="pendingCount">0</strong></div></div><div class="tools"><select id="statusFilter"><option value="all">সব স্ট্যাটাস</option><option value="pending">Pending</option><option value="confirmed">Confirmed</option><option value="processing">Processing</option><option value="shipped">Shipped</option><option value="delivered">Delivered</option><option value="cancelled">Cancelled</option></select><button id="refreshBtn" class="secondary">রিফ্রেশ</button></div></div>
+<div id="orders" class="orders"></div><p id="dashMessage" class="message"></p>
+</section>
+</main>
+<script type="module" src="admin.js"></script>
+</body></html>
