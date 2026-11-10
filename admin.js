@@ -118,6 +118,16 @@ async function loadChatSessions(){
  }
  $("chatInbox").innerHTML=cachedChats.length?cachedChats.map(c=>`<button type="button" class="chat-inbox-item ${selectedChatId===c.id?"selected":""}" data-chat-id="${esc(c.id)}"><strong>${esc(c.customer_name||"Guest")}</strong><small>${esc(c.status)}${c.rating_stars?" · ★"+c.rating_stars+"/5 · "+esc(c.rating_feedback||""):""} · ${new Date(c.last_message_at).toLocaleString("en-BD")}</small><span>${esc(c.last_message||"নতুন চ্যাট")}</span></button>`).join(""):"<p class='muted'>এখনো কোনো নতুন কাস্টমার চ্যাট নেই।</p>";
  $("chatInbox").querySelectorAll("[data-chat-id]").forEach(btn=>btn.addEventListener("click",()=>selectAdminChat(btn.dataset.chatId)));
+ if(!selectedChatId&&cachedChats.length){
+  const first=cachedChats.find(x=>x.status!=="closed")||cachedChats[0];
+  selectedChatId=first.id;chatLastId=0;
+  $("chatConversationTitle").textContent=(first.customer_name||"Guest")+" · "+first.status;
+  const closed=first.status==="closed";
+  $("chatReplyInput").disabled=closed;
+  $("chatReplyForm").querySelector("button").disabled=closed;
+  $("chatCloseBtn").disabled=closed;
+  await loadAdminChatMessages();
+ }
 }
 async function selectAdminChat(id){
  selectedChatId=id;chatLastId=0;
