@@ -61,6 +61,26 @@ async function submitOrder(e){
  }
  $("placeOrderButton").disabled=false;$("placeOrderButton").textContent=pageWords[language].placeOrder;
 }
+document.addEventListener("submit",e=>{
+ if(e.target.id!=="advisorForm")return;
+ e.preventDefault();
+ const skin=$("advisorSkin").value,concern=$("advisorConcern").value,sensitive=$("advisorSensitive").value;
+ if(!skin||!concern)return;
+ let ids=[];
+ if(concern==="hydration")ids=["cosrx-snail-96","anua-heartleaf-77"];
+ if(concern==="acne")ids=["somebymi-toner","anua-heartleaf-77"];
+ if(concern==="soothing")ids=["skin1004-ampoule","anua-heartleaf-77"];
+ if(concern==="sun")ids=["boj-relief-sun","roundlab-sun"];
+ if(concern==="texture")ids=["somebymi-toner","cosrx-snail-96"];
+ if(sensitive==="yes"||skin==="sensitive")ids=ids.filter(id=>id!=="somebymi-toner");
+ if(skin==="dry"&&!ids.includes("cosrx-snail-96"))ids.unshift("cosrx-snail-96");
+ if(skin==="oily"&&!ids.includes("anua-heartleaf-77"))ids.push("anua-heartleaf-77");
+ ids=[...new Set(ids)].slice(0,3);
+ const selected=ids.map(id=>products.find(p=>p.id===id)).filter(Boolean);
+ const labels={dry:"শুষ্ক",oily:"তৈলাক্ত",combination:"মিশ্র",normal:"স্বাভাবিক",sensitive:"সংবেদনশীল"};
+ const reason={hydration:"আর্দ্রতা বজায় রাখার জন্য হাইড্রেটিং পণ্য",acne:"তেল নিয়ন্ত্রণ ও এক্সফোলিয়েটিং যত্নের জন্য",soothing:"ত্বককে আরামদায়ক রাখতে সহায়ক পণ্যের জন্য",sun:"দৈনন্দিন UV সুরক্ষার জন্য",texture:"ত্বকের টেক্সচার ও মৃত কোষের যত্নের জন্য"};
+ $("advisorResult").innerHTML='<h2>আপনার জন্য সাজেশন</h2><p>আপনার '+labels[skin]+' ত্বক এবং নির্বাচিত প্রয়োজন অনুযায়ী '+reason[concern]+' বেছে নেওয়া হয়েছে।</p><div class="advisor-products">'+selected.map(p=>'<article><img src="'+p.img+'" alt=""><div><small>'+p.brand+'</small><h3>'+p.bn+'</h3><strong>'+money(p.price)+'</strong><p>'+p.desc+'</p><a href="?page=product&id='+p.id+'">পণ্য দেখুন ↗</a></div></article>').join("")+'</div><h3>সহজ রুটিন</h3><ol><li>সকালে মৃদু ক্লেনজার দিয়ে মুখ পরিষ্কার করুন।</li><li>প্রয়োজন অনুযায়ী একটি হাইড্রেটিং বা ট্রিটমেন্ট পণ্য ব্যবহার করুন।</li><li>ময়েশ্চারাইজার লাগিয়ে শেষে SPF 50+ সানস্ক্রিন ব্যবহার করুন।</li><li>রাতে ক্লেনজিংয়ের পর হাইড্রেটিং পণ্য ও ময়েশ্চারাইজার ব্যবহার করুন।</li></ol><p class="advisor-disclaimer">একসঙ্গে একাধিক নতুন পণ্য শুরু করবেন না। এক্সফোলিয়েটিং টোনার সংবেদনশীল ত্বকে এড়িয়ে চলুন বা বিশেষ সতর্কতায় ব্যবহার করুন।</p>';
+});
 document.addEventListener("click",e=>{
  const add=e.target.closest("[data-add]");if(add){addToCart(add.dataset.add);return}
  const detail=e.target.closest("[data-detail]");if(detail){showProduct(detail.dataset.detail);return}
@@ -97,6 +117,8 @@ function initStorefront(){
   main.innerHTML='<section class="product-page"><a class="back-link" href="?page=category&category='+p.category+'">← '+(p.category==="skincare"?"স্কিনকেয়ার":"সানকেয়ার")+'</a><div class="product-detail-grid"><div class="detail-image-wrap"><img class="detail-image" src="'+p.img+'" alt="'+p.name+'" onerror="this.onerror=null;this.src=\'https://placehold.co/800x800/f0eee8/222?text=KORDESH+Product\'"></div><div class="detail-copy"><p class="eyebrow">'+p.brand+' · '+p.size+'</p><h1>'+p.bn+'</h1><strong class="detail-price">'+money(p.price)+'</strong><p>'+p.desc+'</p><h3>মূল উপাদান</h3><p>'+p.ingredients+'</p><h3>কোন ত্বকের জন্য</h3><p>'+p.skin+'</p><h3>ব্যবহারবিধি</h3><p>'+p.how+'</p><div class="detail-actions"><button class="button button-light" data-add-detail="'+p.id+'">কার্টে যোগ করুন</button><button class="button button-dark" data-buy="'+p.id+'">এখনই অর্ডার করুন</button></div></div></div></section>';
  }else if(page==="success"){
   main.innerHTML='<section class="success-page"><div class="success-mark">✓</div><p class="eyebrow">KORDESH / ORDER CONFIRMED</p><h1>আপনার অর্ডার নিশ্চিত হয়েছে</h1><p>আপনার অর্ডারটি সফলভাবে গ্রহণ করা হয়েছে।</p><div class="success-number"><span>অর্ডার নম্বর</span><strong>'+String(order||"").replace(/[<>&"]/g,"")+'</strong></div><a class="button button-dark" href="?">হোমে ফিরে যান</a></section>';
+ }else if(page==="advisor"){
+  main.innerHTML='<section class="advisor-page"><a class="back-link" href="?">← হোম</a><p class="eyebrow">KORDESH / PERSONAL BEAUTY GUIDE</p><h1>AI Skin Advisor</h1><p class="category-intro">আপনার ত্বকের ধরন ও প্রয়োজন জানালে ক্যাটালগ থেকে উপযুক্ত পণ্য এবং সহজ রুটিন সাজিয়ে দেব।</p><form id="advisorForm" class="advisor-form"><label>আপনার ত্বকের ধরন<select id="advisorSkin" required><option value="">নির্বাচন করুন</option><option value="dry">শুষ্ক</option><option value="oily">তৈলাক্ত</option><option value="combination">মিশ্র</option><option value="normal">স্বাভাবিক</option><option value="sensitive">সংবেদনশীল</option></select></label><label>আপনার প্রধান লক্ষ্য<select id="advisorConcern" required><option value="">নির্বাচন করুন</option><option value="hydration">শুষ্কতা ও আর্দ্রতা</option><option value="acne">ব্রণ ও অতিরিক্ত তেল</option><option value="soothing">লালচে ভাব ও সংবেদনশীলতা</option><option value="sun">সূর্যের আলো থেকে সুরক্ষা</option><option value="texture">অসমান টেক্সচার</option></select></label><label>ত্বক কি সহজে জ্বালা করে?<select id="advisorSensitive"><option value="no">না / নিশ্চিত নই</option><option value="yes">হ্যাঁ</option></select></label><button class="button button-dark full" type="submit">আমার স্কিনকেয়ার সাজেশন দেখুন</button></form><div id="advisorResult" class="advisor-result" aria-live="polite"></div><p class="advisor-disclaimer">এটি সাধারণ কসমেটিকস-ভিত্তিক গাইড, চিকিৎসা পরামর্শ নয়। নতুন পণ্য ব্যবহারের আগে প্যাচ টেস্ট করুন। ত্বকের সমস্যা স্থায়ী বা গুরুতর হলে ডার্মাটোলজিস্টের পরামর্শ নিন।</p></section>';
  }else if(page==="about"){
   main.innerHTML='<section class="catalog-page"><a class="back-link" href="?">← হোম</a><p class="eyebrow">ABOUT KORDESH</p><h1>আসল পণ্য। সচেতন পছন্দ।</h1><p class="category-intro">কোরিয়ান বিউটি পণ্য বাংলাদেশে পৌঁছে দেওয়াই আমাদের লক্ষ্য।</p></section>';
  }else{location.href="?";return}
