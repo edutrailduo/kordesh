@@ -87,3 +87,24 @@ em{font-family:'Hind Siliguri','DM Sans',sans-serif;font-style:normal}
 
 /* KORDESH Skin Advisor */
 .advisor-page{min-height:72vh;padding:65px clamp(20px,7vw,110px) 90px;background:#faf9f6}.advisor-page h1{font-size:clamp(36px,5vw,58px);margin:0 0 10px}.advisor-form{max-width:650px;display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:35px 0;padding:28px;background:#f0eee9}.advisor-form label{display:grid;gap:8px;font-size:13px}.advisor-form select{padding:13px;border:1px solid #dedad2;background:#fff}.advisor-form button{grid-column:1/-1}.advisor-result{margin-top:35px}.advisor-result:empty{display:none}.advisor-result h2{font-size:28px}.advisor-products{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin:20px 0 35px}.advisor-products article{display:grid;grid-template-columns:120px 1fr;gap:16px;padding:15px;background:#fff;border:1px solid var(--line)}.advisor-products img{width:120px;height:140px;object-fit:contain;background:#f0eee9}.advisor-products h3{font-size:16px;margin:5px 0}.advisor-products p{font-size:12px;color:#777}.advisor-products a{font-size:12px;text-decoration:underline}.advisor-result ol{line-height:2.1}.advisor-disclaimer{font-size:12px;color:#777;line-height:1.9;margin-top:24px}@media(max-width:700px){.advisor-form{grid-template-columns:1fr;padding:20px}.advisor-form button{grid-column:auto}.advisor-products{grid-template-columns:1fr}.advisor-products article{grid-template-columns:95px 1fr}.advisor-products img{width:95px;height:120px}}
+
+/* KORDESH catalogue search, filters and detail refinements */
+.catalog-tools{display:grid;gap:14px;margin:26px 0 24px}
+.search-control{display:grid;gap:7px;max-width:100%;font-size:12px;color:#625e57}
+.search-control input,.category-control select{width:100%;min-height:48px;padding:12px 15px;border:1px solid var(--line);background:#fff;color:var(--ink);outline:none}
+.search-control input:focus,.category-control select:focus,.sort-control select:focus{border-color:#8d806c;box-shadow:0 0 0 3px rgba(169,154,131,.13)}
+.catalog-tools .catalog-controls{display:flex;align-items:center;justify-content:flex-end;gap:14px;flex-wrap:wrap;margin:0}
+.category-control{display:flex;align-items:center;gap:10px;font-size:12px;color:#625e57}
+.category-control select{min-width:170px}
+.product-count{font-size:12px;color:var(--muted);margin:0}
+.product-english-name{font-size:14px;color:var(--muted);margin:4px 0 12px}
+.detail-tag{display:inline-block;margin:12px 0;padding:5px 10px;background:#f0eee9;color:#625e57}
+.product-page .detail-copy h3{margin-top:24px}
+.product-page .detail-copy>p{line-height:1.9}
+@media(max-width:700px){
+ .catalog-tools .catalog-controls{display:grid;grid-template-columns:1fr 1fr;width:100%;gap:8px}
+ .category-control{display:grid;gap:6px}
+ .category-control select{min-width:0}
+ .sort-control{display:grid;gap:6px;justify-content:stretch}
+ .sort-control select{width:100%}
+}
