@@ -17,11 +17,12 @@
 <body>
   <div class="announcement" data-i18n="announcement">কোরিয়ান বিউটি পণ্য এখন আপনার হাতের নাগালে</div>
   <header class="site-header">
+    <div class="menu-wrap header-menu-left"><button class="menu-button" id="menuButton" type="button" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button><nav class="site-menu" id="siteMenu"><a href="?">হোম</a><a href="?page=category&category=skincare">স্কিনকেয়ার</a><a href="?page=category&category=suncare">সানকেয়ার</a><a href="?page=advisor">AI Skin Advisor</a><a href="?page=track">Track Your Order Status</a><a href="?page=about">আমাদের সম্পর্কে</a></nav></div>
     <a class="brand" href="?" aria-label="KORDESH home">KORDESH<span>.</span><small>KOREA | BANGLADESH | GLOBAL</small></a>
     <nav class="desktop-nav" aria-label="প্রধান মেনু">
       <a href="#products" data-i18n="shop">শপ</a><a href="#about" data-i18n="about">আমাদের সম্পর্কে</a><a href="#authenticity" data-i18n="promise">আমাদের প্রতিশ্রুতি</a><a href="#contact" data-i18n="contact">যোগাযোগ</a>
     </nav>
-    <div class="menu-wrap header-menu-left"><button class="menu-button" id="menuButton" type="button" aria-label="মেনু" aria-expanded="false"><span></span><span></span><span></span></button><nav class="site-menu" id="siteMenu"><a href="?">হোম</a><a href="?page=category&category=skincare">স্কিনকেয়ার</a><a href="?page=category&category=suncare">সানকেয়ার</a><a href="?page=advisor">AI Skin Advisor</a><a href="?page=track">Track Your Order Status</a><a href="?page=about">আমাদের সম্পর্কে</a></nav></div><div class="header-actions">
+<div class="header-actions">
       <button class="language-toggle" id="languageToggle" type="button">EN</button>
       <button class="cart-button" id="openCart" type="button"><span data-i18n="cart">কার্ট</span><b id="cartCount">0</b></button>
     </div>
@@ -70,9 +71,12 @@
     </button>
     <section class="kordesh-ai-panel" id="kordeshAIPanel" hidden>
       <header><div><span class="kordesh-ai-orb">K</span><div><strong>KORDESH AI</strong><small>Personal Beauty Assistant</small></div></div><button type="button" id="kordeshAIClose" aria-label="Close">×</button></header>
-      <div class="kordesh-ai-welcome"><span class="kordesh-ai-eyebrow">YOUR BEAUTY COMPANION</span><h3>আপনার স্কিনকেয়ার যাত্রা শুরু হোক।</h3><p>ত্বকের ধরন ও প্রয়োজন অনুযায়ী KORDESH-এর পণ্য এবং রুটিন খুঁজে পেতে শুরু করুন।</p></div>
-      <a class="kordesh-ai-start" href="?page=advisor">Start Skin Analysis <span>↗</span></a>
-      <small class="kordesh-ai-note">Personalized product guidance. AI chat is coming soon.</small>
+      <div class="kordesh-ai-welcome"><span class="kordesh-ai-eyebrow">YOUR BEAUTY COMPANION</span><h3>হ্যালো! কীভাবে সাহায্য করতে পারি?</h3><p>পণ্য খুঁজুন, স্কিনকেয়ার রুটিন সম্পর্কে জানুন অথবা আপনার ত্বকের প্রয়োজন বলুন।</p></div>
+      <div class="kordesh-ai-messages" id="kordeshAIMessages" aria-live="polite"><div class="kordesh-ai-message ai">আমি KORDESH AI। আপনার প্রয়োজন বলুন, আমি KORDESH-এর ক্যাটালগ থেকে উপযুক্ত পণ্য খুঁজে দিতে সাহায্য করব।</div></div>
+      <div class="kordesh-ai-quick"><button type="button" data-ai-prompt="তৈলাক্ত ত্বকের জন্য পণ্য দেখাও">তৈলাক্ত ত্বক</button><button type="button" data-ai-prompt="শুষ্ক ত্বকের জন্য পণ্য দেখাও">শুষ্ক ত্বক</button><button type="button" data-ai-prompt="সানস্ক্রিন দেখাও">সানস্ক্রিন</button></div>
+      <form class="kordesh-ai-form" id="kordeshAIForm"><input id="kordeshAIInput" type="text" maxlength="300" placeholder="আপনার প্রশ্ন লিখুন..." autocomplete="off" aria-label="আপনার প্রশ্ন"><button type="submit" aria-label="Send message">↑</button></form>
+      <a class="kordesh-ai-start" href="?page=advisor">সম্পূর্ণ Skin Analysis <span>↗</span></a>
+      <small class="kordesh-ai-note">পণ্যের পরামর্শ সাধারণ তথ্যভিত্তিক, চিকিৎসা পরামর্শ নয়।</small>
     </section>
   </aside>
   <div class="cart-toast" id="cartToast" role="status">কার্টে যোগ হয়েছে</div>
