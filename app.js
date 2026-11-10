@@ -1,104 +1,60 @@
-const CONFIG = {
-  // Add your deployed Google Apps Script Web App URL here after setup.
-  SHEETS_WEB_APP_URL: "PASTE_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE",
-  // Replace with your Bangladesh WhatsApp number, e.g. 88017XXXXXXXX.
-  WHATSAPP_NUMBER: "8801XXXXXXXXX",
-  CURRENCY: "৳"
-};
-
-const products = [
-  {id:"anua-heartleaf-77",brand:"ANUA",name:"Heartleaf 77% Soothing Toner",bn:"হার্টলিফ ৭৭% সুদিং টোনার",category:"skincare",price:1450,tag:"BESTSELLER",pack:"ANUA\nHEARTLEAF 77",packClass:"",desc:"হার্টলিফ এক্সট্র্যাক্টযুক্ত হালকা টোনার। ত্বককে সতেজ ও আরামদায়ক অনুভূতি দিতে দৈনন্দিন রুটিনে ব্যবহার করা যায়।"},
-  {id:"boj-relief-sun",brand:"BEAUTY OF JOSEON",name:"Relief Sun: Rice + Probiotics SPF50+",bn:"রিলিফ সান: রাইস + প্রোবায়োটিকস SPF50+",category:"suncare",price:1550,tag:"SUN CARE",pack:"BEAUTY OF JOSEON\nRELIEF SUN",packClass:"sun",desc:"রাইস এক্সট্র্যাক্ট ও প্রোবায়োটিকসযুক্ত SPF50+ PA++++ সানস্ক্রিন। দিনের বেলায় সূর্যের আলো থেকে ত্বক সুরক্ষার রুটিনে ব্যবহার করুন।"},
-  {id:"cosrx-snail-96",brand:"COSRX",name:"Advanced Snail 96 Mucin Essence",bn:"অ্যাডভান্সড স্নেইল ৯৬ মিউসিন এসেন্স",category:"skincare",price:1650,tag:"K-BEAUTY PICK",pack:"COSRX\nSNAIL 96",packClass:"",desc:"৯৬% স্নেইল সিক্রিশন ফিলট্রেটযুক্ত এসেন্স। ত্বকে আর্দ্রতা যোগ ও মসৃণ অনুভূতি দিতে স্কিনকেয়ার রুটিনে ব্যবহার করা হয়।"},
-  {id:"skin1004-ampoule",brand:"SKIN1004",name:"Madagascar Centella Ampoule",bn:"মাদাগাস্কার সেন্টেলা অ্যাম্পুল",category:"skincare",price:1750,tag:"DAILY CARE",pack:"SKIN1004\nCENTELLA",packClass:"",desc:"মাদাগাস্কার সেন্টেলা এক্সট্র্যাক্টযুক্ত হালকা অ্যাম্পুল। সংবেদনশীল ত্বকের রুটিনে প্রশান্তিদায়ক যত্নের জন্য পরিচিত।"},
-  {id:"roundlab-sun",brand:"ROUND LAB",name:"Birch Juice Moisturizing Sun Cream",bn:"বার্চ জুস ময়েশ্চারাইজিং সান ক্রিম",category:"suncare",price:1690,tag:"SUN CARE",pack:"ROUND LAB\nBIRCH JUICE",packClass:"sun",desc:"বার্চ জুসযুক্ত ময়েশ্চারাইজিং সান ক্রিম। SPF50+ PA++++ সূর্যরশ্মি থেকে সুরক্ষার পাশাপাশি ত্বকে আর্দ্রতার অনুভূতি দেয়।"},
-  {id:"somebymi-toner",brand:"SOME BY MI",name:"AHA BHA PHA 30 Days Miracle Toner",bn:"AHA BHA PHA ৩০ ডেজ মিরাকল টোনার",category:"skincare",price:1390,tag:"EXFOLIATING CARE",pack:"SOME BY MI\nMIRACLE TONER",packClass:"round",desc:"AHA, BHA ও PHA সমন্বিত এক্সফোলিয়েটিং টোনার। নতুন ব্যবহারকারীরা প্যাচ টেস্ট করে ধীরে শুরু করুন এবং দিনের বেলায় সানস্ক্রিন ব্যবহার করুন।"}
+const CONFIG={SHEETS_WEB_APP_URL:"PASTE_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE",WHATSAPP_NUMBER:"8801XXXXXXXXX"};
+const products=[
+{id:"anua-heartleaf-77",brand:"ANUA",name:"Heartleaf 77% Soothing Toner",bn:"হার্টলিফ ৭৭% সুদিং টোনার",category:"skincare",price:1450,tag:"BESTSELLER",size:"250ml",img:"https://my-kare.com/cdn/shop/files/ANUA-Heartleaf-77_-Soothing-Toner_1200x.jpg?v=1778597959",desc:"৭৭% হার্টলিফ এক্সট্র্যাক্টযুক্ত হালকা টোনার। ত্বককে আরামদায়ক অনুভূতি দিতে এবং আর্দ্রতা বজায় রাখতে সাহায্য করে।",ingredients:"হার্টলিফ এক্সট্র্যাক্ট, গ্লিসারিন, প্যানথেনল ও হায়ালুরোনিক অ্যাসিড।",skin:"স্বাভাবিক, তৈলাক্ত ও মিশ্র ত্বকের দৈনন্দিন যত্নে ব্যবহার করা যায়।",how:"মুখ পরিষ্কারের পর হাতে বা কটন প্যাডে নিয়ে মুখে আলতোভাবে লাগান। সকাল ও রাতে ব্যবহার করা যায়।"},
+{id:"boj-relief-sun",brand:"BEAUTY OF JOSEON",name:"Relief Sun: Rice + Probiotics SPF50+",bn:"রিলিফ সান: রাইস + প্রোবায়োটিকস SPF50+",category:"suncare",price:1550,tag:"SUN CARE",size:"50ml",img:"https://lloydspharmacy.com/cdn/shop/files/0159211_1024x.jpg?v=1764323619",desc:"রাইস এক্সট্র্যাক্ট ও ফারমেন্টেড উপাদানযুক্ত হালকা সানস্ক্রিন। SPF50+ PA++++ সুরক্ষা দিয়ে ত্বকে আরামদায়ক অনুভূতি দেয়।",ingredients:"রাইস এক্সট্র্যাক্ট, ফারমেন্টেড গ্রেইন এক্সট্র্যাক্ট ও UV ফিল্টার।",skin:"বেশিরভাগ ত্বকের ধরনে ব্যবহার উপযোগী; সংবেদনশীল ত্বকে আগে প্যাচ টেস্ট করুন।",how:"সকালের স্কিনকেয়ারের শেষ ধাপে মুখ ও গলায় পর্যাপ্ত পরিমাণে লাগান। বাইরে থাকলে প্রতি ২-৩ ঘণ্টা পর পুনরায় লাগান।"},
+{id:"cosrx-snail-96",brand:"COSRX",name:"Advanced Snail 96 Mucin Essence",bn:"অ্যাডভান্সড স্নেইল ৯৬ মিউসিন এসেন্স",category:"skincare",price:1650,tag:"K-BEAUTY PICK",size:"100ml",img:"https://cdn.shopify.com/s/files/1/0513/3775/6828/files/2022-08-26_163608_480x480.png?v=1661500394",desc:"৯৬% স্নেইল সিক্রিশন ফিলট্রেটযুক্ত এসেন্স, যা ত্বকে আর্দ্রতা যোগ করে এবং ত্বককে নরম ও মসৃণ অনুভব করতে সাহায্য করে।",ingredients:"স্নেইল সিক্রিশন ফিলট্রেট, বেটেইন, সোডিয়াম হায়ালুরোনেট, অ্যালানটয়েন ও প্যানথেনল।",skin:"শুষ্ক, স্বাভাবিক ও মিশ্র ত্বকের আর্দ্রতার রুটিনে ব্যবহার করা যায়।",how:"ক্লেনজিং ও টোনারের পর ১-২ পাম্প মুখে লাগিয়ে আলতোভাবে প্যাট করুন। এরপর ময়েশ্চারাইজার ব্যবহার করুন।"},
+{id:"skin1004-ampoule",brand:"SKIN1004",name:"Madagascar Centella Ampoule",bn:"মাদাগাস্কার সেন্টেলা অ্যাম্পুল",category:"skincare",price:1750,tag:"DAILY CARE",size:"100ml",img:"https://www.adorebeauty.com.au/pim_media/000/545/903/SKIN1004_Madagascar_Centella_Ampoule_100ml_001.png?fmt=webp&h=772&w=772",desc:"মাদাগাস্কার থেকে সংগৃহীত সেন্টেলা এশিয়াটিকা এক্সট্র্যাক্টযুক্ত হালকা অ্যাম্পুল। ত্বককে প্রশান্ত ও আর্দ্র রাখতে সহায়ক দৈনন্দিন যত্ন।",ingredients:"সেন্টেলা এশিয়াটিকা এক্সট্র্যাক্ট, গ্লিসারিন ও বুটিলিন গ্লাইকল।",skin:"সব ধরনের ত্বকে ব্যবহার করা যায়; বিশেষ করে শুষ্ক ও সংবেদনশীল ত্বকের যত্নে।",how:"মুখ পরিষ্কারের পর কয়েক ফোঁটা মুখে ও গলায় লাগিয়ে আলতোভাবে প্যাট করুন।"},
+{id:"roundlab-sun",brand:"ROUND LAB",name:"Birch Juice Moisturizing Sun Cream",bn:"বার্চ জুস ময়েশ্চারাইজিং সান ক্রিম",category:"suncare",price:1690,tag:"SUN CARE",size:"50ml",img:"https://cdn.barecare.bg/images/products/round-lab-birch-juice-moisturizing-sun-cream-50ml-1689161780.jpg",desc:"বার্চ জুস ও হায়ালুরোনিক অ্যাসিডযুক্ত ময়েশ্চারাইজিং সান ক্রিম। SPF50+ PA++++ সুরক্ষার পাশাপাশি ত্বকে আর্দ্রতার অনুভূতি দেয়।",ingredients:"বার্চ জুস, নিয়াসিনামাইড, হায়ালুরোনিক অ্যাসিড ও UV ফিল্টার।",skin:"স্বাভাবিক, শুষ্ক ও মিশ্র ত্বকের জন্য উপযোগী।",how:"সকালের স্কিনকেয়ারের শেষ ধাপে মুখ ও গলায় সমানভাবে লাগান। বাইরে থাকলে নিয়মিত পুনরায় ব্যবহার করুন।"},
+{id:"somebymi-toner",brand:"SOME BY MI",name:"AHA BHA PHA 30 Days Miracle Toner",bn:"AHA BHA PHA ৩০ ডেজ মিরাকল টোনার",category:"skincare",price:1390,tag:"EXFOLIATING CARE",size:"150ml",img:"https://en.somebymi.com/web/product/big/202609/42ee1299bca79a45de7df144c7a69269.jpg",desc:"AHA, BHA ও PHA সমন্বিত এক্সফোলিয়েটিং টোনার। ত্বকের উপরিভাগের মৃত কোষ ও অতিরিক্ত তেল পরিষ্কারের রুটিনে ব্যবহার করা হয়।",ingredients:"AHA, BHA, PHA, টি ট্রি লিফ ওয়াটার ও নিয়াসিনামাইড।",skin:"নতুন ব্যবহারকারীরা সতর্কভাবে শুরু করুন। সংবেদনশীল ত্বকে প্যাচ টেস্ট জরুরি।",how:"মুখ পরিষ্কারের পর অল্প পরিমাণ কটন প্যাডে নিয়ে লাগান। প্রথমে সপ্তাহে ২-৩ রাত ব্যবহার করুন; দিনের বেলায় সানস্ক্রিন ব্যবহার করুন।"}
 ];
-
-const copy = {
-  bn:{announcement:"কোরিয়ান বিউটি পণ্য এখন আপনার হাতের নাগালে",shop:"শপ",about:"আমাদের সম্পর্কে",promise:"আমাদের প্রতিশ্রুতি",contact:"যোগাযোগ",cart:"কার্ট",heroEyebrow:"K-BEAUTY, SELECTED WITH CARE",heroTitle:"কোরিয়ান বিউটির\nনতুন ঠিকানা।",heroText:"বিশ্বস্ত কোরিয়ান স্কিনকেয়ার ও কসমেটিকস পণ্য বেছে নিন সহজে। আপনার পছন্দের পণ্য পৌঁছে যাবে বাংলাদেশের ঠিকানায়।",explore:"পণ্য দেখুন",heroBottom:"আসল পণ্যের প্রতি অঙ্গীকার · সহজ অর্ডার · বাংলাদেশে ডেলিভারি",trust1:"পণ্য যাচাইয়ের অঙ্গীকার",trust2:"বাংলাদেশজুড়ে অর্ডার",trust3:"সহজ কার্ট ও চেকআউট",curated:"THE KORDESH EDIT",productsTitle:"পছন্দের কোরিয়ান বিউটি",productsSub:"প্রতিদিনের স্কিনকেয়ার রুটিনের জন্য বাছাই করা কিছু জনপ্রিয় পণ্য।",all:"সব পণ্য",skincare:"স্কিনকেয়ার",suncare:"সানকেয়ার",sample:"নমুনা পণ্য ও আনুমানিক মূল্য",ourApproach:"OUR APPROACH",editorialTitle:"সঠিক পণ্য।\nসচেতন পছন্দ।",editorialText:"KORDESH-এর লক্ষ্য হলো কোরিয়ান বিউটি পণ্য বাংলাদেশি ক্রেতাদের কাছে সহজে পৌঁছে দেওয়া। পণ্যের তথ্য, মূল্য ও অর্ডার প্রক্রিয়া থাকবে পরিষ্কার ও সহজ।",learnMore:"আরও জানুন ↗",contactTitle:"আপনার পছন্দের পণ্য\nখুঁজে পেতে সাহায্য চাই?",contactText:"পণ্য, অর্ডার বা ডেলিভারি বিষয়ে আমাদের সঙ্গে যোগাযোগ করুন।",rights:"সর্বস্বত্ব সংরক্ষিত।",yourCart:"আপনার কার্ট",subtotal:"সাবটোটাল",shippingNote:"ডেলিভারি চার্জ চেকআউটে যোগ হবে।",checkout:"অর্ডার সম্পন্ন করুন",checkoutTitle:"অর্ডার তথ্য",fullName:"আপনার নাম",phone:"মোবাইল নম্বর",district:"জেলা",area:"এলাকা / থানা",address:"সম্পূর্ণ ঠিকানা",note:"অর্ডার নোট (ঐচ্ছিক)",delivery:"ডেলিভারি এলাকা",total:"সর্বমোট",paymentHint:"পেমেন্ট ও ডেলিভারি নিশ্চিত করতে অর্ডারটি WhatsApp-এও পাঠানো হবে।",placeOrder:"অর্ডার নিশ্চিত করুন",add:"কার্টে যোগ করুন",added:"কার্টে যোগ হয়েছে",empty:"আপনার কার্ট এখন খালি।",remove:"বাদ দিন",inside:"ঢাকার ভেতরে",outside:"ঢাকার বাইরে",needItem:"অর্ডার করতে আগে কার্টে পণ্য যোগ করুন।",orderSent:"অর্ডারের তথ্য প্রস্তুত হয়েছে। WhatsApp খুলে অর্ডারটি পাঠিয়ে দিন।",sheetPending:"Google Sheets সংযোগ এখনো সেটআপ করা হয়নি। অর্ডারটি WhatsApp-এ পাঠানো যাবে।",sheetSent:"অর্ডারের তথ্য Google Sheets-এ পাঠানো হয়েছে।",whatsappMissing:"WhatsApp নম্বর সেটআপ করা হয়নি। KORDESH-এর নম্বর যুক্ত করতে হবে।",error:"অর্ডার পাঠানো যায়নি। আবার চেষ্টা করুন অথবা WhatsApp-এ যোগাযোগ করুন."},
-  en:{announcement:"Korean beauty, now closer to you",shop:"Shop",about:"About",promise:"Our promise",contact:"Contact",cart:"Cart",heroEyebrow:"K-BEAUTY, SELECTED WITH CARE",heroTitle:"Your new address\nfor Korean beauty.",heroText:"Discover Korean skincare and cosmetics with ease. Your favourites, delivered to addresses across Bangladesh.",explore:"Explore products",heroBottom:"Product-care promise · Easy ordering · Bangladesh delivery",trust1:"Product verification commitment",trust2:"Orders across Bangladesh",trust3:"Simple cart and checkout",curated:"THE KORDESH EDIT",productsTitle:"Korean beauty favourites",productsSub:"A considered selection for your everyday skincare routine.",all:"All products",skincare:"Skincare",suncare:"Sun care",sample:"Sample products and indicative prices",ourApproach:"OUR APPROACH",editorialTitle:"Thoughtful products.\nConscious choices.",editorialText:"KORDESH aims to make Korean beauty products more accessible to customers in Bangladesh, with clear product information, pricing and ordering.",learnMore:"Learn more ↗",contactTitle:"Need help finding\nyour next favourite?",contactText:"Contact us for product, order or delivery enquiries.",rights:"All rights reserved.",yourCart:"Your cart",subtotal:"Subtotal",shippingNote:"Delivery fee is added at checkout.",checkout:"Continue to checkout",checkoutTitle:"Order details",fullName:"Full name",phone:"Mobile number",district:"District",area:"Area / Thana",address:"Full address",note:"Order note (optional)",delivery:"Delivery area",total:"Total",paymentHint:"Your order will also be sent through WhatsApp to confirm payment and delivery.",placeOrder:"Place order",add:"Add to cart",added:"Added to cart",empty:"Your cart is empty.",remove:"Remove",inside:"Inside Dhaka",outside:"Outside Dhaka",needItem:"Add a product to your cart first.",orderSent:"Your order is ready. Open WhatsApp and send the order message.",sheetPending:"Google Sheets is not connected yet. You can still send the order through WhatsApp.",sheetSent:"Order details sent to Google Sheets.",whatsappMissing:"WhatsApp number is not configured yet.",error:"Could not submit the order. Please try again or contact us on WhatsApp."}
-};
-
-let language = "bn";
-let cart = JSON.parse(localStorage.getItem("kordesh-cart") || "[]");
-const $ = id => document.getElementById(id);
-const money = n => "৳" + Number(n).toLocaleString("en-BD");
-
-function tr(key){return copy[language][key] || copy.bn[key] || key}
-function productName(p){return language==="bn"?p.bn:p.name}
+const words={bn:{add:"কার্টে যোগ করুন",added:"কার্টে যোগ হয়েছে",details:"বিস্তারিত দেখুন",buy:"এখনই অর্ডার করুন",empty:"আপনার কার্ট এখন খালি।",remove:"বাদ দিন",need:"অর্ডার করতে আগে কার্টে পণ্য যোগ করুন।",setup:"অর্ডার চালু করতে KORDESH-এর WhatsApp নম্বর এবং Google Sheets Web App URL বসাতে হবে।",sending:"অর্ডার পাঠানো হচ্ছে...",waReady:"WhatsApp-এ অর্ডারের তথ্য খুলেছে। পাঠানোর বাটনে চাপ দিয়ে অর্ডারটি পাঠান।",size:"পরিমাণ",desc:"পণ্যের বিবরণ",ingredients:"মূল উপাদান",skin:"কোন ত্বকের জন্য",how:"ব্যবহারবিধি",place:"অর্ডার নিশ্চিত করুন",inside:"ঢাকার ভেতরে · ৳৮০",outside:"ঢাকার বাইরে · ৳১৩০",remove:"বাদ দিন"},en:{add:"Add to cart",added:"Added",details:"View details",buy:"Order now",empty:"Your cart is empty.",remove:"Remove",need:"Add a product to your cart first.",setup:"Add KORDESH WhatsApp number and Google Sheets Web App URL to enable order submission.",sending:"Sending order...",waReady:"Your order message is open in WhatsApp. Tap Send to submit it.",size:"Size",desc:"Description",ingredients:"Key ingredients",skin:"Suitable skin types",how:"How to use",place:"Confirm order",inside:"Inside Dhaka · ৳80",outside:"Outside Dhaka · ৳130",remove:"Remove"}};
+let language="bn",cart=JSON.parse(localStorage.getItem("kordesh-cart")||"[]");
+const $=id=>document.getElementById(id),t=k=>words[language][k]||words.bn[k]||k,money=n=>"৳"+Number(n).toLocaleString("en-BD"),pname=p=>language==="bn"?p.bn:p.name;
 function renderProducts(filter="all"){
-  $("productGrid").innerHTML = products.filter(p=>filter==="all"||p.category===filter).map(p=>`
-    <article class="product-card">
-      <div class="product-visual"><span class="product-tag">${p.tag}</span><div class="product-pack ${p.packClass}">${p.pack.replace("\n","<br>")}</div></div>
-      <div class="product-info"><span class="product-category">${p.brand} · ${p.category==="suncare"?"SUN CARE":"SKINCARE"}</span><h3>${productName(p)}</h3><p>${p.desc}</p>
-      <div class="product-bottom"><span class="product-price">${money(p.price)}</span><button class="add-button" data-add="${p.id}">${tr("add")} +</button></div></div>
-    </article>`).join("");
+ $("productGrid").innerHTML=products.filter(p=>filter==="all"||p.category===filter).map(p=>'<article class="product-card" data-product="'+p.id+'" tabindex="0"><div class="product-visual"><span class="product-tag">'+p.tag+'</span><img src="'+p.img+'" alt="'+pname(p)+'" loading="lazy" onerror="this.onerror=null;this.src=\'https://placehold.co/600x600/f0eee8/222?text=KORDESH+Product\'"></div><div class="product-info"><span class="product-category">'+p.brand+' · '+p.size+'</span><h3>'+pname(p)+'</h3><p>'+p.desc+'</p><div class="product-bottom"><span class="product-price">'+money(p.price)+'</span><button class="add-button" data-add="'+p.id+'">'+t("add")+' +</button></div><button class="details-link" data-detail="'+p.id+'">'+t("details")+' ↗</button></div></article>').join("");
+}
+function renderCart(){
+ $("cartCount").textContent=cart.reduce((s,x)=>s+x.qty,0);$("cartSubtotal").textContent=money(cart.reduce((s,x)=>s+x.qty*x.price,0));
+ $("cartItems").innerHTML=cart.length?cart.map(i=>{const p=products.find(x=>x.id===i.id);return '<div class="cart-line"><img class="cart-thumb" src="'+p.img+'" alt=""><div><h4>'+pname(p)+'</h4><small>'+money(p.price)+'</small><div class="qty-controls"><button data-qty="-1" data-id="'+p.id+'">−</button><span>'+i.qty+'</span><button data-qty="1" data-id="'+p.id+'">+</button></div></div><button class="remove-item" data-remove="'+p.id+'">'+t("remove")+'</button></div>'}).join(""):'<p class="empty-cart">'+t("empty")+'</p>';
 }
 function saveCart(){localStorage.setItem("kordesh-cart",JSON.stringify(cart));renderCart()}
-function cartCount(){return cart.reduce((s,x)=>s+x.qty,0)}
-function subtotal(){return cart.reduce((s,x)=>s+x.qty*x.price,0)}
-function renderCart(){
-  $("cartCount").textContent=cartCount();
-  $("cartSubtotal").textContent=money(subtotal());
-  $("cartItems").innerHTML=cart.length?cart.map(item=>{
-    const p=products.find(x=>x.id===item.id);
-    return `<div class="cart-line"><div class="mini-visual">${p.brand}</div><div><h4>${productName(p)}</h4><small>${money(p.price)}</small><div class="qty-controls"><button data-qty="-1" data-id="${p.id}">−</button><span>${item.qty}</span><button data-qty="1" data-id="${p.id}">+</button></div></div><button class="remove-item" data-remove="${p.id}">${tr("remove")}</button></div>`
-  }).join(""):`<p class="empty-cart">${tr("empty")}</p>`;
+function addToCart(id){const p=products.find(x=>x.id===id),item=cart.find(x=>x.id===id);if(item)item.qty++;else cart.push({id,qty:1,price:p.price});saveCart()}
+function closePanels(){["cartDrawer","checkoutModal","productModal"].forEach(id=>{$(id).classList.remove("open");$(id).setAttribute("aria-hidden","true")});$("overlay").classList.remove("show")}
+function overlay(){ $("overlay").classList.add("show")}
+function openCart(){closePanels();$("cartDrawer").classList.add("open");$("cartDrawer").setAttribute("aria-hidden","false");overlay()}
+function openCheckout(){if(!cart.length){alert(t("need"));return}closePanels();$("checkoutModal").classList.add("open");$("checkoutModal").setAttribute("aria-hidden","false");overlay();updateTotal()}
+function showProduct(id){
+ const p=products.find(x=>x.id===id);if(!p)return;
+ $("productDetailContent").innerHTML='<div class="product-detail-grid"><div class="detail-image-wrap"><img class="detail-image" src="'+p.img+'" alt="'+pname(p)+'" onerror="this.onerror=null;this.src=\'https://placehold.co/800x800/f0eee8/222?text=KORDESH+Product\'"></div><div class="detail-copy"><p class="eyebrow">'+p.brand+' · '+p.size+'</p><h2>'+pname(p)+'</h2><strong class="detail-price">'+money(p.price)+'</strong><h3>'+t("desc")+'</h3><p>'+p.desc+'</p><h3>'+t("ingredients")+'</h3><p>'+p.ingredients+'</p><h3>'+t("skin")+'</h3><p>'+p.skin+'</p><h3>'+t("how")+'</h3><p>'+p.how+'</p><div class="detail-actions"><button class="button button-light" data-add-detail="'+p.id+'">'+t("add")+'</button><button class="button button-dark" data-buy="'+p.id+'">'+t("buy")+'</button></div></div></div>';
+ closePanels();$("productModal").classList.add("open");$("productModal").setAttribute("aria-hidden","false");overlay();
 }
-function openCart(){ $("cartDrawer").classList.add("open");$("overlay").classList.add("show");$("cartDrawer").setAttribute("aria-hidden","false")}
-function closePanels(){ $("cartDrawer").classList.remove("open");$("checkoutModal").classList.remove("open");$("overlay").classList.remove("show");$("cartDrawer").setAttribute("aria-hidden","true");$("checkoutModal").setAttribute("aria-hidden","true")}
-function deliveryFee(){return $("deliverySelect").value==="inside"?80:130}
-function updateTotal(){$("checkoutTotal").textContent=money(subtotal()+deliveryFee())}
-function showCheckout(){
-  if(!cart.length){alert(tr("needItem"));return}
-  closePanels();$("checkoutModal").classList.add("open");$("checkoutModal").setAttribute("aria-hidden","false");$("overlay").classList.add("show");updateTotal();
-}
-function setLanguage(next){
-  language=next;document.documentElement.lang=next;
-  document.querySelectorAll("[data-i18n]").forEach(el=>{const k=el.dataset.i18n;if(copy[next][k])el.textContent=copy[next][k]});
-  $("languageToggle").textContent=next==="bn"?"EN":"বাংলা";
-  document.querySelectorAll(".filter").forEach(b=>b.classList.toggle("active",b.dataset.filter===(document.querySelector(".filter.active")?.dataset.filter||"all")));
-  renderProducts(document.querySelector(".filter.active")?.dataset.filter||"all");renderCart();
-  $("deliverySelect").options[0].text=next==="bn"?"ঢাকার ভেতরে · ৳৮০":"Inside Dhaka · ৳80";
-  $("deliverySelect").options[1].text=next==="bn"?"ঢাকার বাইরে · ৳১৩০":"Outside Dhaka · ৳130";
-  updateTotal();
-}
-function orderMessage(order){
-  const lines=order.items.map(i=>`• ${i.name} × ${i.qty} = ${money(i.price*i.qty)}`).join("\n");
-  return `KORDESH ORDER REQUEST\nOrder ID: ${order.orderId}\nName: ${order.customer.name}\nPhone: ${order.customer.phone}\nDistrict: ${order.customer.district}\nArea: ${order.customer.area}\nAddress: ${order.customer.address}\n\nItems:\n${lines}\n\nSubtotal: ${money(order.subtotal)}\nDelivery: ${money(order.deliveryFee)}\nTotal: ${money(order.total)}\nDelivery zone: ${order.deliveryZone}\nNote: ${order.customer.note||"N/A"}`;
-}
-async function submitOrder(event){
-  event.preventDefault();
-  if(!cart.length){$("orderStatus").textContent=tr("needItem");return}
-  const form=new FormData(event.target);
-  const customer={name:form.get("name").trim(),phone:form.get("phone").trim(),district:form.get("district").trim(),area:form.get("area").trim(),address:form.get("address").trim(),note:form.get("note").trim()};
-  if(!/^\+?[0-9\s-]{10,16}$/.test(customer.phone)){ $("orderStatus").textContent=language==="bn"?"সঠিক মোবাইল নম্বর দিন।":"Enter a valid phone number."; $("orderStatus").className="order-status error";return}
-  const order={orderId:"KD"+Date.now().toString().slice(-9),createdAt:new Date().toISOString(),customer,items:cart.map(i=>{const p=products.find(x=>x.id===i.id);return{id:p.id,name:p.bn,englishName:p.name,brand:p.brand,price:p.price,qty:i.qty}}),subtotal:subtotal(),deliveryFee:deliveryFee(),deliveryZone:form.get("delivery")==="inside"?"Inside Dhaka":"Outside Dhaka",total:subtotal()+deliveryFee(),currency:"BDT"};
-  const msg=orderMessage(order);
-  $("placeOrderButton").disabled=true;$("placeOrderButton").textContent=language==="bn"?"পাঠানো হচ্ছে...":"Submitting...";
-  let sheetOk=false;
-  if(CONFIG.SHEETS_WEB_APP_URL.startsWith("https://script.google.com/")){
-    try{await fetch(CONFIG.SHEETS_WEB_APP_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(order)});sheetOk=true}catch(e){console.error(e)}
-  }
-  const wa=CONFIG.WHATSAPP_NUMBER.replace(/\D/g,"");
-  if(wa.length>=11&&!wa.includes("XXXXXXXX")){
-    window.open("https://wa.me/"+wa+"?text="+encodeURIComponent(msg),"_blank");
-    $("orderStatus").textContent=sheetOk?tr("sheetSent"):tr("orderSent");$("orderStatus").className="order-status";
-    cart=[];saveCart();event.target.reset();updateTotal();
-  }else{
-    $("orderStatus").textContent=tr("whatsappMissing")+" "+(sheetOk?tr("sheetSent"):tr("sheetPending"))+" Order ID: "+order.orderId;
-    $("orderStatus").className="order-status error";
-  }
-  $("placeOrderButton").disabled=false;$("placeOrderButton").textContent=tr("placeOrder");
+function updateTotal(){const sub=cart.reduce((s,x)=>s+x.qty*x.price,0),fee=$("deliverySelect").value==="inside"?80:130;$("checkoutTotal").textContent=money(sub+fee)}
+function setLanguage(next){language=next;document.documentElement.lang=next;$("languageToggle").textContent=next==="bn"?"EN":"বাংলা";renderProducts(document.querySelector(".filter.active")?.dataset.filter||"all");renderCart();$("deliverySelect").options[0].text=t("inside");$("deliverySelect").options[1].text=t("outside");updateTotal()}
+function orderMessage(o){return "KORDESH ORDER\nOrder ID: "+o.orderId+"\nName: "+o.customer.name+"\nPhone: "+o.customer.phone+"\nDistrict: "+o.customer.district+"\nArea: "+o.customer.area+"\nAddress: "+o.customer.address+"\n\nItems:\n"+o.items.map(i=>"• "+i.name+" × "+i.qty+" = "+money(i.price*i.qty)).join("\n")+"\n\nSubtotal: "+money(o.subtotal)+"\nDelivery: "+money(o.deliveryFee)+"\nTotal: "+money(o.total)+"\nNote: "+(o.customer.note||"N/A")}
+async function submitOrder(e){
+ e.preventDefault();if(!cart.length){$("orderStatus").textContent=t("need");return}
+ const d=new FormData(e.target),customer={name:String(d.get("name")).trim(),phone:String(d.get("phone")).trim(),district:String(d.get("district")).trim(),area:String(d.get("area")).trim(),address:String(d.get("address")).trim(),note:String(d.get("note")).trim()};
+ if(!/^(\+?88)?01[3-9]\d{8}$/.test(customer.phone.replace(/[\s-]/g,""))){$("orderStatus").textContent="সঠিক বাংলাদেশি মোবাইল নম্বর লিখুন।";return}
+ const fee=d.get("delivery")==="inside"?80:130,sub=cart.reduce((s,x)=>s+x.qty*x.price,0),order={orderId:"KD"+Date.now().toString().slice(-9),createdAt:new Date().toISOString(),customer,items:cart.map(i=>{const p=products.find(x=>x.id===i.id);return{id:p.id,name:p.bn,englishName:p.name,brand:p.brand,price:p.price,qty:i.qty}}),subtotal:sub,deliveryFee:fee,deliveryZone:d.get("delivery")==="inside"?"Inside Dhaka":"Outside Dhaka",total:sub+fee,currency:"BDT"};
+ const wa=CONFIG.WHATSAPP_NUMBER.replace(/\D/g,""),waOk=wa.length>=11&&!wa.includes("XXXXXXXX"),sheetOk=CONFIG.SHEETS_WEB_APP_URL.startsWith("https://script.google.com/");
+ if(!waOk&&!sheetOk){$("orderStatus").textContent=t("setup");$("orderStatus").className="order-status error";return}
+ $("placeOrderButton").disabled=true;$("placeOrderButton").textContent=t("sending");
+ const tab=waOk?window.open("about:blank","_blank"):null;
+ let sheetSent=false;if(sheetOk){try{await fetch(CONFIG.SHEETS_WEB_APP_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(order)});sheetSent=true}catch(err){console.error(err)}}
+ if(waOk&&tab){tab.location.href="https://wa.me/"+wa+"?text="+encodeURIComponent(orderMessage(order));$("orderStatus").textContent=t("waReady");cart=[];saveCart();e.target.reset();updateTotal()}
+ else if(sheetSent){$("orderStatus").textContent="অর্ডার রিকোয়েস্ট পাঠানো হয়েছে। Google Sheet-এ যাচাই করুন।";cart=[];saveCart();e.target.reset();updateTotal()}
+ else {$("orderStatus").textContent="WhatsApp পপ-আপ ব্লক হয়েছে। আবার চেষ্টা করুন।";$("orderStatus").className="order-status error"}
+ $("placeOrderButton").disabled=false;$("placeOrderButton").textContent=t("place");
 }
 document.addEventListener("click",e=>{
-  const add=e.target.closest("[data-add]");if(add){const id=add.dataset.add;const found=cart.find(x=>x.id===id);found?found.qty++:cart.push({id,qty:1,price:products.find(p=>p.id===id).price});saveCart();add.textContent=tr("added");setTimeout(()=>add.textContent=tr("add")+" +",1100)}
-  const qty=e.target.closest("[data-qty]");if(qty){const item=cart.find(x=>x.id===qty.dataset.id);item.qty+=Number(qty.dataset.qty);if(item.qty<=0)cart=cart.filter(x=>x.id!==item.id);saveCart()}
-  const remove=e.target.closest("[data-remove]");if(remove){cart=cart.filter(x=>x.id!==remove.dataset.remove);saveCart()}
-  const filter=e.target.closest("[data-filter]");if(filter){document.querySelectorAll(".filter").forEach(b=>b.classList.remove("active"));filter.classList.add("active");renderProducts(filter.dataset.filter)}
+ const add=e.target.closest("[data-add]");if(add){addToCart(add.dataset.add);add.textContent=t("added");return}
+ const detail=e.target.closest("[data-detail]");if(detail){showProduct(detail.dataset.detail);return}
+ const card=e.target.closest(".product-card");if(card&&!e.target.closest("button")){showProduct(card.dataset.product);return}
+ const ad=e.target.closest("[data-add-detail]");if(ad){addToCart(ad.dataset.addDetail);ad.textContent=t("added");return}
+ const buy=e.target.closest("[data-buy]");if(buy){addToCart(buy.dataset.buy);openCheckout();return}
+ const qty=e.target.closest("[data-qty]");if(qty){const it=cart.find(x=>x.id===qty.dataset.id);if(it){it.qty+=Number(qty.dataset.qty);if(it.qty<1)cart=cart.filter(x=>x.id!==it.id);saveCart()}return}
+ const rm=e.target.closest("[data-remove]");if(rm){cart=cart.filter(x=>x.id!==rm.dataset.remove);saveCart();return}
+ const filter=e.target.closest("[data-filter]");if(filter){document.querySelectorAll(".filter").forEach(x=>x.classList.remove("active"));filter.classList.add("active");renderProducts(filter.dataset.filter)}
 });
-$("openCart").addEventListener("click",openCart);$("closeCart").addEventListener("click",closePanels);$("overlay").addEventListener("click",closePanels);$("closeCheckout").addEventListener("click",closePanels);$("checkoutButton").addEventListener("click",showCheckout);$("deliverySelect").addEventListener("change",updateTotal);$("checkoutForm").addEventListener("submit",submitOrder);$("languageToggle").addEventListener("click",()=>setLanguage(language==="bn"?"en":"bn"));
-$("contactWhatsApp").href="https://wa.me/"+CONFIG.WHATSAPP_NUMBER;
-$("year").textContent=new Date().getFullYear();
-renderProducts();renderCart();
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closePanels();if((e.key==="Enter"||e.key===" ")&&e.target.classList.contains("product-card"))showProduct(e.target.dataset.product)});
+$("openCart").addEventListener("click",openCart);$("closeCart").addEventListener("click",closePanels);$("overlay").addEventListener("click",closePanels);$("closeCheckout").addEventListener("click",closePanels);$("closeProduct").addEventListener("click",closePanels);$("checkoutButton").addEventListener("click",openCheckout);$("deliverySelect").addEventListener("change",updateTotal);$("checkoutForm").addEventListener("submit",submitOrder);$("languageToggle").addEventListener("click",()=>setLanguage(language==="bn"?"en":"bn"));$("year").textContent=new Date().getFullYear();renderProducts();renderCart();
