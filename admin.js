@@ -14,6 +14,7 @@ async function showSession(){
  $("dashboard").hidden=false;$("signedInAs").textContent=session.user.email||session.user.id;
  await loadOrders();
 }
+$("recoveryForm").addEventListener("submit",async e=>{e.preventDefault();const password=$("newPassword").value;if(password.length<8){msg("recoveryMessage","অন্তত ৮ অক্ষরের পাসওয়ার্ড দিন।");return}const {error}=await supabase.auth.updateUser({password});if(error){msg("recoveryMessage",error.message);return}msg("recoveryMessage","পাসওয়ার্ড আপডেট হয়েছে। Admin Dashboard খুলছে...");$("recoveryPanel").hidden=true;await showSession()});
 $("authForm").addEventListener("submit",async e=>{e.preventDefault();const email=$("email").value.trim(),password=$("password").value;const {error}=await supabase.auth.signInWithPassword({email,password});if(error){msg("authMessage",error.message);return}msg("authMessage","লগইন হয়েছে।");await showSession()});
 $("signupBtn").addEventListener("click",async()=>{const email=$("email").value.trim(),password=$("password").value;if(!email||password.length<8){msg("authMessage","ইমেইল দিন এবং অন্তত ৮ অক্ষরের পাসওয়ার্ড লিখুন।");return}const {data,error}=await supabase.auth.signUp({email,password});if(error){msg("authMessage",error.message);return}if(data.session){msg("authMessage","Account তৈরি হয়েছে। এখন লগইন করুন।");await showSession()}else{msg("authMessage","এই ইমেইলে account আগে থেকেই থাকতে পারে, অথবা confirmation email পাঠানো হয়েছে। Inbox/Spam দেখুন; আগে account থাকলে পাসওয়ার্ড রিসেট করুন।")}});
 $("resetBtn").addEventListener("click",async()=>{const email=$("email").value.trim();if(!email){msg("authMessage","আগে আপনার account-এর ইমেইল লিখুন।");return}const {error}=await supabase.auth.resetPasswordForEmail(email,{redirectTo:location.origin+location.pathname});if(error){msg("authMessage",error.message);return}msg("authMessage","পাসওয়ার্ড reset link পাঠানো হয়েছে। Inbox ও Spam folder দেখুন।")});
@@ -30,4 +31,4 @@ async function loadOrders(){
  msg("dashMessage",rows.length+"টি অর্ডার দেখানো হচ্ছে।");
 }
 function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
-supabase.auth.onAuthStateChange(()=>{setTimeout(showSession,0)});showSession();
+supabase.auth.onAuthStateChange((event)=>{if(event==="PASSWORD_RECOVERY"){$("authPanel").hidden=true;$("dashboard").hidden=true;$("recoveryPanel").hidden=false;return}setTimeout(showSession,0)});showSession();
