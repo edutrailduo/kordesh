@@ -98,7 +98,11 @@ products.slice(6).forEach(p=>{
  else p.desc=name+" হলো "+p.brand+" ব্র্যান্ডের "+p.size+" সাইজের "+type+" পণ্য। আপনার রুটিনে যুক্ত করার আগে পণ্যের ফর্মুলা, উপাদান তালিকা ও ব্যবহারের নির্দেশনা দেখে নিন।";
 });
 const words={bn:{add:"কার্টে যোগ করুন",added:"কার্টে যোগ হয়েছে",details:"বিস্তারিত দেখুন",buy:"এখনই অর্ডার করুন",empty:"আপনার কার্ট এখন খালি।",remove:"বাদ দিন",need:"অর্ডার করতে আগে কার্টে পণ্য যোগ করুন।",setup:"অর্ডার চালু করতে KORDESH-এর WhatsApp নম্বর এবং Google Sheets Web App URL বসাতে হবে।",sending:"অর্ডার পাঠানো হচ্ছে...",size:"পরিমাণ",desc:"পণ্যের বিবরণ",ingredients:"মূল উপাদান",skin:"কোন ত্বকের জন্য",how:"ব্যবহারবিধি",place:"অর্ডার নিশ্চিত করুন",inside:"ঢাকার ভেতরে · ৳৮০",outside:"ঢাকার বাইরে · ৳১৩০",remove:"বাদ দিন"},en:{add:"Add to cart",added:"Added",details:"View details",buy:"Order now",empty:"Your cart is empty.",remove:"Remove",need:"Add a product to your cart first.",sending:"Sending order...",size:"Size",desc:"Description",ingredients:"Key ingredients",skin:"Suitable skin types",how:"How to use",place:"Confirm order",inside:"Inside Dhaka · ৳80",outside:"Outside Dhaka · ৳130",remove:"Remove"}};
-let language="bn",cart=JSON.parse(localStorage.getItem("kordesh-cart")||"[]");
+let language="bn",cart=[];
+try{
+ const savedCart=JSON.parse(localStorage.getItem("kordesh-cart")||"[]");
+ cart=Array.isArray(savedCart)?savedCart.filter(x=>x&&products.some(p=>p.id===x.id)&&Number.isFinite(Number(x.qty))&&Number(x.qty)>0).map(x=>{const p=products.find(v=>v.id===x.id);return{id:p.id,qty:Math.min(99,Math.floor(Number(x.qty))),price:p.price}}):[];
+}catch{cart=[]}
 const $=id=>document.getElementById(id),t=k=>words[language][k]||words.bn[k]||k,money=n=>"৳"+Number(n).toLocaleString("en-BD"),pname=p=>language==="bn"?p.bn:p.name;
 function renderProducts(filter="all",query=""){
  const grid=$("productGrid");if(!grid)return;
@@ -120,7 +124,7 @@ function renderCart(){
 function saveCart(){localStorage.setItem("kordesh-cart",JSON.stringify(cart));renderCart()}
 let toastTimer;
 function showToast(message){let toast=$("cartToast");if(!toast)return;toast.textContent=message;toast.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>toast.classList.remove("show"),2000)}
-function addToCart(id){const p=products.find(x=>x.id===id),item=cart.find(x=>x.id===id);if(item)item.qty++;else cart.push({id,qty:1,price:p.price});saveCart();showToast("কার্টে যোগ হয়েছে");}
+function addToCart(id){const p=products.find(x=>x.id===id);if(!p)return;const item=cart.find(x=>x.id===id);if(item)item.qty=Math.min(99,item.qty+1);else cart.push({id,qty:1,price:p.price});saveCart();showToast("কার্টে যোগ হয়েছে");}
 function closePanels(){["cartDrawer","checkoutModal","productModal"].forEach(id=>{$(id).classList.remove("open");$(id).setAttribute("aria-hidden","true")});$("overlay").classList.remove("show")}
 function overlay(){ $("overlay").classList.add("show")}
 function openCart(){closePanels();$("cartDrawer").classList.add("open");$("cartDrawer").setAttribute("aria-hidden","false");overlay()}
