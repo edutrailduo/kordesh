@@ -374,6 +374,7 @@ function answerKordeshAI(raw){
   if(/ময়েশ্চার|moisturizer|ক্রিম|cream/.test(q))terms.push("cream","moistur");
   return terms.some(t=>hay.includes(t))||[p.name,p.bn,p.brand].some(v=>v&&q.includes(String(v).toLowerCase()));
  }).slice(0,3);
+ if(language==="en"){if(/hello|hi\b|hey/.test(q))return "Hello! Welcome to KORDESH AI. What would you like to know about our products or skincare routines?";if(list.length){const lines=list.map(p=>"• "+p.name+" — ৳"+Number(p.price).toLocaleString("en-US")).join("\n");return "Based on your question, these products may be relevant:\n"+lines+"\n\nSearch the product name in our shop to see details. Patch test before using a new product.";}if(/routine|skin analysis|skin type/.test(q))return "Use Skin Analysis to get a routine based on your skin type and concerns.";return "Could you be more specific? I can help you find products for oily or dry skin, sunscreen, toner or cleanser from the KORDESH catalogue.";}
  if(/hello|হ্যালো|হাই|hi\b/.test(q))return "হ্যালো! KORDESH AI-তে স্বাগতম। পণ্য, ত্বকের ধরন বা স্কিনকেয়ার রুটিন সম্পর্কে কী জানতে চান?";
  if(list.length){
   const lines=list.map(p=>"• "+p.name+" — ৳"+Number(p.price).toLocaleString("en-US")).join("\n");
