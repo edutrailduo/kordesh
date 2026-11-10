@@ -12,14 +12,19 @@ let language="bn",cart=JSON.parse(localStorage.getItem("kordesh-cart")||"[]");
 const $=id=>document.getElementById(id),t=k=>words[language][k]||words.bn[k]||k,money=n=>"৳"+Number(n).toLocaleString("en-BD"),pname=p=>language==="bn"?p.bn:p.name;
 function renderProducts(filter="all"){
  const grid=$("productGrid");if(!grid)return;
- grid.innerHTML=products.filter(p=>filter==="all"||p.category===filter).map(p=>'<article class="product-card" data-product="'+p.id+'" tabindex="0"><div class="product-visual"><span class="product-tag">'+p.tag+'</span><img src="'+p.img+'" alt="'+pname(p)+'" loading="lazy" onerror="this.onerror=null;this.src=\'https://placehold.co/600x600/f0eee8/222?text=KORDESH+Product\'"></div><div class="product-info"><span class="product-category">'+p.brand+' · '+p.size+'</span><h3>'+pname(p)+'</h3><p>'+p.desc+'</p><div class="product-bottom"><span class="product-price">'+money(p.price)+'</span><button class="add-button" data-add="'+p.id+'">'+t("add")+' +</button></div><button class="details-link" data-detail="'+p.id+'">'+t("details")+' ↗</button></div></article>').join("");
+ const sort=$("sortProducts")?.value||"featured";
+ let list=products.filter(p=>filter==="all"||p.category===filter);
+ if(sort==="low")list.sort((a,b)=>a.price-b.price);else if(sort==="high")list.sort((a,b)=>b.price-a.price);
+ grid.innerHTML=list.map(p=>'<article class="product-card" data-product="'+p.id+'" tabindex="0"><div class="product-visual"><span class="product-tag">'+p.tag+'</span><img src="'+p.img+'" alt="'+pname(p)+'" loading="lazy" onerror="this.onerror=null;this.src=\'https://placehold.co/600x600/f0eee8/222?text=KORDESH+Product\'"></div><div class="product-info"><span class="product-category">'+p.brand+' · '+p.size+'</span><h3>'+pname(p)+'</h3><p>'+p.desc+'</p><div class="product-bottom"><span class="product-price">'+money(p.price)+'</span><button class="add-button" data-add="'+p.id+'">'+t("add")+' +</button></div><button class="details-link" data-detail="'+p.id+'">'+t("details")+' ↗</button></div></article>').join("");
 }
 function renderCart(){
  $("cartCount").textContent=cart.reduce((s,x)=>s+x.qty,0);$("cartSubtotal").textContent=money(cart.reduce((s,x)=>s+x.qty*x.price,0));
  $("cartItems").innerHTML=cart.length?cart.map(i=>{const p=products.find(x=>x.id===i.id);return '<div class="cart-line"><img class="cart-thumb" src="'+p.img+'" alt=""><div><h4>'+pname(p)+'</h4><small>'+money(p.price)+'</small><div class="qty-controls"><button data-qty="-1" data-id="'+p.id+'">−</button><span>'+i.qty+'</span><button data-qty="1" data-id="'+p.id+'">+</button></div></div><button class="remove-item" data-remove="'+p.id+'">'+t("remove")+'</button></div>'}).join(""):'<p class="empty-cart">'+t("empty")+'</p>';
 }
 function saveCart(){localStorage.setItem("kordesh-cart",JSON.stringify(cart));renderCart()}
-function addToCart(id){const p=products.find(x=>x.id===id),item=cart.find(x=>x.id===id);if(item)item.qty++;else cart.push({id,qty:1,price:p.price});saveCart()}
+let toastTimer;
+function showToast(message){let toast=$("cartToast");if(!toast)return;toast.textContent=message;toast.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>toast.classList.remove("show"),2000)}
+function addToCart(id){const p=products.find(x=>x.id===id),item=cart.find(x=>x.id===id);if(item)item.qty++;else cart.push({id,qty:1,price:p.price});saveCart();showToast("কার্টে যোগ হয়েছে");}
 function closePanels(){["cartDrawer","checkoutModal","productModal"].forEach(id=>{$(id).classList.remove("open");$(id).setAttribute("aria-hidden","true")});$("overlay").classList.remove("show")}
 function overlay(){ $("overlay").classList.add("show")}
 function openCart(){closePanels();$("cartDrawer").classList.add("open");$("cartDrawer").setAttribute("aria-hidden","false");overlay()}
@@ -38,8 +43,7 @@ function setLanguage(next){language=next;document.documentElement.lang=next;$("l
 function orderMessage(o){return "KORDESH ORDER\nOrder ID: "+o.orderId+"\nName: "+o.customer.name+"\nPhone: "+o.customer.phone+"\nDistrict: "+o.customer.district+"\nArea: "+o.customer.area+"\nAddress: "+o.customer.address+"\n\nItems:\n"+o.items.map(i=>"• "+i.name+" × "+i.qty+" = "+money(i.price*i.qty)).join("\n")+"\n\nSubtotal: "+money(o.subtotal)+"\nDelivery: "+money(o.deliveryFee)+"\nTotal: "+money(o.total)+"\nNote: "+(o.customer.note||"N/A")}
 async function submitOrder(e){
  e.preventDefault();if(!cart.length){$("orderStatus").textContent=t("need");return}
- const d=new FormData(e.target),customer={name:String(d.get("name")).trim(),email:String(d.get("email")).trim(),phone:String(d.get("phone")).trim(),district:String(d.get("district")).trim(),area:String(d.get("area")).trim(),address:String(d.get("address")).trim(),note:String(d.get("note")).trim()};
- if(!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(customer.email)){$("orderStatus").textContent="সঠিক ইমেইল ঠিকানা লিখুন।";return}
+ const d=new FormData(e.target),customer={name:String(d.get("name")).trim(),phone:String(d.get("phone")).trim(),district:String(d.get("district")).trim(),area:String(d.get("area")).trim(),address:String(d.get("address")).trim(),note:String(d.get("note")).trim()};
  if(!/^(\+?88)?01[3-9]\d{8}$/.test(customer.phone.replace(/[\s-]/g,""))){$("orderStatus").textContent="সঠিক বাংলাদেশি মোবাইল নম্বর লিখুন।";return}
  const fee=d.get("delivery")==="inside"?80:130,sub=cart.reduce((s,x)=>s+x.qty*x.price,0),order={orderId:"KD"+Date.now().toString().slice(-9),createdAt:new Date().toISOString(),customer,items:cart.map(i=>{const p=products.find(x=>x.id===i.id);return{id:p.id,name:p.bn,englishName:p.name,brand:p.brand,price:p.price,qty:i.qty}}),subtotal:sub,deliveryFee:fee,deliveryZone:d.get("delivery")==="inside"?"Inside Dhaka":"Outside Dhaka",total:sub+fee,currency:"BDT"};
  $("placeOrderButton").disabled=true;$("placeOrderButton").textContent=t("sending");
@@ -47,61 +51,56 @@ async function submitOrder(e){
    const response=await fetch(CONFIG.SUPABASE_URL+"/rest/v1/kordesh_orders",{
      method:"POST",
      headers:{"apikey":CONFIG.SUPABASE_KEY,"Authorization":"Bearer "+CONFIG.SUPABASE_KEY,"Content-Type":"application/json","Prefer":"return=minimal"},
-     body:JSON.stringify({order_number:order.orderId,customer_name:customer.name,customer_email:customer.email,customer_phone:customer.phone,customer_district:customer.district,customer_area:customer.area,customer_address:customer.address,customer_note:customer.note,items:order.items,subtotal:sub,delivery_fee:fee,total:sub+fee,delivery_zone:order.deliveryZone,status:"pending"})
+     body:JSON.stringify({order_number:order.orderId,customer_name:customer.name,customer_phone:customer.phone,customer_district:customer.district,customer_area:customer.area,customer_address:customer.address,customer_note:customer.note,items:order.items,subtotal:sub,delivery_fee:fee,total:sub+fee,delivery_zone:order.deliveryZone,status:"pending"})
    });
    if(!response.ok){const detail=await response.text();throw new Error("Order save failed ("+response.status+"): "+detail)}
-   let emailSent=false,emailMessage="";
-   try{
-     const mailResponse=await fetch(CONFIG.SUPABASE_URL+"/functions/v1/kordesh-order-email",{
-       method:"POST",
-       headers:{"apikey":CONFIG.SUPABASE_KEY,"Content-Type":"application/json"},
-       body:JSON.stringify({order_number:order.orderId})
-     });
-     const mailResult=await mailResponse.json().catch(()=>({}));
-     emailSent=mailResponse.ok&&mailResult.email_sent===true;
-     if(!emailSent)emailMessage=mailResult.error||"ইমেইল সার্ভিস এখনো সেটআপ হয়নি";
-   }catch(mailError){emailMessage="ইমেইল পাঠানো যায়নি";}
-   $("orderStatus").textContent="ধন্যবাদ, আপনার অর্ডার সফলভাবে নিশ্চিত হয়েছে। Order ID: "+order.orderId+(emailSent?" কনফার্মেশন ইমেইল পাঠানো হয়েছে।":" অর্ডার সেভ হয়েছে, তবে ইমেইল পাঠানো যায়নি।");
-   $("orderStatus").className="order-status"+(emailSent?" success":"");
-   cart=[];saveCart();e.target.reset();updateTotal();
+   cart=[];saveCart();
+   location.href="?page=success&order="+encodeURIComponent(order.orderId);
+
  }catch(err){
    console.error(err);$("orderStatus").textContent="অর্ডার সংরক্ষণ হয়নি। আবার চেষ্টা করুন। ("+err.message+")";$("orderStatus").className="order-status error";
  }
  $("placeOrderButton").disabled=false;$("placeOrderButton").textContent=pageWords[language].placeOrder;
 }
 document.addEventListener("click",e=>{
- const add=e.target.closest("[data-add]");if(add){addToCart(add.dataset.add);add.textContent=t("added");return}
+ const add=e.target.closest("[data-add]");if(add){addToCart(add.dataset.add);return}
  const detail=e.target.closest("[data-detail]");if(detail){showProduct(detail.dataset.detail);return}
  const card=e.target.closest(".product-card");if(card&&!e.target.closest("button")){showProduct(card.dataset.product);return}
- const ad=e.target.closest("[data-add-detail]");if(ad){addToCart(ad.dataset.addDetail);ad.textContent=t("added");return}
+ const ad=e.target.closest("[data-add-detail]");if(ad){addToCart(ad.dataset.addDetail);return}
  const buy=e.target.closest("[data-buy]");if(buy){addToCart(buy.dataset.buy);openCheckout();return}
  const qty=e.target.closest("[data-qty]");if(qty){const it=cart.find(x=>x.id===qty.dataset.id);if(it){it.qty+=Number(qty.dataset.qty);if(it.qty<1)cart=cart.filter(x=>x.id!==it.id);saveCart()}return}
  const rm=e.target.closest("[data-remove]");if(rm){cart=cart.filter(x=>x.id!==rm.dataset.remove);saveCart();return}
  const filter=e.target.closest("[data-filter]");if(filter){document.querySelectorAll(".filter").forEach(x=>x.classList.remove("active"));filter.classList.add("active");renderProducts(filter.dataset.filter)}
+ const menuButton=e.target.closest("#menuButton");if(menuButton){$("siteMenu").classList.toggle("open");menuButton.setAttribute("aria-expanded",$("siteMenu").classList.contains("open"))}
+ if(!e.target.closest(".menu-wrap")){$("siteMenu")?.classList.remove("open");$("menuButton")?.setAttribute("aria-expanded","false")}
 });
 document.addEventListener("keydown",e=>{if(e.key==="Escape")closePanels();if((e.key==="Enter"||e.key===" ")&&e.target.classList.contains("product-card"))showProduct(e.target.dataset.product)});
-$("openCart").addEventListener("click",openCart);$("closeCart").addEventListener("click",closePanels);$("overlay").addEventListener("click",closePanels);$("closeCheckout").addEventListener("click",closePanels);$("closeProduct").addEventListener("click",closePanels);$("checkoutButton").addEventListener("click",openCheckout);$("deliverySelect").addEventListener("change",updateTotal);$("checkoutForm").addEventListener("submit",submitOrder);$("languageToggle").addEventListener("click",()=>setLanguage(language==="bn"?"en":"bn"));$("year").textContent=new Date().getFullYear();
+$("openCart").addEventListener("click",openCart);$("closeCart").addEventListener("click",closePanels);$("overlay").addEventListener("click",closePanels);$("closeCheckout").addEventListener("click",closePanels);$("closeProduct").addEventListener("click",closePanels);$("checkoutButton").addEventListener("click",openCheckout);$("deliverySelect").addEventListener("change",updateTotal);$("checkoutForm").addEventListener("submit",submitOrder);$("languageToggle").addEventListener("click",()=>setLanguage(language==="bn"?"en":"bn"));$("sortProducts")?.addEventListener("change",()=>renderProducts(document.querySelector(".filter.active")?.dataset.filter||"all"));$("year").textContent=new Date().getFullYear();
 function initStorefront(){
- const params=new URLSearchParams(location.search),page=params.get("page")||"home",cat=params.get("category"),id=params.get("id");
- document.body.classList.remove("page-home","page-category","page-product");document.body.classList.add("page-"+page);
+ const params=new URLSearchParams(location.search),page=params.get("page")||"home",cat=params.get("category"),id=params.get("id"),order=params.get("order");
+ document.body.classList.remove("page-home","page-category","page-product","page-success");document.body.classList.add("page-"+page);
  const main=document.querySelector("main");
- const categoryNames={skincare:"স্কিনকেয়ার",suncare:"সানকেয়ার"};
- const categoryCards=[{id:"skincare",title:"Skincare",bn:"স্কিনকেয়ার",desc:"দৈনন্দিন ত্বকের যত্নের জন্য কোরিয়ান পণ্য",img:"https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?auto=format&fit=crop&w=900&q=85"},{id:"suncare",title:"Sun Care",bn:"সানকেয়ার",desc:"সূর্যের আলো থেকে ত্বকের যত্ন",img:"https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=900&q=85"}];
- const homeHref="?";
- document.querySelector(".brand").href=homeHref;
+ const categories=[{id:"skincare",bn:"স্কিনকেয়ার",en:"Skincare",desc:"দৈনন্দিন ত্বকের যত্ন",img:"https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?auto=format&fit=crop&w=900&q=85"},{id:"suncare",bn:"সানকেয়ার",en:"Sun Care",desc:"সূর্যের আলো থেকে সুরক্ষা",img:"https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=900&q=85"}];
+ const categoryLinks=categories.map(c=>'<a href="?page=category&category='+c.id+'">'+c.bn+'</a>').join("");
+ document.querySelector(".brand").href="?";
  document.querySelectorAll(".desktop-nav").forEach(n=>n.style.display="none");
+ const filterMarkup='<div class="catalog-controls"><div class="filter-row"><button class="filter active" data-filter="all">সব পণ্য</button><button class="filter" data-filter="skincare">স্কিনকেয়ার</button><button class="filter" data-filter="suncare">সানকেয়ার</button></div><label class="sort-control">মূল্য অনুযায়ী <select id="sortProducts"><option value="featured">প্রাসঙ্গিক</option><option value="low">কম থেকে বেশি</option><option value="high">বেশি থেকে কম</option></select></label></div>';
  if(page==="home"){
-  main.innerHTML='<section class="category-home"><p class="eyebrow">KORDESH / SHOP BY CATEGORY</p><h1>কোরিয়ান বিউটি,<br><em>আপনার পছন্দে।</em></h1><p class="category-intro">আপনার প্রয়োজন অনুযায়ী পণ্য ক্যাটাগরি বেছে নিন।</p><div class="category-grid">'+categoryCards.map(c=>'<a class="category-card" href="?page=category&category='+c.id+'"><img src="'+c.img+'" alt="'+c.title+'"><div><span>EXPLORE CATEGORY ↗</span><h2>'+c.bn+'</h2><p>'+c.desc+'</p></div></a>').join("")+'</div></section>';
+  main.innerHTML='<section class="home-hero"><div><p class="eyebrow">K-BEAUTY, SELECTED WITH CARE</p><h1>কোরিয়ান বিউটির<br><em>নতুন ঠিকানা।</em></h1><p>বাছাই করা কোরিয়ান স্কিনকেয়ার ও বিউটি পণ্য, বাংলাদেশের ঠিকানায়।</p><a class="button button-dark" href="#categories">ক্যাটাগরি দেখুন ↓</a></div><div class="home-hero-image"></div></section><section class="home-categories" id="categories"><p class="eyebrow">SHOP BY CATEGORY</p><h2>আপনার পছন্দের ক্যাটাগরি</h2><div class="category-grid">'+categories.map(c=>'<a class="category-card" href="?page=category&category='+c.id+'"><img src="'+c.img+'" alt="'+c.en+'"><div><span>EXPLORE CATEGORY ↗</span><h2>'+c.bn+'</h2><p>'+c.desc+'</p></div></a>').join("")+'</div></section><section class="home-products" id="products"><p class="eyebrow">THE KORDESH EDIT</p><h2>জনপ্রিয় পণ্য</h2>'+filterMarkup+'<div class="product-grid" id="productGrid"></div></section><section class="home-about" id="about"><p class="eyebrow">OUR APPROACH</p><h2>আসল পণ্য। সচেতন পছন্দ।</h2><p>KORDESH-এর লক্ষ্য হলো বাছাই করা কোরিয়ান বিউটি পণ্য বাংলাদেশি ক্রেতাদের কাছে সহজে পৌঁছে দেওয়া।</p></section>';
+  renderProducts("all");
  }else if(page==="category"){
-  const selected=categoryCards.find(c=>c.id===cat);
-  if(!selected){location.href="?";return}
-  main.innerHTML='<section class="catalog-page"><a class="back-link" href="?">← সব ক্যাটাগরি</a><p class="eyebrow">KORDESH / CATEGORY</p><h1>'+selected.bn+'</h1><p class="category-intro">এই ক্যাটাগরির বাছাই করা কোরিয়ান পণ্য।</p><div class="product-grid" id="productGrid"></div></section>';
+  const selected=categories.find(c=>c.id===cat);if(!selected){location.href="?";return}
+  main.innerHTML='<section class="catalog-page"><a class="back-link" href="?">← হোম</a><p class="eyebrow">KORDESH / CATEGORY</p><h1>'+selected.bn+'</h1><p class="category-intro">এই ক্যাটাগরির বাছাই করা কোরিয়ান পণ্য।</p>'+filterMarkup+'<div class="product-grid" id="productGrid"></div></section>';
+  document.querySelectorAll(".filter").forEach(b=>{if(b.dataset.filter===cat)b.classList.add("active");else b.classList.remove("active")});
   renderProducts(cat);
  }else if(page==="product"){
-  const p=products.find(x=>x.id===id);
-  if(!p){location.href="?";return}
-  main.innerHTML='<section class="product-page"><a class="back-link" href="?page=category&category='+p.category+'">← '+categoryNames[p.category]+'</a><div class="product-detail-grid"><div class="detail-image-wrap"><img class="detail-image" src="'+p.img+'" alt="'+p.name+'" onerror="this.onerror=null;this.src=\'https://placehold.co/800x800/f0eee8/222?text=KORDESH+Product\'"></div><div class="detail-copy"><p class="eyebrow">'+p.brand+' · '+p.size+'</p><h1>'+p.bn+'</h1><strong class="detail-price">'+money(p.price)+'</strong><p>'+p.desc+'</p><h3>মূল উপাদান</h3><p>'+p.ingredients+'</p><h3>কোন ত্বকের জন্য</h3><p>'+p.skin+'</p><h3>ব্যবহারবিধি</h3><p>'+p.how+'</p><div class="detail-actions"><button class="button button-light" data-add-detail="'+p.id+'">কার্টে যোগ করুন</button><button class="button button-dark" data-buy="'+p.id+'">এখনই অর্ডার করুন</button></div></div></div></section>';
+  const p=products.find(x=>x.id===id);if(!p){location.href="?";return}
+  main.innerHTML='<section class="product-page"><a class="back-link" href="?page=category&category='+p.category+'">← '+(p.category==="skincare"?"স্কিনকেয়ার":"সানকেয়ার")+'</a><div class="product-detail-grid"><div class="detail-image-wrap"><img class="detail-image" src="'+p.img+'" alt="'+p.name+'" onerror="this.onerror=null;this.src=\'https://placehold.co/800x800/f0eee8/222?text=KORDESH+Product\'"></div><div class="detail-copy"><p class="eyebrow">'+p.brand+' · '+p.size+'</p><h1>'+p.bn+'</h1><strong class="detail-price">'+money(p.price)+'</strong><p>'+p.desc+'</p><h3>মূল উপাদান</h3><p>'+p.ingredients+'</p><h3>কোন ত্বকের জন্য</h3><p>'+p.skin+'</p><h3>ব্যবহারবিধি</h3><p>'+p.how+'</p><div class="detail-actions"><button class="button button-light" data-add-detail="'+p.id+'">কার্টে যোগ করুন</button><button class="button button-dark" data-buy="'+p.id+'">এখনই অর্ডার করুন</button></div></div></div></section>';
+ }else if(page==="success"){
+  main.innerHTML='<section class="success-page"><div class="success-mark">✓</div><p class="eyebrow">KORDESH / ORDER CONFIRMED</p><h1>আপনার অর্ডার নিশ্চিত হয়েছে</h1><p>আপনার অর্ডারটি সফলভাবে গ্রহণ করা হয়েছে।</p><div class="success-number"><span>অর্ডার নম্বর</span><strong>'+String(order||"").replace(/[<>&"]/g,"")+'</strong></div><a class="button button-dark" href="?">হোমে ফিরে যান</a></section>';
+ }else if(page==="about"){
+  main.innerHTML='<section class="catalog-page"><a class="back-link" href="?">← হোম</a><p class="eyebrow">ABOUT KORDESH</p><h1>আসল পণ্য। সচেতন পছন্দ।</h1><p class="category-intro">কোরিয়ান বিউটি পণ্য বাংলাদেশে পৌঁছে দেওয়াই আমাদের লক্ষ্য।</p></section>';
  }else{location.href="?";return}
 }
-initStorefront();renderCart();$("contactWhatsApp").href="https://wa.me/"+CONFIG.WHATSAPP_NUMBER;
+initStorefront();renderCart();
 document.addEventListener("click",e=>{const link=e.target.closest('a[href^="?"]');if(link){document.body.classList.add("page-loading");}});
