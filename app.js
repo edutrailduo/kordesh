@@ -502,7 +502,16 @@ async function startKordeshLiveChat(){
  try{
   const client=await getKordeshChatClient();
   const saved=localStorage.getItem("kordesh_live_chat_key");
-  if(saved){kordeshLiveChatKey=saved;const {data,error}=await client.rpc("kordesh_chat_customer_messages",{p_chat_key:saved,p_after_id:0});if(error){localStorage.removeItem("kordesh_live_chat_key");kordeshLiveChatKey="";}}
+  if(saved){
+   const {data:statusData,error:statusError}=await client.rpc("kordesh_chat_customer_status",{p_chat_key:saved});
+   if(statusError||statusData?.status==="closed"){
+    localStorage.removeItem("kordesh_live_chat_key");kordeshLiveChatKey="";kordeshLiveChatLastId=0;
+   }else{
+    kordeshLiveChatKey=saved;
+    const {error}=await client.rpc("kordesh_chat_customer_messages",{p_chat_key:saved,p_after_id:0});
+    if(error){localStorage.removeItem("kordesh_live_chat_key");kordeshLiveChatKey="";}
+   }
+  }
   if(!kordeshLiveChatKey){
    const name=(window.prompt("আপনার নাম লিখুন (ঐচ্ছিক):")||"Guest").trim().slice(0,80)||"Guest";
    const {data,error}=await client.rpc("kordesh_chat_create",{p_customer_name:name});
