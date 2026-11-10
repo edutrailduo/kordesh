@@ -234,6 +234,26 @@ em{font-family:'Hind Siliguri','DM Sans',sans-serif;font-style:normal}
 .kordesh-live-back{margin:0 17px 8px;padding:5px 0;border:0;background:transparent;color:#6e604e;font-size:11px;cursor:pointer}
 .kordesh-live-back[hidden],.kordesh-live-start[hidden]{display:none}
 
+
+/* Separate floating Customer Care launcher */
+.kordesh-customer-launcher{position:fixed!important;left:22px!important;bottom:26px!important;z-index:2147483001!important;display:flex;align-items:center;gap:9px;padding:10px 16px 10px 11px;border:1px solid #171717;border-radius:999px;background:#fff;color:#171717;box-shadow:0 8px 28px #0002;font:700 12px 'DM Sans','Hind Siliguri',sans-serif;letter-spacing:.02em;cursor:pointer}
+.kordesh-customer-launcher svg{width:25px;height:25px;flex:0 0 25px}
+.kordesh-customer-launcher:hover{background:#f2f0ec}
+#kordeshAIPanel.customer-care-mode{position:fixed!important;left:22px!important;right:auto!important;bottom:88px!important;width:min(350px,calc(100vw - 32px))!important}
+#kordeshAIPanel.customer-care-mode .kordesh-ai-welcome,
+#kordeshAIPanel.customer-care-mode #kordeshLiveChatStart,
+#kordeshAIPanel.customer-care-mode .kordesh-ai-quick,
+#kordeshAIPanel.customer-care-mode .kordesh-ai-start,
+#kordeshAIPanel.customer-care-mode .kordesh-ai-note{display:none!important}
+#kordeshAIPanel.customer-care-mode .kordesh-ai-messages{height:260px}
+#kordeshAIPanel.customer-care-mode #kordeshAIInput{placeholder-shown:color:#777}
+@media(max-width:600px){
+ .kordesh-customer-launcher{left:12px!important;bottom:14px!important;padding:9px!important;width:48px;height:48px;justify-content:center}
+ .kordesh-customer-launcher span{display:none}
+ #kordeshAIPanel.customer-care-mode{left:12px!important;right:auto!important;bottom:72px!important;width:min(350px,calc(100vw - 24px))!important}
+}
+@media print{.kordesh-customer-launcher{display:none!important}}
+
 /* Customer feedback after automatic chat closure */
 .kordesh-chat-rating{margin:12px 0;padding:14px;border:1px solid #e7e2d9;border-radius:14px;background:#faf9f6;color:#171717}
 .kordesh-chat-rating>strong{font-size:13px}.kordesh-chat-rating>p{font-size:11px;color:#777;margin:5px 0 10px}
