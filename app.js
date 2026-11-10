@@ -145,7 +145,7 @@ async function loadBangladeshGeo(){
   tree.forEach(div=>(div.districts||[]).forEach(dist=>records.push({bn:dist.bn_name,en:dist.name,upazilas:(dist.upazilas||[]).map(up=>({bn:up.bn_name,en:up.name,unions:up.unions||[],pourashavas:up.pourashavas||[]}))})));
   if(records.length!==64)throw new Error("Unexpected district count: "+records.length);
   window.KORDESH_BD_LOCATIONS=records;districtSelect.disabled=false;renderDistrictOptions();
- }catch(err){console.error("Bangladesh union/municipality data failed:",err);localitySelect.innerHTML="";localitySelect.append(geoOption("তথ্য লোড হয়নি; সম্পূর্ণ ঠিকানা লিখুন",""));localitySelect.disabled=true;}
+ }catch(err){console.error("Bangladesh union/municipality data failed:",err);districtSelect.disabled=false;renderDistrictOptions();localitySelect.innerHTML="";localitySelect.append(geoOption("তথ্য লোড হয়নি; সম্পূর্ণ ঠিকানা লিখুন",""));localitySelect.disabled=true;}
 }
 function renderLocalityOptions(){
  const ds=$("districtSelect"),as=$("areaSelect"),ls=$("localitySelect");if(!ls)return;
