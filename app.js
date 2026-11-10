@@ -136,10 +136,10 @@ function showProduct(id){
 }
 function renderDistrictOptions(){
  const districtSelect=$("districtSelect"),areaSelect=$("areaSelect");if(!districtSelect||!areaSelect)return;
- const selected=districtSelect.value;
+ const selected=districtSelect.value,selectedArea=areaSelect.value;
  districtSelect.innerHTML='<option value="">'+(language==="bn"?"জেলা নির্বাচন করুন":"Select district")+'</option>'+window.KORDESH_BD_LOCATIONS.map(d=>'<option value="'+d.bn+'" data-en="'+d.en+'">'+(language==="bn"?d.bn:d.en)+'</option>').join("");
  if(selected&&window.KORDESH_BD_LOCATIONS.some(d=>d.bn===selected))districtSelect.value=selected;
- renderUpazilaOptions();
+ renderUpazilaOptions();if(selectedArea&&[...areaSelect.options].some(o=>o.value===selectedArea))areaSelect.value=selectedArea;
 }
 function renderUpazilaOptions(){
  const districtSelect=$("districtSelect"),areaSelect=$("areaSelect");if(!districtSelect||!areaSelect)return;
