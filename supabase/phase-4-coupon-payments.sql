@@ -41,7 +41,7 @@ begin
    raise exception 'Please enter a valid customer name';
  end if;
  phone_value := regexp_replace(coalesce(new.customer_phone,''), '[ -]', '', 'g');
- if phone_value !~ '^(\\+?88)?01[3-9][0-9]{8}$' then
+ if phone_value !~ '^(\+?88)?01[3-9][0-9]{8}$' then
    raise exception 'Please enter a valid Bangladesh mobile number';
  end if;
  if nullif(trim(coalesce(new.customer_district,'')),'') is null
