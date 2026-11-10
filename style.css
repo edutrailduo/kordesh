@@ -218,3 +218,10 @@ em{font-family:'Hind Siliguri','DM Sans',sans-serif;font-style:normal}
 
 @media(max-width:600px){.site-header{gap:12px}.kordesh-ai-widget{right:13px;bottom:16px}.kordesh-ai-launcher{padding:8px 13px 8px 8px}.kordesh-ai-orb{width:31px;height:31px}.header-menu-left .site-menu{max-width:calc(100vw - 30px)}}
 @media print{.kordesh-ai-widget{display:none!important}}
+
+/* KORDESH AI visibility and mobile-safe placement */
+#kordeshAIWidget{display:block!important;visibility:visible!important;opacity:1!important;position:fixed!important;right:22px!important;bottom:26px!important;z-index:2147483000!important;pointer-events:auto!important}
+#kordeshAILauncher{display:flex!important;visibility:visible!important;opacity:1!important;cursor:pointer!important;min-height:54px!important}
+#kordeshAIPanel[hidden]{display:none!important}
+#kordeshAIPanel:not([hidden]){display:block!important;visibility:visible!important;opacity:1!important;z-index:2147483000!important}
+@media(max-width:600px){#kordeshAIWidget{right:12px!important;bottom:14px!important}#kordeshAIPanel{width:min(350px,calc(100vw - 24px))!important}}
