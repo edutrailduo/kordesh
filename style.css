@@ -82,3 +82,5 @@ h1,h2,h3,p,button,input,textarea,select,label,a{font-family:inherit}
  .header-actions{gap:7px}
  .menu-button{width:37px;height:37px}
 }
+
+em{font-family:'Hind Siliguri','DM Sans',sans-serif;font-style:normal}
