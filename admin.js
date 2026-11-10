@@ -90,14 +90,15 @@ async function loadChatSessions(){
  const {data,error}=await supabase.rpc("kordesh_chat_admin_sessions");
  if(error){msg("chatAdminMessage","লাইভ চ্যাট লোড হয়নি: "+error.message);return}
  cachedChats=Array.isArray(data)?data:[];
- $("chatInbox").innerHTML=cachedChats.length?cachedChats.map(c=>`<button type="button" class="chat-inbox-item ${selectedChatId===c.id?"selected":""}" data-chat-id="${esc(c.id)}"><strong>${esc(c.customer_name||"Guest")}</strong><small>${esc(c.status)} · ${new Date(c.last_message_at).toLocaleString("en-BD")}</small><span>${esc(c.last_message||"নতুন চ্যাট")}</span></button>`).join(""):"<p class='muted'>এখনো কোনো নতুন কাস্টমার চ্যাট নেই।</p>";
+ $("chatInbox").innerHTML=cachedChats.length?cachedChats.map(c=>`<button type="button" class="chat-inbox-item ${selectedChatId===c.id?"selected":""}" data-chat-id="${esc(c.id)}"><strong>${esc(c.customer_name||"Guest")}</strong><small>${esc(c.status)}${c.rating_stars?" · ★"+c.rating_stars+"/5 · "+esc(c.rating_feedback||""):""} · ${new Date(c.last_message_at).toLocaleString("en-BD")}</small><span>${esc(c.last_message||"নতুন চ্যাট")}</span></button>`).join(""):"<p class='muted'>এখনো কোনো নতুন কাস্টমার চ্যাট নেই।</p>";
  $("chatInbox").querySelectorAll("[data-chat-id]").forEach(btn=>btn.addEventListener("click",()=>selectAdminChat(btn.dataset.chatId)));
 }
 async function selectAdminChat(id){
  selectedChatId=id;chatLastId=0;
  const chat=cachedChats.find(x=>x.id===id);
  $("chatConversationTitle").textContent=chat?chat.customer_name+" · "+chat.status:"Customer conversation";
- $("chatReplyInput").disabled=false;$("chatReplyForm").querySelector("button").disabled=false;$("chatCloseBtn").disabled=false;
+ const isClosed=chat?.status==="closed";
+ $("chatReplyInput").disabled=isClosed;$("chatReplyForm").querySelector("button").disabled=isClosed;$("chatCloseBtn").disabled=isClosed;
  await loadChatSessions();await loadAdminChatMessages();
 }
 async function loadAdminChatMessages(){
@@ -109,8 +110,8 @@ async function loadAdminChatMessages(){
  rows.forEach(m=>{
   if(Number(m.id)<=chatLastId)return;
   chatLastId=Math.max(chatLastId,Number(m.id));
-  const item=document.createElement("div");item.className="admin-chat-message "+(m.sender==="agent"?"agent":"customer");
-  const who=document.createElement("small");who.textContent=m.sender==="agent"?"KORDESH Customer Care":"Customer";
+  const item=document.createElement("div");item.className="admin-chat-message "+(m.sender==="agent"?"agent":m.sender==="system"?"system":"customer");
+  const who=document.createElement("small");who.textContent=m.sender==="agent"?"KORDESH Customer Care":m.sender==="system"?"Automatic system":"Customer";
   const body=document.createElement("p");body.textContent=m.body;
   const time=document.createElement("time");time.textContent=new Date(m.created_at).toLocaleString("en-BD");
   item.append(who,body,time);$("chatThread").appendChild(item);
