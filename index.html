@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=20261111-7">
+  <link rel="stylesheet" href="style.css?v=20261111-8">
 </head>
 <body>
   <div class="announcement" data-i18n="announcement">কোরিয়ান বিউটি পণ্য এখন আপনার হাতের নাগালে</div>
@@ -33,7 +33,7 @@
         <p class="eyebrow" data-i18n="heroEyebrow">K-BEAUTY, SELECTED WITH CARE</p>
         <h1 data-i18n="heroTitle">কোরিয়ান বিউটির<br><em>নতুন ঠিকানা।</em></h1>
         <p class="hero-text" data-i18n="heroText">বিশ্বস্ত কোরিয়ান স্কিনকেয়ার ও কসমেটিকস পণ্য বেছে নিন সহজে। আপনার পছন্দের পণ্য পৌঁছে যাবে বাংলাদেশের ঠিকানায়।</p>
-        <a class="button button-dark" href="#products" data-i18n="explore">পণ্য দেখুন <span>↗</span></a>
+        <a class="button button-dark" href="#products" data-i18n="explore">পণ্য দেখুন <span></span></a>
       </div>
       <div class="hero-art" aria-label="Korean beauty editorial still life">
         <div class="art-circle"></div><div class="art-label">SEOUL<br>BEAUTY<br>EDIT</div>
@@ -47,15 +47,19 @@
       <div><b>01</b><span data-i18n="trust1">পণ্য যাচাইয়ের অঙ্গীকার</span></div><div><b>02</b><span data-i18n="trust2">বাংলাদেশজুড়ে অর্ডার</span></div><div><b>03</b><span data-i18n="trust3">সহজ কার্ট ও চেকআউট</span></div>
     </section>
 
-    <section class="products-section" id="products">
-      <div class="section-heading"><div><p class="eyebrow" data-i18n="curated">THE KORDESH EDIT</p><h2 data-i18n="productsTitle">পছন্দের কোরিয়ান বিউটি</h2></div><p data-i18n="productsSub">প্রতিদিনের স্কিনকেয়ার রুটিনের জন্য বাছাই করা কিছু জনপ্রিয় পণ্য।</p></div>
-      <div class="filter-row"><button class="filter active" data-filter="all" data-i18n="all">সব পণ্য</button><button class="filter" data-filter="skincare" data-i18n="skincare">স্কিনকেয়ার</button><button class="filter" data-filter="suncare" data-i18n="suncare">সানকেয়ার</button><span class="sample-note" data-i18n="sample">নমুনা পণ্য ও আনুমানিক মূল্য</span></div>
-      <div class="product-grid" id="productGrid"></div>
+    <section class="home-search-section">
+      <form class="home-search" id="homeProductSearchForm">
+        <label for="homeProductSearch">পণ্য খুঁজুন</label>
+        <div><input id="homeProductSearch" type="search" placeholder="পণ্যের নাম, ব্র্যান্ড বা ক্যাটাগরি লিখুন..." autocomplete="off"><button class="button button-dark" type="submit">খুঁজুন</button></div>
+      </form>
     </section>
 
-    <section class="editorial" id="about">
-      <div class="editorial-image"><div class="editorial-shape"></div><span>LESS, BUT<br>BETTER.</span></div>
-      <div class="editorial-copy"><p class="eyebrow" data-i18n="ourApproach">OUR APPROACH</p><h2 data-i18n="editorialTitle">সঠিক পণ্য।<br><em>সচেতন পছন্দ।</em></h2><p data-i18n="editorialText">KORDESH-এর লক্ষ্য হলো কোরিয়ান বিউটি পণ্য বাংলাদেশি ক্রেতাদের কাছে সহজে পৌঁছে দেওয়া। পণ্যের তথ্য, মূল্য ও অর্ডার প্রক্রিয়া থাকবে পরিষ্কার ও সহজ।</p><a href="#authenticity" class="text-link" data-i18n="learnMore">আরও জানুন ↗</a></div>
+    <section class="editorial home-about" id="about">
+      <div class="editorial-image"><div class="editorial-shape"></div><span>FROM KOREA<br>WITH CARE.</span></div>
+      <div class="editorial-copy"><p class="eyebrow">ABOUT KORDESH</p><h2>আমাদের গল্প,<br><em>আমাদের অঙ্গীকার।</em></h2>
+        <p>আমাদের শুরু একটি সহজ বিশ্বাস থেকে: ভালো ও আসল পণ্য পাওয়ার অধিকার সবার আছে। আমরা দক্ষিণ কোরিয়া থেকে পণ্য সংগ্রহ করি, নিজেরা বেছে দেখি এবং বাংলাদেশের মানুষের কাছে পৌঁছে দিতে চাই এমন যত্ন নিয়ে, যেন প্রিয় কারও জন্য কিছু পাঠাচ্ছি।</p>
+        <p>আমাদের লক্ষ্য শুধু পণ্য বিক্রি নয়। কোরিয়ার জনপ্রিয় ও প্রয়োজনীয় বিউটি পণ্য সম্পর্কে পরিষ্কার তথ্য দেওয়া, আসল পণ্যকে অগ্রাধিকার দেওয়া এবং কেনাকাটার প্রতিটি ধাপে বিশ্বাস তৈরি করাই আমাদের অঙ্গীকার।</p>
+      </div>
     </section>
 
   
@@ -76,11 +80,11 @@
     <section class="kordesh-ai-panel" id="kordeshAIPanel" hidden>
       <header><div><span class="kordesh-ai-orb">K</span><div><strong id="kordeshChatPanelTitle">KORDESH AI</strong><small id="kordeshChatPanelSubtitle">Personal Beauty Assistant</small></div></div><button type="button" id="kordeshAIClose" aria-label="Close">×</button></header>
       <div class="kordesh-ai-welcome"><span class="kordesh-ai-eyebrow">YOUR BEAUTY COMPANION</span><h3 id="kordeshAIWelcomeTitle">Hello! How can I help you?</h3><p id="kordeshAIWelcomeText">Find products, explore skincare routines or tell us about your skin needs.</p></div>
-      <button type="button" class="kordesh-live-start" id="kordeshLiveChatStart">Talk to Customer Care</button><p class="kordesh-live-status" id="kordeshLiveChatStatus" aria-live="polite">Message Customer Care for direct assistance.</p><button type="button" class="kordesh-live-back" id="kordeshLiveChatBack" hidden>← Back to KORDESH AI</button>
+      <button type="button" class="kordesh-live-start" id="kordeshLiveChatStart">Talk to Customer Care</button><p class="kordesh-live-status" id="kordeshLiveChatStatus" aria-live="polite">Message Customer Care for direct assistance.</p><button type="button" class="kordesh-live-back" id="kordeshLiveChatBack" hidden> Back to KORDESH AI</button>
       <div class="kordesh-ai-messages" id="kordeshAIMessages" aria-live="polite"><div class="kordesh-ai-message ai" id="kordeshAIInitialMessage">I am KORDESH AI. Tell me what you need and I will help you find products from our catalogue.</div></div>
       <div class="kordesh-ai-quick"><button type="button" data-ai-prompt="Show products for oily skin">Oily skin</button><button type="button" data-ai-prompt="Show products for dry skin">Dry skin</button><button type="button" data-ai-prompt="Show sunscreen">Sunscreen</button></div>
-      <form class="kordesh-ai-form" id="kordeshAIForm"><input id="kordeshAIInput" type="text" maxlength="300" placeholder="Ask your question..." autocomplete="off" aria-label="Your question"><button type="submit" aria-label="Send message">↑</button></form>
-      <a class="kordesh-ai-start" href="?page=advisor">Complete Skin Analysis <span>↗</span></a>
+      <form class="kordesh-ai-form" id="kordeshAIForm"><input id="kordeshAIInput" type="text" maxlength="300" placeholder="Ask your question..." autocomplete="off" aria-label="Your question"><button type="submit" aria-label="Send message"></button></form>
+      <a class="kordesh-ai-start" href="?page=advisor">Complete Skin Analysis <span></span></a>
       <small class="kordesh-ai-note">Product suggestions are general information, not medical advice.</small>
     </section>
   </aside>
@@ -118,7 +122,7 @@
     </form>
   </section>
   <script src="bd-locations.js"></script>
-  <script src="app.js?v=20261111-8"></script>
+  <script src="app.js?v=20261111-9"></script>
   <script src="features.js?v=20261111-3"></script>
 </body>
 </html>
