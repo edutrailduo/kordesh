@@ -157,12 +157,19 @@ function renderLocalityOptions(){
  if(municipalities.length){const g=document.createElement("optgroup");g.label=language==="bn"?"পৌরসভা":"Municipalities";municipalities.forEach(x=>g.append(geoOption((language==="bn"?x.bn_name:x.name)+(language==="bn"?" পৌরসভা":" Municipality"),(language==="bn"?x.bn_name:x.name)+" [পৌরসভা]","pourashava")));ls.append(g)}
  ls.disabled=unions.length+municipalities.length===0;
 }
+function filterLocationSelect(inputId,selectId){
+ const input=$(inputId),select=$(selectId);if(!input||!select)return;
+ const query=input.value.trim().toLocaleLowerCase();
+ [...select.options].forEach(option=>{option.hidden=!!query&&!option.value&&!option.textContent.toLocaleLowerCase().includes(query);if(option.value)option.hidden=!!query&&!option.textContent.toLocaleLowerCase().includes(query)});
+ [...select.querySelectorAll("optgroup")].forEach(group=>{const visible=[...group.querySelectorAll("option")].some(o=>!o.hidden);group.hidden=!!query&&!visible});
+}
+function resetLocationSearch(inputId){const input=$(inputId);if(input)input.value="";}
 function renderDistrictOptions(){
  const districtSelect=$("districtSelect"),areaSelect=$("areaSelect");if(!districtSelect||!areaSelect)return;
  const selected=districtSelect.value,selectedArea=areaSelect.value;
  districtSelect.innerHTML='<option value="">'+(language==="bn"?"জেলা নির্বাচন করুন":"Select district")+'</option>'+window.KORDESH_BD_LOCATIONS.map(d=>'<option value="'+d.bn+'" data-en="'+d.en+'">'+(language==="bn"?d.bn:d.en)+'</option>').join("");
  if(selected&&window.KORDESH_BD_LOCATIONS.some(d=>d.bn===selected))districtSelect.value=selected;
- renderUpazilaOptions();if(selectedArea&&[...areaSelect.options].some(o=>o.value===selectedArea))areaSelect.value=selectedArea;renderLocalityOptions();
+ renderUpazilaOptions();if(selectedArea&&[...areaSelect.options].some(o=>o.value===selectedArea))areaSelect.value=selectedArea;renderLocalityOptions();filterLocationSelect("districtSearch","districtSelect");filterLocationSelect("areaSearch","areaSelect");filterLocationSelect("localitySearch","localitySelect");
 }
 function renderUpazilaOptions(){
  const districtSelect=$("districtSelect"),areaSelect=$("areaSelect");if(!districtSelect||!areaSelect)return;
@@ -173,7 +180,7 @@ function renderUpazilaOptions(){
 function initLocationSelectors(){
  const districtSelect=$("districtSelect"),areaSelect=$("areaSelect");if(!districtSelect||!areaSelect||!Array.isArray(window.KORDESH_BD_LOCATIONS))return;
  renderDistrictOptions();loadBangladeshGeo();
- districtSelect.addEventListener("change",()=>renderUpazilaOptions());areaSelect.addEventListener("change",renderLocalityOptions);
+ districtSelect.addEventListener("change",()=>{resetLocationSearch("districtSearch");renderUpazilaOptions()});areaSelect.addEventListener("change",()=>{resetLocationSearch("areaSearch");resetLocationSearch("localitySearch");renderLocalityOptions()});\n ["districtSearch","areaSearch","localitySearch"].forEach(id=>$(id)?.addEventListener("input",()=>filterLocationSelect(id,id.replace("Search","Select"))));
 }
 function updateTotal(){const sub=cart.reduce((s,x)=>s+x.qty*x.price,0),fee=$("deliverySelect").value==="inside"?80:130;$("checkoutTotal").textContent=money(sub+fee)}
 const pageWords={
