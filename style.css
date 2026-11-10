@@ -400,3 +400,18 @@ em{font-family:'Hind Siliguri','DM Sans',sans-serif;font-style:normal}
 @media(prefers-reduced-motion:reduce){
  .kordesh-customer-launcher span,.kordesh-ai-launcher-label{animation:none!important;opacity:1!important;clip-path:inset(0)!important;transform:translateY(-50%)!important}
 }
+
+
+/* KORDESH home search and About story */
+.home-search-section{padding:30px clamp(20px,7vw,110px) 38px;background:#fff;border-bottom:1px solid var(--line)}
+.home-search{max-width:900px;margin:0 auto}
+.home-search>label{display:block;margin:0 0 10px;font-size:13px;font-weight:700;color:#282521}
+.home-search>div{display:flex;gap:10px}
+.home-search input{flex:1;min-width:0;height:52px;padding:0 17px;border:1px solid #d9d4ca;border-radius:2px;background:#fff;font:14px 'Hind Siliguri','DM Sans',sans-serif;outline:none}
+.home-search input:focus{border-color:#171717;box-shadow:0 0 0 2px #17171712}
+.home-search .button{height:52px;min-width:112px;gap:0;letter-spacing:0}
+.home-about{display:block!important;padding:90px clamp(20px,7vw,110px)!important}
+.home-about .editorial-copy{max-width:900px;margin:0 auto}
+.home-about .editorial-copy h2{margin-bottom:24px}
+.home-about .editorial-copy>p:not(.eyebrow){max-width:850px;margin:0 0 17px;color:#5f5a52;font-size:15px;line-height:2.1}
+@media(max-width:600px){.home-search-section{padding:24px 18px 30px}.home-search>div{gap:7px}.home-search input{height:48px;padding:0 11px;font-size:12px}.home-search .button{height:48px;min-width:76px;padding:10px}.home-about{padding:55px 20px!important}.home-about .editorial-copy>p:not(.eyebrow){font-size:14px;line-height:2}}
