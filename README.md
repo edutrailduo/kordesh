@@ -36,6 +36,17 @@ Security:
 4. The admin page will show your Supabase User ID. Send that ID to the project maintainer so it can be added to the private admin allowlist.
 5. After approval, log in again. You can view orders and change their status.
 
+## Automatic order confirmation email
+- Checkout collects the customer's email address and saves it with the order.
+- After the order is saved, the Supabase Edge Function `kordesh-order-email` sends a branded confirmation through Brevo.
+- The email includes the order ID, items, total, and delivery address.
+- Email delivery requires a Brevo account, a verified sender address, and two Edge Function secrets:
+  - `BREVO_API_KEY`
+  - `KORDESH_FROM_EMAIL` (the sender email address verified in Brevo)
+- Add these values in Supabase **Project Settings → Edge Functions → Secrets**: https://supabase.com/dashboard/project/bibithkwfrwahttdkcfi/functions/secrets
+- Create an API key in Brevo and register a sender under **Settings → Senders, Domains, IPs → Senders**. Verify the sender using the OTP sent to that mailbox. See [Brevo sender setup](https://developers.brevo.com/docs/getting-started-with-senders-and-domains).
+- Brevo Free includes transactional email and up to 300 email sends per day; free emails include Brevo branding. See [Brevo Free plan limits](https://help.brevo.com/hc/en-us/articles/208580669-FAQs-What-are-the-limits-of-the-Free-plan).
+
 ## Before accepting real orders
 - The current catalogue, product descriptions, prices, and delivery fees are sample content. Confirm stock, authenticity, pricing, sizes, and shipping fees before launch.
 - Product photos are loaded from external image hosts and may change or block hotlinking.
