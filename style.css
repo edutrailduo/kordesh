@@ -108,3 +108,20 @@ em{font-family:'Hind Siliguri','DM Sans',sans-serif;font-style:normal}
  .sort-control{display:grid;gap:6px;justify-content:stretch}
  .sort-control select{width:100%}
 }
+
+/* Final Phase 1 mobile polish */
+@media(max-width:800px){
+ .product-page .detail-image-wrap{min-height:280px}
+ .product-page .detail-image{height:280px}
+ .product-page .detail-copy{min-width:0}
+ .product-page .detail-copy h1,.product-page .product-english-name{overflow-wrap:anywhere}
+ .product-page .detail-actions{display:grid;grid-template-columns:1fr;gap:10px}
+ .catalog-tools .search-control input{font-size:16px}
+ .catalog-page .product-grid,.home-products .product-grid{gap:24px 12px}
+}
+@media(max-width:390px){
+ .catalog-tools .catalog-controls{grid-template-columns:1fr}
+ .home-categories .category-grid{grid-template-columns:1fr}
+ .home-categories .category-card{min-height:230px}
+ .product-info h3{overflow-wrap:anywhere}
+}
