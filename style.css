@@ -28,3 +28,27 @@
 .page-loading:before{content:"KORDESH";position:fixed;inset:0;z-index:1000;background:#171717;color:#fff;display:grid;place-items:center;font-size:16px;letter-spacing:.35em;animation:fadeout .45s forwards}
 @keyframes fadeout{0%{opacity:1}70%{opacity:1}100%{opacity:0;visibility:hidden;pointer-events:none}}
 @media(max-width:800px){.category-home,.catalog-page,.product-page{padding:52px 18px 70px}.category-grid{grid-template-columns:1fr;gap:16px}.category-card{min-height:300px}.product-page .detail-image-wrap{min-height:300px}.product-page .detail-image{height:300px}}
+
+/* Home is a single-screen category landing page */
+body.page-home{height:100svh;overflow:hidden}
+body.page-home footer{display:none}
+body.page-home main{height:calc(100svh - 120px);overflow:hidden}
+body.page-home .category-home{height:100%;min-height:0;overflow:hidden;padding:clamp(18px,3vh,38px) clamp(20px,7vw,110px);display:flex;flex-direction:column}
+body.page-home .category-home .eyebrow{margin-bottom:8px}
+body.page-home .category-home h1{font-size:clamp(27px,3.6vw,46px);line-height:1.18;margin-bottom:6px}
+body.page-home .category-intro{font-size:12px;margin-bottom:18px}
+body.page-home .category-grid{flex:1;min-height:0;margin-top:0;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+body.page-home .category-card{min-height:0;height:100%}
+body.page-home .category-card>div{padding:22px}
+@media(max-width:800px){
+ body.page-home main{height:calc(100svh - 106px)}
+ body.page-home .category-home{padding:20px 16px 24px}
+ body.page-home .category-home h1{font-size:clamp(25px,7vw,34px)}
+ body.page-home .category-intro{font-size:11px;margin-bottom:14px}
+ body.page-home .category-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+ body.page-home .category-card{min-height:0}
+ body.page-home .category-card>div{padding:12px}
+ body.page-home .category-card h2{font-size:clamp(16px,4vw,22px);margin:5px 0}
+ body.page-home .category-card p{font-size:10px;line-height:1.5}
+ body.page-home .category-card span{font-size:7px}
+}
