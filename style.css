@@ -129,3 +129,10 @@ em{font-family:'Hind Siliguri','DM Sans',sans-serif;font-style:normal}
 
 /* Division-first Bangladesh checkout address */
 #divisionSelect{margin-bottom:14px}
+
+
+/* Coupon and payment checkout options */
+.coupon-panel{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:end;padding:14px;border:1px solid var(--line,#e5e2dc);border-radius:12px;margin:14px 0}
+.coupon-panel label{margin:0}.coupon-apply{min-height:46px;padding:0 18px}.coupon-status{grid-column:1/-1;margin:0;font-size:13px;color:var(--muted)}.coupon-status.success{color:#187447}.coupon-status.error{color:#b42318}
+.payment-hint{margin:-4px 0 14px;padding:11px 13px;background:#f6f5f2;border-radius:8px;font-size:13px;line-height:1.6;color:#5f5b54}
+.checkout-breakdown{display:grid;gap:7px;margin:14px 0 8px;font-size:14px}.checkout-breakdown>div{display:flex;justify-content:space-between;gap:12px}.checkout-breakdown .discount-line{color:#187447}
