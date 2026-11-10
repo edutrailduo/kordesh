@@ -397,10 +397,20 @@ function setKordeshChatPanelMode(mode){
  const subtitle=document.getElementById("kordeshChatPanelSubtitle");
  const input=document.getElementById("kordeshAIInput");
  if(!panel)return;
+ const wasCustomer=panel.classList.contains("customer-care-mode");
  panel.classList.toggle("customer-care-mode",mode==="customer");
  if(title)title.textContent=mode==="customer"?"KORDESH CUSTOMER CARE":"KORDESH AI";
  if(subtitle)subtitle.textContent=mode==="customer"?"Live Customer Support":"Personal Beauty Assistant";
  if(input)input.placeholder=mode==="customer"?"Write your message...":"Ask your question...";
+ if(mode==="ai"&&wasCustomer){
+  kordeshLiveChatMode=false;
+  if(kordeshLiveChatPoll){clearInterval(kordeshLiveChatPoll);kordeshLiveChatPoll=null;}
+  const back=document.getElementById("kordeshLiveChatBack");if(back)back.hidden=true;
+  const quick=document.querySelector(".kordesh-ai-quick");if(quick)quick.hidden=false;
+  const messages=document.getElementById("kordeshAIMessages");
+  if(messages)messages.innerHTML="";
+  addKordeshAIMessage("আমি KORDESH AI। আপনার প্রয়োজন বলুন, আমি পণ্য খুঁজে দিতে সাহায্য করব।","ai");
+ }
 }
 async function openKordeshCustomerCare(){
  const panel=document.getElementById("kordeshAIPanel");
