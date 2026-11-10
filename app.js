@@ -317,9 +317,19 @@ function initStorefront(){
  const params=new URLSearchParams(location.search),page=params.get("page")||"home",cat=params.get("category"),id=params.get("id"),order=params.get("order");
  document.body.classList.remove("page-home","page-category","page-product","page-success");document.body.classList.add("page-"+page);
  const main=document.querySelector("main");
- const categoryMeta={skincare:["স্কিনকেয়ার","Skincare","দৈনন্দিন ত্বকের যত্ন"],suncare:["সানকেয়ার","Sun Care","সূর্যের আলো থেকে সুরক্ষা"],haircare:["হেয়ারকেয়ার","Haircare","চুল ও স্ক্যাল্পের যত্ন"],bodycare:["বডিকেয়ার","Body Care","শরীরের ত্বকের যত্ন"],lipcare:["লিপকেয়ার","Lip Care","ঠোঁটের যত্ন"],supplement:["সাপ্লিমেন্ট","Supplements","খাদ্য-পরিপূরক"],homecare:["হোমকেয়ার","Home Care","ঘর ও গাড়ির সুগন্ধি পণ্য"]};
- const categoryIds=[...new Set(products.map(p=>p.category))];
- const categories=categoryIds.map(id=>({id,bn:(categoryMeta[id]||[id,id,"বাছাই করা পণ্য"])[0],en:(categoryMeta[id]||[id,id,""])[1],desc:(categoryMeta[id]||[id,id,""])[2],img:id==="suncare"?"https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=900&q=85":"https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?auto=format&fit=crop&w=900&q=85"}));
+ const categoryMeta={skincare:["ফেস কেয়ার","Face Care","মুখের ত্বকের দৈনন্দিন যত্ন"],suncare:["সান কেয়ার","Sun Care","সূর্যের আলো থেকে সুরক্ষা"],haircare:["হেয়ার কেয়ার","Hair Care","চুল ও স্ক্যাল্পের যত্ন"],bodycare:["বডি কেয়ার","Body Care","শরীরের ত্বকের যত্ন"],lipcare:["লিপ কেয়ার","Lip Care","ঠোঁটের যত্ন"],supplement:["সাপ্লিমেন্ট","Supplements","খাদ্য-পরিপূরক"],homecare:["হোম কেয়ার","Home Care","ঘর ও গাড়ির সুগন্ধি পণ্য"],babycare:["বেবি কেয়ার","Baby Care","শিশুর কোমল ত্বকের যত্ন"]};
+ const categoryIds=[...new Set([...products.map(p=>p.category),"babycare"])];
+ const categoryImages={
+  skincare:"https://cdn.shopify.com/s/files/1/0567/0299/2418/files/Large_Pores_and_Uneven_Texture_Try_This_Luxiface_curated_5-Step_Korean_Skincare_Routine.png?v=1769088321",
+  suncare:"https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=1000&q=85",
+  haircare:"https://img.joomcdn.net/50f88ec8ecd77978653046a5a135cacd5544df86_original.jpeg",
+  bodycare:"https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?auto=format&fit=crop&w=1000&q=85",
+  lipcare:"https://images.unsplash.com/photo-1586495777744-4413f21062fa?auto=format&fit=crop&w=1000&q=85",
+  supplement:"https://images.unsplash.com/photo-1571781926291-c477ebfd024b?auto=format&fit=crop&w=1000&q=85",
+  homecare:"https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?auto=format&fit=crop&w=1000&q=85",
+  babycare:"https://makeyouhappy.ca/cdn/shop/files/Gemini_Generated_Image_xxan4zxxan4zxxan.png?v=1776380262"
+ };
+ const categories=categoryIds.map(id=>({id,bn:(categoryMeta[id]||[id,id,"বাছাই করা পণ্য"])[0],en:(categoryMeta[id]||[id,id,""])[1],desc:(categoryMeta[id]||[id,id,""])[2],img:categoryImages[id]||categoryImages.skincare}));
  const categoryLinks=categories.map(c=>'<a href="?page=category&category='+c.id+'">'+L(c.bn,c.en)+'</a>').join("");
  const menu=$("siteMenu");if(menu)menu.innerHTML='<a href="?">'+L("হোম","Home")+'</a>'+categoryLinks+'<a href="?page=advisor">AI Skin Advisor</a><a href="?page=track">Track Your Order Status</a><a href="?page=about">'+L("আমাদের সম্পর্কে","About us")+'</a>';
  document.querySelector(".brand").href="?";
