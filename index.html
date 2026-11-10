@@ -71,13 +71,13 @@
     </button>
     <section class="kordesh-ai-panel" id="kordeshAIPanel" hidden>
       <header><div><span class="kordesh-ai-orb">K</span><div><strong>KORDESH AI</strong><small>Personal Beauty Assistant</small></div></div><button type="button" id="kordeshAIClose" aria-label="Close">×</button></header>
-      <div class="kordesh-ai-welcome"><span class="kordesh-ai-eyebrow">YOUR BEAUTY COMPANION</span><h3>হ্যালো! কীভাবে সাহায্য করতে পারি?</h3><p>পণ্য খুঁজুন, স্কিনকেয়ার রুটিন সম্পর্কে জানুন অথবা আপনার ত্বকের প্রয়োজন বলুন।</p></div>
-      <button type="button" class="kordesh-live-start" id="kordeshLiveChatStart">Talk to Customer Care</button><p class="kordesh-live-status" id="kordeshLiveChatStatus" aria-live="polite">সরাসরি সহায়তা পেতে Customer Care-এ মেসেজ করুন।</p><button type="button" class="kordesh-live-back" id="kordeshLiveChatBack" hidden>← Back to KORDESH AI</button>
-      <div class="kordesh-ai-messages" id="kordeshAIMessages" aria-live="polite"><div class="kordesh-ai-message ai">আমি KORDESH AI। আপনার প্রয়োজন বলুন, আমি KORDESH-এর ক্যাটালগ থেকে উপযুক্ত পণ্য খুঁজে দিতে সাহায্য করব।</div></div>
-      <div class="kordesh-ai-quick"><button type="button" data-ai-prompt="তৈলাক্ত ত্বকের জন্য পণ্য দেখাও">তৈলাক্ত ত্বক</button><button type="button" data-ai-prompt="শুষ্ক ত্বকের জন্য পণ্য দেখাও">শুষ্ক ত্বক</button><button type="button" data-ai-prompt="সানস্ক্রিন দেখাও">সানস্ক্রিন</button></div>
-      <form class="kordesh-ai-form" id="kordeshAIForm"><input id="kordeshAIInput" type="text" maxlength="300" placeholder="আপনার প্রশ্ন লিখুন..." autocomplete="off" aria-label="আপনার প্রশ্ন"><button type="submit" aria-label="Send message">↑</button></form>
-      <a class="kordesh-ai-start" href="?page=advisor">সম্পূর্ণ Skin Analysis <span>↗</span></a>
-      <small class="kordesh-ai-note">পণ্যের পরামর্শ সাধারণ তথ্যভিত্তিক, চিকিৎসা পরামর্শ নয়।</small>
+      <div class="kordesh-ai-welcome"><span class="kordesh-ai-eyebrow">YOUR BEAUTY COMPANION</span><h3 id="kordeshAIWelcomeTitle">Hello! How can I help you?</h3><p id="kordeshAIWelcomeText">Find products, explore skincare routines or tell us about your skin needs.</p></div>
+      <button type="button" class="kordesh-live-start" id="kordeshLiveChatStart">Talk to Customer Care</button><p class="kordesh-live-status" id="kordeshLiveChatStatus" aria-live="polite">Message Customer Care for direct assistance.</p><button type="button" class="kordesh-live-back" id="kordeshLiveChatBack" hidden>← Back to KORDESH AI</button>
+      <div class="kordesh-ai-messages" id="kordeshAIMessages" aria-live="polite"><div class="kordesh-ai-message ai" id="kordeshAIInitialMessage">I am KORDESH AI. Tell me what you need and I will help you find products from our catalogue.</div></div>
+      <div class="kordesh-ai-quick"><button type="button" data-ai-prompt="Show products for oily skin">Oily skin</button><button type="button" data-ai-prompt="Show products for dry skin">Dry skin</button><button type="button" data-ai-prompt="Show sunscreen">Sunscreen</button></div>
+      <form class="kordesh-ai-form" id="kordeshAIForm"><input id="kordeshAIInput" type="text" maxlength="300" placeholder="Ask your question..." autocomplete="off" aria-label="Your question"><button type="submit" aria-label="Send message">↑</button></form>
+      <a class="kordesh-ai-start" href="?page=advisor">Complete Skin Analysis <span>↗</span></a>
+      <small class="kordesh-ai-note">Product suggestions are general information, not medical advice.</small>
     </section>
   </aside>
   <div class="cart-toast" id="cartToast" role="status">কার্টে যোগ হয়েছে</div>
