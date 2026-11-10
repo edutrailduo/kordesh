@@ -19,6 +19,7 @@
 <div class="toolbar"><div class="stats"><div><small>মোট অর্ডার</small><strong id="totalCount">0</strong></div><div><small>পেন্ডিং</small><strong id="pendingCount">0</strong></div></div><div class="tools"><select id="statusFilter"><option value="all">সব স্ট্যাটাস</option><option value="pending">Pending</option><option value="confirmed">Confirmed</option><option value="processing">Processing</option><option value="shipped">Shipped</option><option value="delivered">Delivered</option><option value="cancelled">Cancelled</option></select><button id="refreshBtn" class="secondary">রিফ্রেশ</button></div></div>
 <div id="orders" class="orders"></div><p id="dashMessage" class="message"></p>
 </section>
+<section id="recoveryPanel" class="panel auth" hidden><p class="eyebrow">ACCOUNT SECURITY</p><h1>নতুন পাসওয়ার্ড</h1><form id="recoveryForm"><label>নতুন পাসওয়ার্ড<input id="newPassword" type="password" minlength="8" required autocomplete="new-password"></label><button type="submit">পাসওয়ার্ড সংরক্ষণ</button></form><p id="recoveryMessage" class="message"></p></section>
 </main>
 <script type="module" src="admin.js"></script>
 </body></html>
