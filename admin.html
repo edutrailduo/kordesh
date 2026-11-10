@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#111">
-<title>KORDESH | Admin</title><link rel="stylesheet" href="admin.css?v=private-admin-only-20261111-1">
+<title>KORDESH | Admin</title><link rel="stylesheet" href="admin.css?v=private-admin-only-20261111-2">
 </head>
 <body>
 <header class="top"><a href="./">KORDESH<span>.</span></a><small>STORE MANAGEMENT</small></header>
@@ -16,15 +16,16 @@
 </section>
 <section id="dashboard" hidden>
 <div class="dash-head"><div><p class="eyebrow">KORDESH / ORDERS</p><h1>অর্ডারসমূহ</h1><p id="signedInAs" class="muted"></p></div><button id="logoutBtn" class="secondary">লগআউট</button></div>
-<div class="toolbar"><div class="stats"><div><small>মোট অর্ডার</small><strong id="totalCount">0</strong></div><div><small>পেন্ডিং</small><strong id="pendingCount">0</strong></div><div><small>সম্পন্ন</small><strong id="deliveredCount">0</strong></div></div><div class="tools"><input id="orderSearch" type="search" placeholder="অর্ডার, নাম বা ফোন খুঁজুন"><label class="date-filter">শুরু <input id="orderDateFrom" type="date" aria-label="শুরুর তারিখ"></label><label class="date-filter">শেষ <input id="orderDateTo" type="date" aria-label="শেষ তারিখ"></label><button id="clearDateFilter" class="secondary" type="button">তারিখ মুছুন</button><select id="statusFilter"><option value="all">সব স্ট্যাটাস</option><option value="pending">Pending</option><option value="confirmed">Confirmed</option><option value="processing">Processing</option><option value="shipped">Shipped</option><option value="delivered">Delivered</option><option value="cancelled">Cancelled</option></select><button id="refreshBtn" class="secondary">রিফ্রেশ</button><button id="exportBtn" class="secondary">CSV ডাউনলোড</button></div></div>
-<div id="orders" class="orders"></div><p id="dashMessage" class="message"></p>
 <section class="chat-admin panel" id="customerCarePanel">
 <div class="chat-admin-head"><div><p class="eyebrow">KORDESH / CUSTOMER CARE</p><h2>লাইভ কাস্টমার চ্যাট</h2></div><button id="chatRefreshBtn" class="secondary" type="button">চ্যাট রিফ্রেশ</button></div>
 <div class="chat-admin-layout"><div class="chat-inbox" id="chatInbox"><p class="muted">চ্যাট লোড হচ্ছে...</p></div><div class="chat-conversation"><div class="chat-conversation-title" id="chatConversationTitle">একটি কথোপকথন নির্বাচন করুন</div><div class="chat-thread" id="chatThread"><p class="muted">কাস্টমারের মেসেজ এখানে দেখা যাবে।</p></div><form id="chatReplyForm" class="chat-reply-form"><input id="chatReplyInput" maxlength="1000" placeholder="আপনার উত্তর লিখুন..." autocomplete="off" disabled><button type="submit" disabled>Send</button></form><button id="chatCloseBtn" class="secondary" type="button" disabled>চ্যাট বন্ধ করুন</button></div></div>
 <p id="chatAdminMessage" class="message" role="status"></p>
 </section>
+<div class="toolbar"><div class="stats"><div><small>মোট অর্ডার</small><strong id="totalCount">0</strong></div><div><small>পেন্ডিং</small><strong id="pendingCount">0</strong></div><div><small>সম্পন্ন</small><strong id="deliveredCount">0</strong></div></div><div class="tools"><input id="orderSearch" type="search" placeholder="অর্ডার, নাম বা ফোন খুঁজুন"><label class="date-filter">শুরু <input id="orderDateFrom" type="date" aria-label="শুরুর তারিখ"></label><label class="date-filter">শেষ <input id="orderDateTo" type="date" aria-label="শেষ তারিখ"></label><button id="clearDateFilter" class="secondary" type="button">তারিখ মুছুন</button><select id="statusFilter"><option value="all">সব স্ট্যাটাস</option><option value="pending">Pending</option><option value="confirmed">Confirmed</option><option value="processing">Processing</option><option value="shipped">Shipped</option><option value="delivered">Delivered</option><option value="cancelled">Cancelled</option></select><button id="refreshBtn" class="secondary">রিফ্রেশ</button><button id="exportBtn" class="secondary">CSV ডাউনলোড</button></div></div>
+<div id="orders" class="orders"></div><p id="dashMessage" class="message"></p>
+
 </section>
 <section id="recoveryPanel" class="panel auth" hidden><p class="eyebrow">ACCOUNT SECURITY</p><h1>নতুন পাসওয়ার্ড</h1><form id="recoveryForm"><label>নতুন পাসওয়ার্ড<input id="newPassword" type="password" minlength="8" required autocomplete="new-password"></label><button type="submit">পাসওয়ার্ড সংরক্ষণ</button></form><p id="recoveryMessage" class="message"></p></section>
 </main>
-<script type="module" src="admin.js?v=private-admin-only-20261111-1"></script>
+<script type="module" src="admin.js?v=private-admin-only-20261111-2"></script>
 </body></html>
