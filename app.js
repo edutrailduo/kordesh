@@ -416,6 +416,7 @@ function setKordeshLiveStatus(value){const el=document.getElementById("kordeshLi
 function appendKordeshLiveMessage(m){
  if(!m||!m.id||Number(m.id)<=kordeshLiveChatLastId)return;
  kordeshLiveChatLastId=Math.max(kordeshLiveChatLastId,Number(m.id));
+ if(m.sender==="agent")setKordeshLiveStatus("Customer Care প্রতিনিধি যুক্ত হয়েছেন। আপনি সরাসরি উত্তর দিতে পারেন।");
  addKordeshAIMessage((m.sender==="agent"?"Customer Care: ":"আপনি: ")+m.body,m.sender==="agent"?"ai":"user");
 }
 async function loadKordeshLiveMessages(){
