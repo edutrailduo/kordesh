@@ -400,3 +400,79 @@ document.addEventListener("submit",event=>{
  event.preventDefault();const input=document.getElementById("kordeshAIInput");
  sendKordeshAI(input?.value);if(input)input.value="";
 });
+
+/* KORDESH live customer-care chat */
+let kordeshLiveChatKey = "";
+let kordeshLiveChatMode = false;
+let kordeshLiveChatPoll = null;
+let kordeshLiveChatLastId = 0;
+let kordeshChatClientPromise = null;
+function getKordeshChatClient(){
+ if(!kordeshChatClientPromise)kordeshChatClientPromise=import("https://esm.sh/@supabase/supabase-js@2.102.0").then(({createClient})=>createClient(CONFIG.SUPABASE_URL,CONFIG.SUPABASE_KEY));
+ return kordeshChatClientPromise;
+}
+function setKordeshLiveStatus(value){const el=document.getElementById("kordeshLiveChatStatus");if(el)el.textContent=value;}
+function appendKordeshLiveMessage(m){
+ if(!m||!m.id||Number(m.id)<=kordeshLiveChatLastId)return;
+ kordeshLiveChatLastId=Math.max(kordeshLiveChatLastId,Number(m.id));
+ addKordeshAIMessage((m.sender==="agent"?"Customer Care: ":"আপনি: ")+m.body,m.sender==="agent"?"ai":"user");
+}
+async function loadKordeshLiveMessages(){
+ if(!kordeshLiveChatKey)return;
+ try{
+  const client=await getKordeshChatClient();
+  const {data,error}=await client.rpc("kordesh_chat_customer_messages",{p_chat_key:kordeshLiveChatKey,p_after_id:kordeshLiveChatLastId});
+  if(error)throw error;
+  (Array.isArray(data)?data:[]).forEach(appendKordeshLiveMessage);
+ }catch(e){setKordeshLiveStatus("চ্যাট সংযোগে সমস্যা হয়েছে। আবার চেষ্টা করুন।");}
+}
+async function startKordeshLiveChat(){
+ const start=document.getElementById("kordeshLiveChatStart");
+ if(start)start.disabled=true;
+ try{
+  const client=await getKordeshChatClient();
+  const saved=localStorage.getItem("kordesh_live_chat_key");
+  if(saved){kordeshLiveChatKey=saved;const {data,error}=await client.rpc("kordesh_chat_customer_messages",{p_chat_key:saved,p_after_id:0});if(error){localStorage.removeItem("kordesh_live_chat_key");kordeshLiveChatKey="";}}
+  if(!kordeshLiveChatKey){
+   const name=(window.prompt("আপনার নাম লিখুন (ঐচ্ছিক):")||"Guest").trim().slice(0,80)||"Guest";
+   const {data,error}=await client.rpc("kordesh_chat_create",{p_customer_name:name});
+   if(error)throw error;
+   kordeshLiveChatKey=data.chat_key;localStorage.setItem("kordesh_live_chat_key",kordeshLiveChatKey);
+  }
+  kordeshLiveChatMode=true;
+  const messages=document.getElementById("kordeshAIMessages");if(messages)messages.innerHTML="";
+  const quick=document.querySelector(".kordesh-ai-quick");if(quick)quick.hidden=true;
+  const back=document.getElementById("kordeshLiveChatBack");if(back)back.hidden=false;
+  setKordeshLiveStatus("Customer Care-এ সংযোগের অনুরোধ পাঠানো হয়েছে। প্রতিনিধি উত্তর দিলে এখানে দেখতে পাবেন।");
+  await loadKordeshLiveMessages();
+  if(kordeshLiveChatPoll)clearInterval(kordeshLiveChatPoll);
+  kordeshLiveChatPoll=setInterval(loadKordeshLiveMessages,5000);
+ }catch(e){setKordeshLiveStatus("এখন লাইভ চ্যাট চালু করা যাচ্ছে না। কিছুক্ষণ পর আবার চেষ্টা করুন।");}
+ finally{if(start)start.disabled=false;}
+}
+async function sendKordeshLiveMessage(body){
+ const value=String(body||"").trim();if(!value||!kordeshLiveChatKey)return;
+ try{
+  const client=await getKordeshChatClient();
+  const {data,error}=await client.rpc("kordesh_chat_customer_send",{p_chat_key:kordeshLiveChatKey,p_body:value});
+  if(error)throw error;
+  appendKordeshLiveMessage(data);
+ }catch(e){setKordeshLiveStatus("মেসেজ পাঠানো যায়নি। আবার চেষ্টা করুন।");}
+}
+document.getElementById("kordeshLiveChatStart")?.addEventListener("click",startKordeshLiveChat);
+document.getElementById("kordeshLiveChatBack")?.addEventListener("click",()=>{
+ kordeshLiveChatMode=false;if(kordeshLiveChatPoll)clearInterval(kordeshLiveChatPoll);
+ const quick=document.querySelector(".kordesh-ai-quick");if(quick)quick.hidden=false;
+ const back=document.getElementById("kordeshLiveChatBack");if(back)back.hidden=true;
+ setKordeshLiveStatus("সরাসরি সহায়তা পেতে Customer Care-এ মেসেজ করুন।");
+ const messages=document.getElementById("kordeshAIMessages");if(messages)messages.innerHTML="";
+ addKordeshAIMessage("আমি KORDESH AI। আপনার প্রয়োজন বলুন, আমি পণ্য খুঁজে দিতে সাহায্য করব।","ai");
+});
+const kordeshAIForm=document.getElementById("kordeshAIForm");
+if(kordeshAIForm)kordeshAIForm.addEventListener("submit",async event=>{
+ if(!kordeshLiveChatMode)return;
+ event.preventDefault();
+ const input=document.getElementById("kordeshAIInput"),value=input?.value||"";
+ if(input)input.value="";
+ await sendKordeshLiveMessage(value);
+});
