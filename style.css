@@ -581,3 +581,8 @@ footer .brand-image{width:132px;height:64px;flex-basis:132px}
  .brand-image{width:112px;height:60px;flex-basis:112px}
  footer .brand-image{width:112px;height:56px;flex-basis:112px}
 }
+
+/* Official logo in the About section and branded loading screen */
+.about-brand-logo{display:block;width:min(210px,55%);height:auto;object-fit:contain;margin:0 0 28px}
+.page-loading:before{content:""!important;background:#171717 url("20261013_191748.png") center/112px 112px no-repeat!important}
+@media(max-width:600px){.about-brand-logo{width:170px;margin-bottom:22px}}
