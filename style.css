@@ -586,3 +586,12 @@ footer .brand-image{width:132px;height:64px;flex-basis:132px}
 .about-brand-logo{display:block;width:min(210px,55%);height:auto;object-fit:contain;margin:0 0 28px}
 .page-loading:before{content:""!important;background:#171717 url("20261013_191748.png") center/112px 112px no-repeat!important}
 @media(max-width:600px){.about-brand-logo{width:170px;margin-bottom:22px}}
+
+/* Keep cart and checkout controls above the fixed mobile bottom navigation */
+@media(max-width:800px){
+ .overlay{z-index:2147483000!important}
+ .cart-drawer{z-index:2147483001!important;padding-bottom:calc(24px + env(safe-area-inset-bottom))!important}
+ .product-modal,.checkout-modal{z-index:2147483002!important}
+ .cart-drawer .cart-summary{position:sticky;bottom:0;flex-shrink:0;padding-bottom:calc(12px + env(safe-area-inset-bottom));background:#faf9f6}
+ html.kordesh-dark .cart-drawer .cart-summary{background:#1a1b17}
+}
