@@ -404,10 +404,43 @@ function answerKordeshAI(raw){
  if(/routine|রুটিন|skin analysis|ত্বকের ধরন/.test(q))return "আপনার ত্বকের ধরন ও লক্ষ্য অনুযায়ী রুটিন সাজাতে Skin Analysis ব্যবহার করুন।";
  return "আপনার প্রশ্নটি আরেকটু নির্দিষ্ট করে বলবেন? যেমন তৈলাক্ত বা শুষ্ক ত্বকের পণ্য, সানস্ক্রিন, টোনার কিংবা ক্লেনজার। আমি বর্তমানে KORDESH-এর পণ্যের ক্যাটালগ থেকে সাজেশন দিতে পারি।";
 }
-function sendKordeshAI(text){
+let kordeshAIHistory = [];
+async function sendKordeshAI(text){
  const value=String(text||"").trim();if(!value)return;
  addKordeshAIMessage(value,"user");
- addKordeshAIMessage(answerKordeshAI(value),"ai");
+ kordeshAIHistory.push({role:"user",content:value});
+ const list=document.getElementById("kordeshAIMessages");
+ const pending=document.createElement("div");
+ pending.className="kordesh-ai-message ai";
+ pending.textContent="KORDESH AI is thinking...";
+ if(list){list.appendChild(pending);list.scrollTop=list.scrollHeight;}
+ try{
+  const response=await fetch(CONFIG.SUPABASE_URL+"/functions/v1/kordesh-ai",{
+   method:"POST",
+   headers:{
+    "Content-Type":"application/json",
+    "apikey":CONFIG.SUPABASE_KEY,
+    "Authorization":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpYml0aGt3ZnJ3YWh0dGRrY2ZpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM3MjMyNTAsImV4cCI6MjEwOTI5OTI1MH0.6wZwhngFe5VYaW_5Of8ZPIb2Si6nJGRRV12dCq5jD60"
+   },
+   body:JSON.stringify({
+    message:value,
+    history:kordeshAIHistory.slice(-8,-1),
+    products:products.map(({id,brand,name,bn,category,price,size,desc,ingredients,skin,how})=>({id,brand,name,bn,category,price,size,desc,ingredients,skin,how}))
+   })
+  });
+  const data=await response.json().catch(()=>({}));
+  if(!response.ok)throw new Error(data.error||"AI request failed");
+  const answer=String(data.answer||"").trim();
+  if(!answer)throw new Error("Empty AI response");
+  pending.textContent=answer;
+  kordeshAIHistory.push({role:"assistant",content:answer});
+  kordeshAIHistory=kordeshAIHistory.slice(-8);
+ }catch(error){
+  console.error("KORDESH AI:",error);
+  pending.textContent="দুঃখিত, এই মুহূর্তে AI সংযোগ পাওয়া যাচ্ছে না। একটু পরে আবার চেষ্টা করুন।";
+  kordeshAIHistory.pop();
+ }
+ if(list)list.scrollTop=list.scrollHeight;
 }
 function setKordeshChatPanelMode(mode){
  const panel=document.getElementById("kordeshAIPanel");
