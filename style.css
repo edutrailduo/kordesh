@@ -691,3 +691,63 @@ html.kordesh-dark .home-about{background:#24221d}
  .home-feature-mark{width:190px}
  .trust-strip{grid-template-columns:1fr;gap:12px;padding:24px}
 }
+
+
+/* KORDESH dark mode refinement: layered charcoal, not an all-black page */
+html.kordesh-dark body{background:#191815!important;color:#eee9df}
+html.kordesh-dark .announcement{background:#292720;color:#e9dfce}
+html.kordesh-dark .home-hero{background:#201f1b;color:#f2eee6}
+html.kordesh-dark .home-hero-image{background-color:#302d26;border-color:#514a3e}
+html.kordesh-dark .home-categories,
+html.kordesh-dark .home-products,
+html.kordesh-dark .home-about,
+html.kordesh-dark .products-section,
+html.kordesh-dark .category-home,
+html.kordesh-dark .catalog-page,
+html.kordesh-dark .product-page,
+html.kordesh-dark .about-page{background:#1b1a17!important;color:#eee9df}
+html.kordesh-dark .trust-strip{background:#24221d!important;color:#eee9df}
+html.kordesh-dark .trust-strip>div{border-color:#49443a}
+html.kordesh-dark .editorial{background:#292720;color:#eee9df}
+html.kordesh-dark .editorial-copy>p:not(.eyebrow),
+html.kordesh-dark .home-about p:not(.eyebrow){color:#c9c1b4}
+html.kordesh-dark .newsletter{background:#292720;color:#f2eee6}
+html.kordesh-dark footer{background:#211f1b!important;color:#eee9df}
+html.kordesh-dark .home-products .product-card,
+html.kordesh-dark .products-section .product-card,
+html.kordesh-dark .catalog-page .product-card{background:#24221d;color:#eee9df;border:1px solid #3d392f}
+html.kordesh-dark .product-visual,
+html.kordesh-dark .detail-image-wrap,
+html.kordesh-dark .cart-thumb{background:#302d26}
+html.kordesh-dark .product-visual img,
+html.kordesh-dark .detail-image{mix-blend-mode:normal}
+html.kordesh-dark .product-tag{background:#3a352b;color:#e9ddc9}
+html.kordesh-dark .product-info h3,
+html.kordesh-dark .section-heading h2,
+html.kordesh-dark .home-categories h2,
+html.kordesh-dark .home-products h2,
+html.kordesh-dark .home-about h2,
+html.kordesh-dark .category-home h1,
+html.kordesh-dark .catalog-page h1,
+html.kordesh-dark .product-page h1{color:#f1ece2}
+html.kordesh-dark .product-info>p,
+html.kordesh-dark .section-heading>p,
+html.kordesh-dark .hero-bottom{color:#c0b8aa}
+html.kordesh-dark .filter{color:#ded6c9;border-color:#514b40}
+html.kordesh-dark .filter.active,
+html.kordesh-dark .filter:hover{background:#c9b99e;border-color:#c9b99e;color:#211f1b}
+html.kordesh-dark .add-button{border-color:#c9b99e;color:#eee9df}
+html.kordesh-dark .add-button:hover{background:#c9b99e;color:#211f1b}
+html.kordesh-dark .category-card{background:#302d26}
+html.kordesh-dark .category-card:after{background:linear-gradient(0deg,rgba(0,0,0,.76),rgba(0,0,0,.12) 75%)}
+html.kordesh-dark .cart-drawer .cart-summary{background:#1a1b17!important}
+html.kordesh-dark .cart-drawer .qty-controls button{background:#302d26;color:#eee9df;border-color:#514b40}
+html.kordesh-dark .checkout-modal input,
+html.kordesh-dark .checkout-modal textarea,
+html.kordesh-dark .checkout-modal select{background:#302d26;color:#eee9df;border-color:#514b40}
+html.kordesh-dark .button-dark{background:#d5c5aa;color:#211f1b;border-color:#d5c5aa}
+html.kordesh-dark .button-dark:hover{background:#e4d7c4;border-color:#e4d7c4}
+html.kordesh-dark .button-light{background:#302d26;color:#eee9df;border-color:#514b40}
+html.kordesh-dark .site-menu{background:#24221d;border-color:#49443a}
+html.kordesh-dark .site-menu a{color:#eee9df;border-color:#3a362e}
+html.kordesh-dark .mobile-bottom-nav{background:rgba(34,32,27,.98)!important}
